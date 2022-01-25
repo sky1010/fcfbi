@@ -50,15 +50,26 @@
 
         init: function (page_name) {
             $("[data-role='app_name']").text(app_name);
-            app.renderer.toggle('[data-role^=spa]', `[data-role=${page_name}]`); 
+            $(`[data-tab='${page_name}']`).click();
+            // console.log(`[data-tab='${page_name}']`);
+            var d = new Date();
+            $("footer").text(`${d.getFullYear()} © ${app_name}`);
         }
     }
-
-    app.init("spa-content-map");
 
     $("[data-bs-target]").click(function(){
         var spa_target = $(this).attr("data-bs-target").replace("#", "");
         app.renderer.toggle('[data-role^=spa]', `[data-role=${spa_target}]`);
+    });
+
+    $("[data-tab]").click(function(){
+        $("[data-tab-target]").addClass("no-display");
+        $(`[data-tab-target='${$(this).attr("data-tab")}']`).removeClass("no-display");
+
+        if($(this)[0].hasAttribute("data-init-spa")){
+            let spa_target = $(this).attr("data-spa");
+            app.renderer.toggle('[data-role^=spa]', `[data-role=${spa_target}]`); 
+        }
     });
 
     $("[data-role='spa-content-map']").on("spaloaded", function(){
@@ -87,5 +98,6 @@
         // TODO pre processsing
     });
 
+    app.init("site_summary");
     feather.replace();
 })(jQuery);

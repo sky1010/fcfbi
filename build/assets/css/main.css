@@ -1,0 +1,13 @@
+.no-display{
+	display: none;
+}
+
+footer{
+	position: absolute;
+    width: 100%;
+    bottom: 0px;
+    left: 0px;
+    background-color: rgb(248,249,250);
+    margin: 0px;
+    padding: 15px;
+}
