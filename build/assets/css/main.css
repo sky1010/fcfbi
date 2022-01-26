@@ -54,3 +54,7 @@ footer{
 .table-striped>tbody>tr:nth-of-type(odd)>* {
     --bs-table-accent-bg: rgba(60,72,88, 0.05) !important;
 }
+
+.bg-light{
+  background-color: #fff !important;
+}
