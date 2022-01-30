@@ -401,6 +401,6 @@
     });
     // $("[data-target-collapse]").click();
 
-    app.init("site_summary");
+    app.init("building");
     feather.replace();
 })(jQuery);
