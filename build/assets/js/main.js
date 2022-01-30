@@ -162,9 +162,19 @@
     });
 
     $("[data-role='spa-content-asset_list']").on("spaloaded", function(){
-        // TODO pre processsing
-    });
+        app.protocol.ajax(
+            'build/bridge.php',
+            { request_type: 'get_asset_list'},
+            {c: show_asset_list }
+        );  
 
+        // generate the left filters
+        app.protocol.ajax(
+            'build/bridge.php',
+            { request_type: 'get_asset_list_sidebar_dataset'},
+            {c: show_asset_list_sidebar_dataset}
+        )
+    });
 
     $("[data-sidebar-collapse-target]").click(function(){
         $(this).data("collapse", !!!$(this).data("collapse"));
@@ -191,7 +201,6 @@
                 'build/bridge.php',
                 { request_type: 'get_column_name', table: target_table},
                 {c: (data) => {
-                    console.log(data);
                      console.log(target_table);
                     show_columns(`[data-role='${spa_loaded}'] [data-drop-col]`, data)
                     $(`[data-role='${spa_loaded}'] [data-column-form]`).removeClass("no-display");
@@ -271,7 +280,7 @@
         }
     });
 
-          $("[data-role='spa-content-floor_plans'] [data-column-form-role='apply']").click(function(e){
+        $("[data-role='spa-content-floor_plans'] [data-column-form-role='apply']").click(function(e){
         var filter = [];
         const target_table = $(this).attr("data-table");
 
@@ -288,7 +297,28 @@
 
             $(`[data-role='${spa_loaded}'] [data-role='show_columns']`).click();
         }
+    });
+
+
+        $("[data-role='spa-content-asset_list'] [data-column-form-role='apply']").click(function(e){
+        var filter = [];
+        const target_table = $(this).attr("data-table");
+
+        $(`[data-role='${spa_loaded}'] [data-column-form] .dropzone [data-filter-by-columns]`).each(function (index, el) {
+            filter.push($(this).attr("data-filter-by-columns"));
+        });
+
+        if(filter.length > 0){
+            app.protocol.ajax(
+                'build/bridge.php',
+                { request_type: 'filter_by_column_name', filters: JSON.stringify(filter), table: target_table},
+                {c: show_asset_list}
+            ); 
+
+            $(`[data-role='${spa_loaded}'] [data-role='show_columns']`).click();
+        }
     });      
+      
 
 
     // $("[data-target-collapse]").click();

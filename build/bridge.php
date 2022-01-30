@@ -103,6 +103,23 @@
                 http_response_code(400);
             }                          
             break;
+            
+            case 'get_asset_list':
+            try{
+                //creates a connection, selects the user and send the data as an JSON outstream
+                $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
+                $assets = select($connection, "SELECT * FROM assets ORDER BY UID LIMIT 100", []);
+
+                echo json_encode(['data' => $assets]);
+
+                //destroy database connection
+                db_disconnect($connection);
+                http_response_code(200);
+            }catch(Exception $e){
+                //return bad http request when error is encountered
+                http_response_code(400);
+            }                          
+            break;    
 
         case 'get_buildings_sidebar_dataset':
             try{
@@ -141,6 +158,58 @@
                 http_response_code(400);
             }
             break;
+
+            case 'get_asset_list_sidebar_dataset':
+            try{
+                //creates a connection, selects the user and send the data as an JSON outstream
+                $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
+
+                $temp = [];
+                $client = select($connection, "SELECT COUNT(UID) AS tot_col, (CASE 
+                    WHEN Client IS NULL THEN 'Empty'
+                    ELSE Client
+                    END) AS col_name
+                    FROM assets GROUP BY Client LIMIT 50", []);
+                $temp['Client'] = $client;
+
+                $region = select($connection, "SELECT COUNT(UID) AS tot_col, (CASE 
+                    WHEN Region IS NULL THEN 'Empty'
+                    ELSE Region
+                    END) AS col_name
+                    FROM assets GROUP BY Region LIMIT 50", []);
+                $temp['Region'] = $region;
+
+                $building_name = select($connection, "SELECT COUNT(UID) AS tot_col, (CASE 
+                    WHEN BuildingName IS NULL THEN 'Empty'
+                    ELSE BuildingName
+                    END) AS col_name
+                    FROM assets GROUP BY BuildingName LIMIT 50", []);
+                $temp['BuildingName'] = $building_name;
+
+                $Group1 = select($connection, "SELECT COUNT(UID) AS tot_col, (CASE 
+                    WHEN Group1 IS NULL THEN 'Empty'
+                    ELSE Group1
+                    END) AS col_name
+                    FROM assets GROUP BY Group1", []);
+                $temp['Group1'] = $Group1;
+
+                $Description = select($connection, "SELECT COUNT(UID) AS tot_col, (CASE 
+                    WHEN Description IS NULL THEN 'Empty'
+                    ELSE Description
+                    END) AS col_name
+                    FROM assets GROUP BY Description LIMIT 50", []);
+                $temp['Description'] = $Group1;
+
+                echo json_encode(['data' => $temp]);
+
+                //destroy database connection
+                db_disconnect($connection);
+                http_response_code(200);
+            }catch(Exception $e){
+                //return bad http request when error is encountered
+                http_response_code(400);
+            }
+            break;    
         case 'get_contacts_sidebar_dataset':
             try{
                 //creates a connection, selects the user and send the data as an JSON outstream
@@ -272,6 +341,45 @@
                 http_response_code(400);
             }
             break;
+                case 'get_filtered_dataset_asset_list':
+            try{
+                $filters = json_decode($_REQUEST['filters'], true);
+                $column = implode(", ", array_keys($filters));
+                $in_clauses = [];
+                $or_clauses = [];
+                $glue = ""; 
+                $where_clauses = "";
+
+                foreach ($filters as $k => $v) {
+                    if(in_array("Empty", $v)){
+                        $or_clauses[] = sprintf("%s IS NULL", $k);
+                        array_splice($v, array_search('Empty', $v), 1);
+                    }
+
+                    if(!empty($v)){
+                        foreach($v AS $kb => $kv) 
+                            $v[$kb] = sprintf("'%s'", $kv);
+                        $in_clauses[] = sprintf("%s IN ( %s )", $k, implode(", ", $v));
+                    }
+                } 
+
+                $glue = empty($in_clauses)?" ":(empty($or_clauses)?"":" OR ");
+                $where_clauses = implode(" AND ", $in_clauses).$glue.implode(" OR ", $or_clauses);
+
+                //creates a connection, selects the user and send the data as an JSON outstream
+                $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
+                $building = select($connection, sprintf("SELECT * FROM assets WHERE %s LIMIT 500 ", $where_clauses), []);
+
+                echo json_encode(['data' => $building]);
+
+                //destroy database connection
+                db_disconnect($connection);
+                http_response_code(200);
+            }catch(Exception $e){
+                //return bad http request when error is encountered
+                http_response_code(400);
+            }
+            break;    
         case 'get_filtered_dataset_contacts':
             try{
                 $filters = json_decode($_REQUEST['filters'], true);
@@ -411,7 +519,7 @@
 
                 //creates a connection, selects the user and send the data as an JSON outstream
                 $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
-                $dataset = select($connection, sprintf("SELECT %s FROM %s ", $filters, $_REQUEST['table']), []);
+                $dataset = select($connection, sprintf("SELECT %s FROM %s LIMIT 500", $filters, $_REQUEST['table']), []);
 
                 echo json_encode(['data' => $dataset]);
 
