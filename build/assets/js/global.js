@@ -7,6 +7,8 @@
 const app_name = 'FCFBI';   // holds the application name
 const event = new Event('spa_loaded'); // spa loaded event
 const mapbox_token = 'pk.eyJ1IjoicmFqZXNzZW4iLCJhIjoiY2t5dWwya2l1MWlkODJ1dGdjd2xsOTdrZSJ9.qyn4CgQZmD-YTzrVcqUzgg';
+var spa_loaded = null;
+
 var map = null;
 var session = window.sessionStorage;
 
@@ -33,15 +35,58 @@ var app = {
 
         var d = new Date();
         $("footer").text(`${d.getFullYear()} © ${app_name}`);
+
+        interact('.dropzone').dropzone({
+            accept: '.col-items',
+            overlap: 0.75,
+            ondragenter: function (event) {
+                var draggableElement = event.relatedTarget
+                var dropzoneElement = event.target
+
+                // feedback the possibility of a drop
+                var clone = $(draggableElement).clone().removeAttr("style");
+                $(dropzoneElement).append(clone);
+                $(draggableElement).remove();
+            },
+            ondropdeactivate: function (event) {
+                $(event.relatedTarget).removeAttr("style");
+            }
+        })
+
+        interact('.drag-drop')
+            .draggable({
+            inertia: true,
+            modifiers: [
+              interact.modifiers.restrictRect({
+                restriction: 'parent',
+                endOnly: true
+              })
+            ],
+            autoScroll: true,
+            // dragMoveListener from the dragging demo above
+            listeners: { move: (event) => {
+                var target = event.target;
+                var target_bounds = $(target)[0].getBoundingClientRect();
+
+                var x = event.clientX - (target_bounds.width / 2);
+                var y = event.clientY - (target_bounds.height / 2);
+
+                $(target).css({position: "absolute", left: `${x}px`, top: `${y}px`}); 
+
+                // update the posiion attributes
+                target.setAttribute('data-x', x)
+                target.setAttribute('data-y', y)
+            }}
+        })
     },
 
     renderer: {
         toggle: function(fsel, ssel, affectDOM = true){
+            let spa_target = $(ssel).attr("data-role");
+
             if(affectDOM){
                 $(fsel).removeClass("show active");
                 $(ssel).addClass("show active");
-
-                let spa_target = $(ssel).attr("data-role");
 
                 $("[data-bs-target]").removeClass("active");
                 $(`[data-bs-target='#${spa_target}']`).addClass("active");
@@ -49,6 +94,8 @@ var app = {
             
             setTimeout(function(){
                 $(ssel).trigger('spaloaded');
+                session.setItem('spa_loaded', spa_target);
+                spa_loaded = spa_target;
             }, 0);
         }
     },

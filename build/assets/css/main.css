@@ -152,8 +152,9 @@ footer{
 .col-items{
   width: fit-content;
   background-color: var(--theme-primary-color);
-  height: 40px;
+  height: fit-content;
   padding: 10px;
+  word-break: break-all;
 }
 
 .drop-active{

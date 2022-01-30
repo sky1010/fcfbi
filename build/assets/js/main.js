@@ -122,8 +122,8 @@
 
     $("[data-sidebar-collapse-target]").click(function(){
         $(this).data("collapse", !!!$(this).data("collapse"));
-
         const collapse_state = $(this).data("collapse");
+
         if(collapse_state){
             $(`[data-sidebar-collapse=${$(this).attr('data-sidebar-collapse-target')}]`).addClass("csx-sidebar-collapse");
             $(this).find("svg").addClass("rotate");
@@ -135,66 +135,56 @@
         }
     });
 
+    $("[data-role='show_columns']").click(function(){
+        const target_table = $(this).attr("data-table");
+        $(this).data("collapse", !!!$(this).data("collapse"));
+        const collapse_state = $(this).data("collapse");
 
-    interact('.dropzone').dropzone({
-      // only accept elements matching this CSS selector
-      accept: '#drop_column',
-      // Require a 75% element overlap for a drop to be possible
-      overlap: 0.75,
+        if(collapse_state){
+            app.protocol.ajax(
+                'build/bridge.php',
+                { request_type: 'get_column_name', table: target_table},
+                {c: (data) => {
+                    show_columns(`[data-role='${spa_loaded}'] [data-drop-col]`, data)
+                    $(`[data-role='${spa_loaded}'] [data-column-form]`).removeClass("no-display");
+                }}
+            ); 
+        }else{
+            $(`[data-role='${spa_loaded}'] [data-column-form]`).addClass("no-display");
+        } 
+    });
 
-      // listen for drop related events:
+    $("[data-column-form-role='cancel']").click(function(e){
+        $(`[data-role='${spa_loaded}'] [data-role='show_columns']`).click();
+    });
 
-      ondropactivate: function (event) {
-        // add active dropzone feedback
-        console.log("element is being dragged");
-      },
-      ondragenter: function (event) {
-        var draggableElement = event.relatedTarget
-        var dropzoneElement = event.target
+    $("[data-column-form-role='restore']").click(function(e){
+        $(`[data-role='${spa_loaded}'] [data-column-form] .dropzone`).children().each(function(index, el){
+            var clone = $(el).clone();
+            $(`[data-role='${spa_loaded}'] [data-column-form] [data-drop-col]`).append(clone);
+            $(el).remove();
+        });
+    });
 
-        // feedback the possibility of a drop
-        console.log("can drop element");
-      },
-      ondragleave: function (event) {
-        // remove the drop feedback style
-        console.log("can remove dropped element");
-      },
-      ondrop: function (event) {
-        console.log("element dropped");
-      },
-      ondropdeactivate: function (event) {
-        // remove active dropzone feedback
-        console.log("element is no longer being dragged");
-      }
-    })
+    $("[data-column-form-role='apply']").click(function(e){
+        var filter = [];
+        const target_table = $(this).attr("data-table");
 
-    interact('.drag-drop')
-      .draggable({
-        inertia: true,
-        modifiers: [
-          interact.modifiers.restrictRect({
-            restriction: 'parent',
-            endOnly: true
-          })
-        ],
-        autoScroll: true,
-        // dragMoveListener from the dragging demo above
-        listeners: { move: dragMoveListener }
-    })
+        $(`[data-role='${spa_loaded}'] [data-column-form] .dropzone [data-filter-by-columns]`).each(function (index, el) {
+            filter.push($(this).attr("data-filter-by-columns"));
+        });
 
-    function dragMoveListener (event) {
-      var target = event.target
-      // keep the dragged position in the data-x/data-y attributes
-      var x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx
-      var y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy
+        if(filter.length > 0){
+            app.protocol.ajax(
+                'build/bridge.php',
+                { request_type: 'filter_by_column_name', filters: JSON.stringify(filter), table: target_table},
+                {c: show_building}
+            ); 
 
-      // translate the element
-      target.style.transform = 'translate(' + x + 'px, ' + y + 'px)'
+            $(`[data-role='${spa_loaded}'] [data-role='show_columns']`).click();
+        }
+    });
 
-      // update the posiion attributes
-      target.setAttribute('data-x', x)
-      target.setAttribute('data-y', y)
-    }
 
     // $("[data-target-collapse]").click();
 

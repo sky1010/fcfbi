@@ -124,7 +124,41 @@
                 echo json_encode(['data' => $building]);
 
                 //destroy database connection
-                // db_disconnect($connection);
+                db_disconnect($connection);
+                http_response_code(200);
+            }catch(Exception $e){
+                //return bad http request when error is encountered
+                http_response_code(400);
+            }
+            break;
+        case 'get_column_name':
+            try{
+                //creates a connection, selects the user and send the data as an JSON outstream
+                $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
+                $col_names = select($connection, "SELECT column_name FROM information_schema.columns WHERE table_name = ?", [$_REQUEST['table']]);
+
+                echo json_encode(['data' => $col_names]);
+
+                //destroy database connection
+                db_disconnect($connection);
+                http_response_code(200);
+            }catch(Exception $e){
+                //return bad http request when error is encountered
+                http_response_code(400);
+            }
+            break;
+        case 'filter_by_column_name':
+            try{
+                $filters = implode(", ", json_decode($_REQUEST['filters']));
+
+                //creates a connection, selects the user and send the data as an JSON outstream
+                $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
+                $dataset = select($connection, sprintf("SELECT %s FROM %s ", $filters, $_REQUEST['table']), []);
+
+                echo json_encode(['data' => $dataset]);
+
+                //destroy database connection
+                db_disconnect($connection);
                 http_response_code(200);
             }catch(Exception $e){
                 //return bad http request when error is encountered

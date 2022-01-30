@@ -75,7 +75,7 @@
                 </div>
                 <div class="row csx-full-vp">
                   <div class="col-lg-2 csx-right-separator" data-sidebar-collapse="left-filters-building"></div>
-                  <div class="col-lg-10" data-target-pagination="building_pagination" data-target-table="buildings">
+                  <div class="col-lg-10" data-target-pagination data-target-table>
                     <div class="container-fluid mt-4">
                       <div class="row">
                           <div class="col-lg-3 col-sm-12">
@@ -89,7 +89,7 @@
                             </div>
                           </div>
                           <div class="col-lg-6 col-sm-12 d-flex justify-content-around flex-group">
-                              <button class="btn btn-sm btn-warning">Column <span data-feather="bar-chart-2"></span></button>
+                              <button class="btn btn-sm btn-warning" data-table="buildings" data-role="show_columns">Column <span data-feather="bar-chart-2"></span></button>
                               <button class="btn btn-sm btn-warning">Sorting <span data-feather="filter"></span></button>
                               <button class="btn btn-sm btn-warning">Group by <span data-feather="filter"></span></button>
                               <div class="dropdown">
@@ -112,16 +112,22 @@
                           </div>
                       </div>
                     </div>
-                    <div class="container-fluid mt-4 mb-4">
+                    <div class="container-fluid mt-4 mb-4 no-display" data-column-form>
+                      <div class="row">
+                        <div class="col-lg-12 col-sm-12 float-right">
+                          <div class="d-lg-flex justify-content-end mt-3 mb-3">
+                            <button class="btn btn-sm btn-warning ms-3" data-column-form-role="apply" data-table="buildings">Apply <span data-feather="check"></span></button>
+                            <button class="btn btn-sm btn-warning ms-3" data-column-form-role="restore">Restore <span data-feather="x"></span></button>
+                            <button class="btn btn-sm btn-warning ms-3" data-column-form-role="cancel">Cancel <span data-feather="x"></span></button>
+                          </div>
+                        </div>
+                      </div>
                       <div class="row">
                           <div class="col-lg-6 col-sm-6">
-                            <div class="csx-drop-col-zone d-flex">
-                                <div class="col-items drag-drop m-2">BuildingName</div>
-                                <div class="col-items drag-drop m-2">Client</div>
-                            </div>
+                            <div class="csx-drop-col-zone d-flex flex-wrap" data-drop-col></div>
                           </div> 
                           <div class="col-lg-6 col-sm-6">
-                            <div class="csx-drop-col-zone dropzone">
+                            <div class="csx-drop-col-zone d-flex flex-wrap dropzone">
                               
                             </div>
                           </div>
@@ -130,19 +136,7 @@
                     <div class="table-responsive mt-5">
                       <table class="table table-striped">
                         <thead class="csx-light-theme">
-                          <tr>
-                            <th scope="col"></th>
-                            <th scope="col">BuildingNumber</th>
-                            <th scope="col">BuildingName</th>
-                            <th scope="col">Client</th>
-                            <th scope="col">Address</th>
-                            <th scope="col">PostCode</th>
-                            <th scope="col">Phone</th>
-                            <th scope="col">Region</th>
-                            <th scope="col">SubRegion</th>
-                            <th scope="col">TradingType</th>
-                            <th scope="col">Status</th>
-                          </tr>
+                          <tr></tr>
                         </thead>
                         <tbody class="sm-font"></tbody>
                       </table>

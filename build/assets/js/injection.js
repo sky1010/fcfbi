@@ -6,52 +6,50 @@
 
 function show_building(data){
     const buildings = JSON.parse(data);
-    const container = $("[data-target-table='buildings'] tbody");
+    const container = $(`[data-role='${spa_loaded}'] [data-target-table]`);
 
-    $(container).children().remove();
+    $(container).find("tbody").children().remove();
+    $(container).find("thead").children().remove();
+
+    console.log(buildings);
+    // gen header
+    var col_name = Object.keys(buildings.data[0]);
+    var tr_node = $("<tr></tr>");
+    $(tr_node).append($("<th></th>"));
+
+    for(let x in col_name){
+        var th_node = $("<th></th>").text(col_name[x]);
+        $(tr_node).append(th_node);
+    }
+
+    $(container).find("thead").append(tr_node);
 
     for(let x in buildings.data){
 
         var tr = $("<tr></tr>").attr("data-building", buildings.data[x].UID );
-        var building_number = $("<td></td>").text( buildings.data[x].UID );
-        var building_name = $("<td></td>").text( buildings.data[x].BuildingName );
-        var client = $("<td></td>").text( buildings.data[x].Client );
-        var address = $("<td></td>").text( buildings.data[x].Address );
-        var post_code = $("<td></td>").text( buildings.data[x].PostCode );
-        var phone = $("<td></td>").text( buildings.data[x].Phone );
-        var region = $("<td></td>").text( buildings.data[x].Region );
-        var sub_region = $("<td></td>").text( buildings.data[x].SubRegion );
-        var trading_type = $("<td></td>").text( buildings.data[x].TradingType );
-        var status = $("<td></td>").text( buildings.data[x].Status );
         var edit_btn = $("<th scope='row'> <span class='hover-pointer' data-feather='edit-3'></span></th>");
 
-        $(container)
-            .append( $(tr)
-            .append(edit_btn)
-            .append(building_number)
-            .append(building_name)
-            .append(client)
-            .append(address)
-            .append(post_code)
-            .append(phone)
-            .append(region)
-            .append(sub_region)
-            .append(trading_type)
-            .append(status)
-        );
+        $(tr).append(edit_btn);
+        
+        for(let y in buildings.data[x]){
+            var td_node = $("<td></td>").text(buildings.data[x][y]);
+            $(tr).append(td_node);
+        }
 
-        $(edit_btn).click(function(){
-            // TODO
-        });
+        $(container).find("tbody").append(tr);
+
+        // $(edit_btn).click(function(){
+        //     // TODO
+        // });
 
     }
 
-    $("[data-target-pagination='building_pagination']").pagination({
-        dataSource: [...$("[data-target-table='buildings'] tbody tr")],
+    $(`[data-role='${spa_loaded}'] [data-target-pagination]`).pagination({
+        dataSource: [...$(`[data-role='${spa_loaded}'] [data-target-table] tbody tr`)],
         pageSize: 9,
         callback: function(data, pagination) {
             var html = template(data);
-            $("[data-target-table='buildings'] tbody").html(html);
+            $(`[data-role='${spa_loaded}'] [data-target-table] tbody`).html(html);
         }
     })
 
@@ -61,8 +59,8 @@ function show_building(data){
 function show_buildings_sidebar_dataset(data){
     const dataset = JSON.parse(data);
     const container = $("[data-sidebar-collapse='left-filters-building']");
-
     $(container).children().remove();
+
     var section_keys = Object.keys(dataset.data);
     var key_transform = {
         Client: 'Client',
@@ -168,6 +166,20 @@ function registerSidebarFiltersEvent(sel, callback ){
 
         callback(all_selected_val);
     });
+}
+
+function show_columns(sel, data){
+    const dataset = JSON.parse(data);
+    const container = $(sel);
+    $(container).children().remove();
+
+    for(let x in dataset.data){
+        var div_node = $("<div></div>")
+            .text(dataset.data[x].column_name)
+            .addClass("col-items drag-drop m-2")
+            .attr("data-filter-by-columns", dataset.data[x].column_name);
+        $(container).append(div_node);
+    }
 }
 
 function template(nodes){
