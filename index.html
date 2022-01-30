@@ -66,9 +66,86 @@
               <div class="mt-5" id='map'></div>
             </div>
             <div class="tab-pane fade" id="spa-content-contacts" data-role="spa-content-contacts" role="tabpanel" aria-labelledby="csx-contacts-tab">
-              In development
+            <!--contacts-->
+              <div class="container-fluid">
+                <div class="sidebar-toggle" data-sidebar-collapse-target="left-filters-contacts">
+                  <span data-feather="chevron-left"></span>
+                </div>
+                <div class="row csx-full-vp">
+                  <div class="col-lg-2 csx-right-separator" data-sidebar-collapse="left-filters-contacts"></div>
+                  <div class="col-lg-10" data-target-pagination data-target-table>
+                    <div class="container-fluid mt-4">
+                      <div class="row">
+                          <div class="col-lg-3 col-sm-12">
+                            <div class="dropdown">
+                              <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="quick_search_form" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Quick search <span data-feather="search"></span>
+                              </button>
+                              <div class="dropdown-menu" aria-labelledby="quick_search_form">
+
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-lg-6 col-sm-12 d-flex justify-content-around flex-group">
+                              <button class="btn btn-sm btn-warning" data-table="contacts" data-role="show_columns">Column <span data-feather="bar-chart-2"></span></button>
+                              <button class="btn btn-sm btn-warning">Sorting <span data-feather="filter"></span></button>
+                              <button class="btn btn-sm btn-warning">Group by <span data-feather="filter"></span></button>
+                              <div class="dropdown">
+                                <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="export_list_type" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                  Export <span data-feather="download"></span>
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="export_list_type">
+                                  <a class="dropdown-item" href="#">Action</a>
+                                  <a class="dropdown-item" href="#">Another action</a>
+                                  <a class="dropdown-item" href="#">Something else here</a>
+                                </div>
+                              </div>
+                              <button class="btn btn-sm btn-warning">Search <span data-feather="search"></span></button>
+                          </div>
+                          <div class="col-lg-3 col-sm-12">
+                            <div class="float-right">
+                              <button class="btn btn-sm btn-warning">Add new <span data-feather="plus"></span></button>
+                              <button class="btn btn-sm btn-warning">Reload <span data-feather="refresh-cw"></span></button>
+                            </div>
+                          </div>
+                      </div>
+                    </div>
+                    <div class="container-fluid mt-4 mb-4 no-display" data-column-form>
+                      <div class="row">
+                        <div class="col-lg-12 col-sm-12 float-right">
+                          <div class="d-lg-flex justify-content-end mt-3 mb-3">
+                            <button class="btn btn-sm btn-warning ms-3" data-column-form-role="apply" data-table="contacts">Apply <span data-feather="check"></span></button>
+                            <button class="btn btn-sm btn-warning ms-3" data-column-form-role="restore">Restore <span data-feather="x"></span></button>
+                            <button class="btn btn-sm btn-warning ms-3" data-column-form-role="cancel">Cancel <span data-feather="x"></span></button>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                          <div class="col-lg-6 col-sm-6">
+                            <div class="csx-drop-col-zone d-flex flex-wrap" data-drop-col></div>
+                          </div> 
+                          <div class="col-lg-6 col-sm-6">
+                            <div class="csx-drop-col-zone d-flex flex-wrap dropzone">
+                              
+                            </div>
+                          </div>
+                      </div>
+                    </div>
+                    <div class="table-responsive mt-5">
+                      <table class="table table-striped">
+                        <thead class="csx-light-theme">
+                          <tr></tr>
+                        </thead>
+                        <tbody class="sm-font"></tbody>
+                      </table>
+                    </div>   
+                  </div>
+                </div> 
+              </div>
             </div>
+             <!-- contact ends-->
             <div class="tab-pane fade" id="spa-content-building_list" data-role="spa-content-building_list" role="tabpanel" aria-labelledby="csx-building_list-tab">
+              <!--Buildings-->
               <div class="container-fluid">
                 <div class="sidebar-toggle" data-sidebar-collapse-target="left-filters-building">
                   <span data-feather="chevron-left"></span>
@@ -145,11 +222,166 @@
                 </div> 
               </div>
             </div>
+            <!--building ends-->
             <div class="tab-pane fade" id="spa-content-contracts" data-role="spa-content-contracts" role="tabpanel" aria-labelledby="csx-contracts-tab">
-              In development
+              <!--contracts-->
+              <div class="container-fluid">
+                <div class="sidebar-toggle" data-sidebar-collapse-target="left-filters-contracts">
+                  <span data-feather="chevron-left"></span>
+                </div>
+                <div class="row csx-full-vp">
+                  <div class="col-lg-2 csx-right-separator" data-sidebar-collapse="left-filters-contracts"></div>
+                  <div class="col-lg-10" data-target-pagination data-target-table>
+                    <div class="container-fluid mt-4">
+                      <div class="row">
+                          <div class="col-lg-3 col-sm-12">
+                            <div class="dropdown">
+                              <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="quick_search_form" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Quick search <span data-feather="search"></span>
+                              </button>
+                              <div class="dropdown-menu" aria-labelledby="quick_search_form">
+
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-lg-6 col-sm-12 d-flex justify-content-around flex-group">
+                              <button class="btn btn-sm btn-warning" data-table="zcontrats" data-role="show_columns">Column <span data-feather="bar-chart-2"></span></button>
+                              <button class="btn btn-sm btn-warning">Sorting <span data-feather="filter"></span></button>
+                              <button class="btn btn-sm btn-warning">Group by <span data-feather="filter"></span></button>
+                              <div class="dropdown">
+                                <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="export_list_type" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                  Export <span data-feather="download"></span>
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="export_list_type">
+                                  <a class="dropdown-item" href="#">Action</a>
+                                  <a class="dropdown-item" href="#">Another action</a>
+                                  <a class="dropdown-item" href="#">Something else here</a>
+                                </div>
+                              </div>
+                              <button class="btn btn-sm btn-warning">Search <span data-feather="search"></span></button>
+                          </div>
+                          <div class="col-lg-3 col-sm-12">
+                            <div class="float-right">
+                              <button class="btn btn-sm btn-warning">Add new <span data-feather="plus"></span></button>
+                              <button class="btn btn-sm btn-warning">Reload <span data-feather="refresh-cw"></span></button>
+                            </div>
+                          </div>
+                      </div>
+                    </div>
+                    <div class="container-fluid mt-4 mb-4 no-display" data-column-form>
+                      <div class="row">
+                        <div class="col-lg-12 col-sm-12 float-right">
+                          <div class="d-lg-flex justify-content-end mt-3 mb-3">
+                            <button class="btn btn-sm btn-warning ms-3" data-column-form-role="apply" data-table="zcontrats">Apply <span data-feather="check"></span></button>
+                            <button class="btn btn-sm btn-warning ms-3" data-column-form-role="restore">Restore <span data-feather="x"></span></button>
+                            <button class="btn btn-sm btn-warning ms-3" data-column-form-role="cancel">Cancel <span data-feather="x"></span></button>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                          <div class="col-lg-6 col-sm-6">
+                            <div class="csx-drop-col-zone d-flex flex-wrap" data-drop-col></div>
+                          </div> 
+                          <div class="col-lg-6 col-sm-6">
+                            <div class="csx-drop-col-zone d-flex flex-wrap dropzone">
+                              
+                            </div>
+                          </div>
+                      </div>
+                    </div>
+                    <div class="table-responsive mt-5">
+                      <table class="table table-striped">
+                        <thead class="csx-light-theme">
+                          <tr></tr>
+                        </thead>
+                        <tbody class="sm-font"></tbody>
+                      </table>
+                    </div>   
+                  </div>
+                </div> 
+              </div>
+            </div>
+            <!--contracts ends-->
             </div>
             <div class="tab-pane fade" id="spa-content-floor_plans" data-role="spa-content-floor_plans" role="tabpanel" aria-labelledby="csx-floor_plans-tab">
-              In development
+              <!--floor_plans-->
+              <div class="container-fluid">
+                <div class="sidebar-toggle" data-sidebar-collapse-target="left-filters-floor_plans">
+                  <span data-feather="chevron-left"></span>
+                </div>
+                <div class="row csx-full-vp">
+                  <div class="col-lg-2 csx-right-separator" data-sidebar-collapse="left-filters-floor_plans"></div>
+                  <div class="col-lg-10" data-target-pagination data-target-table>
+                    <div class="container-fluid mt-4">
+                      <div class="row">
+                          <div class="col-lg-3 col-sm-12">
+                            <div class="dropdown">
+                              <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="quick_search_form" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Quick search <span data-feather="search"></span>
+                              </button>
+                              <div class="dropdown-menu" aria-labelledby="quick_search_form">
+
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-lg-6 col-sm-12 d-flex justify-content-around flex-group">
+                              <button class="btn btn-sm btn-warning" data-table="fplans" data-role="show_columns">Column <span data-feather="bar-chart-2"></span></button>
+                              <button class="btn btn-sm btn-warning">Sorting <span data-feather="filter"></span></button>
+                              <button class="btn btn-sm btn-warning">Group by <span data-feather="filter"></span></button>
+                              <div class="dropdown">
+                                <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="export_list_type" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                  Export <span data-feather="download"></span>
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="export_list_type">
+                                  <a class="dropdown-item" href="#">Action</a>
+                                  <a class="dropdown-item" href="#">Another action</a>
+                                  <a class="dropdown-item" href="#">Something else here</a>
+                                </div>
+                              </div>
+                              <button class="btn btn-sm btn-warning">Search <span data-feather="search"></span></button>
+                          </div>
+                          <div class="col-lg-3 col-sm-12">
+                            <div class="float-right">
+                              <button class="btn btn-sm btn-warning">Add new <span data-feather="plus"></span></button>
+                              <button class="btn btn-sm btn-warning">Reload <span data-feather="refresh-cw"></span></button>
+                            </div>
+                          </div>
+                      </div>
+                    </div>
+                    <div class="container-fluid mt-4 mb-4 no-display" data-column-form>
+                      <div class="row">
+                        <div class="col-lg-12 col-sm-12 float-right">
+                          <div class="d-lg-flex justify-content-end mt-3 mb-3">
+                            <button class="btn btn-sm btn-warning ms-3" data-column-form-role="apply" data-table="fplans">Apply <span data-feather="check"></span></button>
+                            <button class="btn btn-sm btn-warning ms-3" data-column-form-role="restore">Restore <span data-feather="x"></span></button>
+                            <button class="btn btn-sm btn-warning ms-3" data-column-form-role="cancel">Cancel <span data-feather="x"></span></button>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                          <div class="col-lg-6 col-sm-6">
+                            <div class="csx-drop-col-zone d-flex flex-wrap" data-drop-col></div>
+                          </div> 
+                          <div class="col-lg-6 col-sm-6">
+                            <div class="csx-drop-col-zone d-flex flex-wrap dropzone">
+                              
+                            </div>
+                          </div>
+                      </div>
+                    </div>
+                    <div class="table-responsive mt-5">
+                      <table class="table table-striped">
+                        <thead class="csx-light-theme">
+                          <tr></tr>
+                        </thead>
+                        <tbody class="sm-font"></tbody>
+                      </table>
+                    </div>   
+                  </div>
+                </div> 
+              </div>
+            </div>
+            <!--floor_plans ends-->
             </div>
             <div class="tab-pane fade" id="spa-content-images" data-role="spa-content-images" role="tabpanel" aria-labelledby="csx-images-tab">
               In development

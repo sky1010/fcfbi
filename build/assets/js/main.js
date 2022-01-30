@@ -86,8 +86,22 @@
     });
 
     $("[data-role='spa-content-contacts']").on("spaloaded", function(){
-        console.log("rendering contacts ...");
+
+        // generate the building table
+        app.protocol.ajax(
+            'build/bridge.php',
+            { request_type: 'get_contacts'},
+            {c: show_contacts }
+        );  
+
+        // generate the left filters
+        app.protocol.ajax(
+            'build/bridge.php',
+            { request_type: 'get_contacts_sidebar_dataset'},
+            {c: show_contacts_sidebar_dataset}
+        )
     });
+
 
     $("[data-role='spa-content-building_list']").on("spaloaded", function(){
 
@@ -108,12 +122,35 @@
 
 
     $("[data-role='spa-content-contracts']").on("spaloaded", function(){
-        // TODO pre processsing
+        // generate the contracts table
+        app.protocol.ajax(
+            'build/bridge.php',
+            { request_type: 'get_contracts'},
+            {c: show_contracts }
+        );  
+
+        // generate the left filters
+        app.protocol.ajax(
+            'build/bridge.php',
+            { request_type: 'get_contracts_sidebar_dataset'},
+            {c: show_contracts_sidebar_dataset}
+        )
     });
 
-
     $("[data-role='spa-content-floor_plans']").on("spaloaded", function(){
-        // TODO pre processsing
+        // generate the floor_plans table
+        app.protocol.ajax(
+            'build/bridge.php',
+            { request_type: 'get_floor_plans'},
+            {c: show_floor_plans }
+        );  
+
+        // generate the left filters
+        app.protocol.ajax(
+            'build/bridge.php',
+            { request_type: 'get_floor_plans_sidebar_dataset'},
+            {c: show_floor_plans_sidebar_dataset}
+        )
     });
 
     $("[data-role='spa-content-images']").on("spaloaded", function(){
@@ -145,6 +182,8 @@
                 'build/bridge.php',
                 { request_type: 'get_column_name', table: target_table},
                 {c: (data) => {
+                    console.log(data);
+                     console.log(target_table);
                     show_columns(`[data-role='${spa_loaded}'] [data-drop-col]`, data)
                     $(`[data-role='${spa_loaded}'] [data-column-form]`).removeClass("no-display");
                 }}
@@ -166,7 +205,7 @@
         });
     });
 
-    $("[data-column-form-role='apply']").click(function(e){
+    $("[data-role='spa-content-building_list'] [data-column-form-role='apply']").click(function(e){
         var filter = [];
         const target_table = $(this).attr("data-table");
 
@@ -184,6 +223,63 @@
             $(`[data-role='${spa_loaded}'] [data-role='show_columns']`).click();
         }
     });
+
+    $("[data-role='spa-content-contacts'] [data-column-form-role='apply']").click(function(e){
+        var filter = [];
+        const target_table = $(this).attr("data-table");
+
+        $(`[data-role='${spa_loaded}'] [data-column-form] .dropzone [data-filter-by-columns]`).each(function (index, el) {
+            filter.push($(this).attr("data-filter-by-columns"));
+        });
+
+        if(filter.length > 0){
+            app.protocol.ajax(
+                'build/bridge.php',
+                { request_type: 'filter_by_column_name', filters: JSON.stringify(filter), table: target_table},
+                {c: show_contacts}
+            ); 
+
+            $(`[data-role='${spa_loaded}'] [data-role='show_columns']`).click();
+        }
+    });
+
+        $("[data-role='spa-content-contracts'] [data-column-form-role='apply']").click(function(e){
+        var filter = [];
+        const target_table = $(this).attr("data-table");
+
+        $(`[data-role='${spa_loaded}'] [data-column-form] .dropzone [data-filter-by-columns]`).each(function (index, el) {
+            filter.push($(this).attr("data-filter-by-columns"));
+        });
+
+        if(filter.length > 0){
+            app.protocol.ajax(
+                'build/bridge.php',
+                { request_type: 'filter_by_column_name', filters: JSON.stringify(filter), table: target_table},
+                {c: show_contracts}
+            ); 
+
+            $(`[data-role='${spa_loaded}'] [data-role='show_columns']`).click();
+        }
+    });
+
+          $("[data-role='spa-content-floor_plans'] [data-column-form-role='apply']").click(function(e){
+        var filter = [];
+        const target_table = $(this).attr("data-table");
+
+        $(`[data-role='${spa_loaded}'] [data-column-form] .dropzone [data-filter-by-columns]`).each(function (index, el) {
+            filter.push($(this).attr("data-filter-by-columns"));
+        });
+
+        if(filter.length > 0){
+            app.protocol.ajax(
+                'build/bridge.php',
+                { request_type: 'filter_by_column_name', filters: JSON.stringify(filter), table: target_table},
+                {c: show_floor_plans}
+            ); 
+
+            $(`[data-role='${spa_loaded}'] [data-role='show_columns']`).click();
+        }
+    });      
 
 
     // $("[data-target-collapse]").click();

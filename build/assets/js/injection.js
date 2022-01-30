@@ -11,7 +11,6 @@ function show_building(data){
     $(container).find("tbody").children().remove();
     $(container).find("thead").children().remove();
 
-    console.log(buildings);
     // gen header
     var col_name = Object.keys(buildings.data[0]);
     var tr_node = $("<tr></tr>");
@@ -55,6 +54,160 @@ function show_building(data){
 
     feather.replace();
 }
+
+
+function show_contacts(data){
+    const contacts = JSON.parse(data);
+    const container = $(`[data-role='${spa_loaded}'] [data-target-table]`);
+
+    $(container).find("tbody").children().remove();
+    $(container).find("thead").children().remove();
+
+    // gen header
+    var col_name = Object.keys(contacts.data[0]);
+    var tr_node = $("<tr></tr>");
+    $(tr_node).append($("<th></th>"));
+
+    for(let x in col_name){
+        var th_node = $("<th></th>").text(col_name[x]);
+        $(tr_node).append(th_node);
+    }
+
+    $(container).find("thead").append(tr_node);
+
+    for(let x in contacts.data){
+
+        var tr = $("<tr></tr>").attr("data-building", contacts.data[x].UID );
+        var edit_btn = $("<th scope='row'> <span class='hover-pointer' data-feather='edit-3'></span></th>");
+
+        $(tr).append(edit_btn);
+        
+        for(let y in contacts.data[x]){
+            var td_node = $("<td></td>").text(contacts.data[x][y]);
+            $(tr).append(td_node);
+        }
+
+        $(container).find("tbody").append(tr);
+
+        // $(edit_btn).click(function(){
+        //     // TODO
+        // });
+
+    }
+
+    $(`[data-role='${spa_loaded}'] [data-target-pagination]`).pagination({
+        dataSource: [...$(`[data-role='${spa_loaded}'] [data-target-table] tbody tr`)],
+        pageSize: 9,
+        callback: function(data, pagination) {
+            var html = template(data);
+            $(`[data-role='${spa_loaded}'] [data-target-table] tbody`).html(html);
+        }
+    })
+
+    feather.replace();
+}
+
+function show_contracts(data){
+    const contracts = JSON.parse(data);
+    const container = $(`[data-role='${spa_loaded}'] [data-target-table]`);
+
+    $(container).find("tbody").children().remove();
+    $(container).find("thead").children().remove();
+    // gen header
+    var col_name = Object.keys(contracts.data[0]);
+    var tr_node = $("<tr></tr>");
+    $(tr_node).append($("<th></th>"));
+
+    for(let x in col_name){
+        var th_node = $("<th></th>").text(col_name[x]);
+        $(tr_node).append(th_node);
+    }
+
+    $(container).find("thead").append(tr_node);
+
+    for(let x in contracts.data){
+
+        var tr = $("<tr></tr>").attr("data-building", contracts.data[x].UID );
+        var edit_btn = $("<th scope='row'> <span class='hover-pointer' data-feather='edit-3'></span></th>");
+
+        $(tr).append(edit_btn);
+        
+        for(let y in contracts.data[x]){
+            var td_node = $("<td></td>").text(contracts.data[x][y]);
+            $(tr).append(td_node);
+        }
+
+        $(container).find("tbody").append(tr);
+
+        // $(edit_btn).click(function(){
+        //     // TODO
+        // });
+
+    }
+
+    $(`[data-role='${spa_loaded}'] [data-target-pagination]`).pagination({
+        dataSource: [...$(`[data-role='${spa_loaded}'] [data-target-table] tbody tr`)],
+        pageSize: 9,
+        callback: function(data, pagination) {
+            var html = template(data);
+            $(`[data-role='${spa_loaded}'] [data-target-table] tbody`).html(html);
+        }
+    })
+
+    feather.replace();
+}
+
+function show_floor_plans(data){
+    const fplan = JSON.parse(data);
+    const container = $(`[data-role='${spa_loaded}'] [data-target-table]`);
+
+    $(container).find("tbody").children().remove();
+    $(container).find("thead").children().remove();
+    // gen header
+    var col_name = Object.keys(fplan.data[0]);
+    var tr_node = $("<tr></tr>");
+    $(tr_node).append($("<th></th>"));
+
+    for(let x in col_name){
+        var th_node = $("<th></th>").text(col_name[x]);
+        $(tr_node).append(th_node);
+    }
+
+    $(container).find("thead").append(tr_node);
+
+    for(let x in fplan.data){
+
+        var tr = $("<tr></tr>").attr("data-building", fplan.data[x].UID );
+        var edit_btn = $("<th scope='row'> <span class='hover-pointer' data-feather='edit-3'></span></th>");
+
+        $(tr).append(edit_btn);
+        
+        for(let y in fplan.data[x]){
+            var td_node = $("<td></td>").text(fplan.data[x][y]);
+            $(tr).append(td_node);
+        }
+
+        $(container).find("tbody").append(tr);
+
+        // $(edit_btn).click(function(){
+        //     // TODO
+        // });
+
+    }
+
+    $(`[data-role='${spa_loaded}'] [data-target-pagination]`).pagination({
+        dataSource: [...$(`[data-role='${spa_loaded}'] [data-target-table] tbody tr`)],
+        pageSize: 9,
+        callback: function(data, pagination) {
+            var html = template(data);
+            $(`[data-role='${spa_loaded}'] [data-target-table] tbody`).html(html);
+        }
+    })
+
+    feather.replace();
+}
+
+
 
 function show_buildings_sidebar_dataset(data){
     const dataset = JSON.parse(data);
@@ -115,6 +268,202 @@ function show_buildings_sidebar_dataset(data){
                 'build/bridge.php',
                 { request_type: 'get_buildings'},
                 {c: show_building }
+            );
+        }  
+    });
+
+    feather.replace();
+}
+
+
+function show_contacts_sidebar_dataset(data){
+    const dataset = JSON.parse(data);
+    const container = $("[data-sidebar-collapse='left-filters-contacts']");
+    $(container).children().remove();
+
+    var section_keys = Object.keys(dataset.data);
+    var key_transform = {
+        Name: 'Name'
+    };
+
+    for(let x in dataset.data){
+        var parent_node = null;
+        var parent_node = $("<div></div>").addClass("table-responsive mt-2");
+        var table_node = $("<table></table>").addClass("table");
+
+        //generate thead
+        var thead = $("<thead></thead>").addClass("csx-light-theme");
+        var tr_node = $("<tr></tr>");
+        var th_node = $("<th scope='col'></th>");
+        var div_node = $("<div></div>").attr("data-target-collapse", x).text(key_transform[x]).append($("<span data-feather='chevron-down'></span>"));
+        $(th_node).append(div_node);
+        $(tr_node).append(th_node);
+        $(thead).append(tr_node);
+
+
+        var tbody = $("<tbody></tbody>").addClass("sm-font").attr("data-collapse", x);
+
+        dataset.data[x].push({tot_col: 0, col_name: '+ See All'});
+        for(let y in dataset.data[x]){
+            var tr_node = $("<tr></tr>");
+            var td_node = $("<td></td>");
+            var div_node = $("<div></div>").addClass("form-check");
+            var input_ = $(`<input class="form-check-input" name="${x}" type="checkbox" value="${dataset.data[x][y].col_name}" id="fi_${dataset.data[x][y].col_name.replaceAll(' ', '_')}_${x}">`);
+            var label_ = $(`<label for="fi_${dataset.data[x][y].col_name.replaceAll(' ', '_')}_${x}"></label>`).addClass("form-check-label").text(dataset.data[x][y].col_name);
+            $(div_node).append(input_).append(label_);
+            $(td_node).append(div_node);
+            $(tr_node).append(td_node);
+            $(tbody).append(tr_node);
+        }
+
+        $(table_node).append(thead).append(tbody);
+        $(parent_node).append(table_node);
+        $(container).append(parent_node);
+    }
+
+    registerSidebarFiltersEvent("[data-role='spa-content-contacts']", (all_selected_val) => {
+        if(!(Object.keys(all_selected_val).length === 0 && all_selected_val.constructor === Object)){
+            app.protocol.ajax(
+                'build/bridge.php',
+                { request_type: 'get_filtered_dataset_contacts', filters: JSON.stringify(all_selected_val)},
+                {c: show_contacts }
+            );
+        }else{
+            app.protocol.ajax(
+                'build/bridge.php',
+                { request_type: 'get_contacts'},
+                {c: show_contacts }
+            );
+        }  
+    });
+
+    feather.replace();
+}
+
+function show_contracts_sidebar_dataset(data){
+    const dataset = JSON.parse(data);
+    const container = $("[data-sidebar-collapse='left-filters-contracts']");
+    $(container).children().remove();
+
+    var section_keys = Object.keys(dataset.data);
+    var key_transform = {
+        Client: 'Client',
+        Region: 'Region',
+        BuildingName: 'Building name'
+    };
+
+    for(let x in dataset.data){
+        var parent_node = null;
+        var parent_node = $("<div></div>").addClass("table-responsive mt-2");
+        var table_node = $("<table></table>").addClass("table");
+
+        //generate thead
+        var thead = $("<thead></thead>").addClass("csx-light-theme");
+        var tr_node = $("<tr></tr>");
+        var th_node = $("<th scope='col'></th>");
+        var div_node = $("<div></div>").attr("data-target-collapse", x).text(key_transform[x]).append($("<span data-feather='chevron-down'></span>"));
+        $(th_node).append(div_node);
+        $(tr_node).append(th_node);
+        $(thead).append(tr_node);
+
+
+        var tbody = $("<tbody></tbody>").addClass("sm-font").attr("data-collapse", x);
+
+        dataset.data[x].push({tot_col: 0, col_name: '+ See All'});
+        for(let y in dataset.data[x]){
+            var tr_node = $("<tr></tr>");
+            var td_node = $("<td></td>");
+            var div_node = $("<div></div>").addClass("form-check");
+            var input_ = $(`<input class="form-check-input" name="${x}" type="checkbox" value="${dataset.data[x][y].col_name}" id="fi_${dataset.data[x][y].col_name.replaceAll(' ', '_')}_${x}">`);
+            var label_ = $(`<label for="fi_${dataset.data[x][y].col_name.replaceAll(' ', '_')}_${x}"></label>`).addClass("form-check-label").text(dataset.data[x][y].col_name);
+            $(div_node).append(input_).append(label_);
+            $(td_node).append(div_node);
+            $(tr_node).append(td_node);
+            $(tbody).append(tr_node);
+        }
+
+        $(table_node).append(thead).append(tbody);
+        $(parent_node).append(table_node);
+        $(container).append(parent_node);
+    }
+
+    registerSidebarFiltersEvent("[data-role='spa-content-contracts']", (all_selected_val) => {
+        if(!(Object.keys(all_selected_val).length === 0 && all_selected_val.constructor === Object)){
+            app.protocol.ajax(
+                'build/bridge.php',
+                { request_type: 'get_filtered_dataset_contracts', filters: JSON.stringify(all_selected_val)},
+                {c: show_contracts }
+            );
+        }else{
+            app.protocol.ajax(
+                'build/bridge.php',
+                { request_type: 'get_contracts'},
+                {c: show_contracts }
+            );
+        }  
+    });
+
+    feather.replace();
+}
+
+function show_floor_plans_sidebar_dataset(data){
+    const dataset = JSON.parse(data);
+    const container = $("[data-sidebar-collapse='left-filters-floor_plans']");
+    $(container).children().remove();
+
+    var section_keys = Object.keys(dataset.data);
+    var key_transform = {
+        UID: 'UID',
+        description: 'description'
+    };
+
+    for(let x in dataset.data){
+        var parent_node = null;
+        var parent_node = $("<div></div>").addClass("table-responsive mt-2");
+        var table_node = $("<table></table>").addClass("table");
+
+        //generate thead
+        var thead = $("<thead></thead>").addClass("csx-light-theme");
+        var tr_node = $("<tr></tr>");
+        var th_node = $("<th scope='col'></th>");
+        var div_node = $("<div></div>").attr("data-target-collapse", x).text(key_transform[x]).append($("<span data-feather='chevron-down'></span>"));
+        $(th_node).append(div_node);
+        $(tr_node).append(th_node);
+        $(thead).append(tr_node);
+
+
+        var tbody = $("<tbody></tbody>").addClass("sm-font").attr("data-collapse", x);
+
+        dataset.data[x].push({tot_col: 0, col_name: '+ See All'});
+        for(let y in dataset.data[x]){
+            var tr_node = $("<tr></tr>");
+            var td_node = $("<td></td>");
+            var div_node = $("<div></div>").addClass("form-check");
+            var input_ = $(`<input class="form-check-input" name="${x}" type="checkbox" value="${dataset.data[x][y].col_name}" id="fi_${dataset.data[x][y].col_name.replaceAll(' ', '_')}_${x}">`);
+            var label_ = $(`<label for="fi_${dataset.data[x][y].col_name.replaceAll(' ', '_')}_${x}"></label>`).addClass("form-check-label").text(dataset.data[x][y].col_name);
+            $(div_node).append(input_).append(label_);
+            $(td_node).append(div_node);
+            $(tr_node).append(td_node);
+            $(tbody).append(tr_node);
+        }
+
+        $(table_node).append(thead).append(tbody);
+        $(parent_node).append(table_node);
+        $(container).append(parent_node);
+    }
+
+    registerSidebarFiltersEvent("[data-role='spa-content-floor_plans']", (all_selected_val) => {
+        if(!(Object.keys(all_selected_val).length === 0 && all_selected_val.constructor === Object)){
+            app.protocol.ajax(
+                'build/bridge.php',
+                { request_type: 'get_filtered_dataset_floor_plans', filters: JSON.stringify(all_selected_val)},
+                {c: show_floor_plans }
+            );
+        }else{
+            app.protocol.ajax(
+                'build/bridge.php',
+                { request_type: 'get_floor_plans'},
+                {c: show_floor_plans }
             );
         }  
     });
