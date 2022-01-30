@@ -17,8 +17,8 @@
         const tab_target = $(this).attr("data-tab");
 
         $("[data-tab-target]").addClass("no-display");
-        $("[data-tab] .nav-link").removeClass("active");
-        $(`[data-tab='${tab_target}'] .nav-link`).addClass("active");
+        $("[data-tab-target] .nav-link").removeClass("active");
+        $(`[data-tab-target='${tab_target}'] .nav-link`).addClass("active");
         $(`[data-tab-target='${$(this).attr("data-tab")}']`).removeClass("no-display");
 
         if($(this)[0].hasAttribute("data-init-spa")){
@@ -118,6 +118,7 @@
             { request_type: 'get_buildings_sidebar_dataset'},
             {c: show_buildings_sidebar_dataset}
         )
+
     });
 
 
@@ -176,6 +177,42 @@
         )
     });
 
+    $("[data-role='spa-content-work_order']").on("spaloaded", function(){
+        app.protocol.ajax(
+            'build/bridge.php',
+            { request_type: 'get_work_order'},
+            {c: show_work_order }
+        );  
+
+        app.protocol.ajax(
+            'build/bridge.php',
+            { request_type: 'get_work_priority'},
+            {c: (data) => {
+                if(ref_chart['work_priority'] == undefined)
+                    chart_.gen_chart_priority(data);
+                else{
+                    ref_chart['work_priority'].destroy();
+                    ref_chart['work_priority'] = undefined;
+                    chart_.gen_chart_priority(data);
+                }
+            }}
+        ); 
+
+        app.protocol.ajax(
+            'build/bridge.php',
+            { request_type: 'get_work_type'},
+            {c: (data) => {
+                if(ref_chart['work_type'] == undefined)
+                    chart_.gen_chart_work_type(data);
+                else{
+                    ref_chart['work_type'].destroy();
+                    ref_chart['work_type'] = undefined;
+                    chart_.gen_chart_work_type(data);
+                }
+            }}
+        );         
+    });
+
     $("[data-sidebar-collapse-target]").click(function(){
         $(this).data("collapse", !!!$(this).data("collapse"));
         const collapse_state = $(this).data("collapse");
@@ -201,7 +238,6 @@
                 'build/bridge.php',
                 { request_type: 'get_column_name', table: target_table},
                 {c: (data) => {
-                     console.log(target_table);
                     show_columns(`[data-role='${spa_loaded}'] [data-drop-col]`, data)
                     $(`[data-role='${spa_loaded}'] [data-column-form]`).removeClass("no-display");
                 }}
@@ -231,15 +267,13 @@
             filter.push($(this).attr("data-filter-by-columns"));
         });
 
-        if(filter.length > 0){
-            app.protocol.ajax(
-                'build/bridge.php',
-                { request_type: 'filter_by_column_name', filters: JSON.stringify(filter), table: target_table},
-                {c: show_building}
-            ); 
+        app.protocol.ajax(
+            'build/bridge.php',
+            { request_type: 'filter_by_column_name', filters: JSON.stringify(filter), table: target_table},
+            {c: show_building}
+        ); 
 
-            $(`[data-role='${spa_loaded}'] [data-role='show_columns']`).click();
-        }
+        $(`[data-role='${spa_loaded}'] [data-role='show_columns']`).click();
     });
 
     $("[data-role='spa-content-contacts'] [data-column-form-role='apply']").click(function(e){
@@ -250,18 +284,16 @@
             filter.push($(this).attr("data-filter-by-columns"));
         });
 
-        if(filter.length > 0){
-            app.protocol.ajax(
-                'build/bridge.php',
-                { request_type: 'filter_by_column_name', filters: JSON.stringify(filter), table: target_table},
-                {c: show_contacts}
-            ); 
+        app.protocol.ajax(
+            'build/bridge.php',
+            { request_type: 'filter_by_column_name', filters: JSON.stringify(filter), table: target_table},
+            {c: show_contacts}
+        ); 
 
-            $(`[data-role='${spa_loaded}'] [data-role='show_columns']`).click();
-        }
+        $(`[data-role='${spa_loaded}'] [data-role='show_columns']`).click();
     });
 
-        $("[data-role='spa-content-contracts'] [data-column-form-role='apply']").click(function(e){
+    $("[data-role='spa-content-contracts'] [data-column-form-role='apply']").click(function(e){
         var filter = [];
         const target_table = $(this).attr("data-table");
 
@@ -269,18 +301,16 @@
             filter.push($(this).attr("data-filter-by-columns"));
         });
 
-        if(filter.length > 0){
-            app.protocol.ajax(
-                'build/bridge.php',
-                { request_type: 'filter_by_column_name', filters: JSON.stringify(filter), table: target_table},
-                {c: show_contracts}
-            ); 
+        app.protocol.ajax(
+            'build/bridge.php',
+            { request_type: 'filter_by_column_name', filters: JSON.stringify(filter), table: target_table},
+            {c: show_contracts}
+        ); 
 
-            $(`[data-role='${spa_loaded}'] [data-role='show_columns']`).click();
-        }
+        $(`[data-role='${spa_loaded}'] [data-role='show_columns']`).click();
     });
 
-        $("[data-role='spa-content-floor_plans'] [data-column-form-role='apply']").click(function(e){
+    $("[data-role='spa-content-floor_plans'] [data-column-form-role='apply']").click(function(e){
         var filter = [];
         const target_table = $(this).attr("data-table");
 
@@ -288,19 +318,17 @@
             filter.push($(this).attr("data-filter-by-columns"));
         });
 
-        if(filter.length > 0){
-            app.protocol.ajax(
-                'build/bridge.php',
-                { request_type: 'filter_by_column_name', filters: JSON.stringify(filter), table: target_table},
-                {c: show_floor_plans}
-            ); 
+        app.protocol.ajax(
+            'build/bridge.php',
+            { request_type: 'filter_by_column_name', filters: JSON.stringify(filter), table: target_table},
+            {c: show_floor_plans}
+        ); 
 
-            $(`[data-role='${spa_loaded}'] [data-role='show_columns']`).click();
-        }
+        $(`[data-role='${spa_loaded}'] [data-role='show_columns']`).click();
     });
 
 
-        $("[data-role='spa-content-asset_list'] [data-column-form-role='apply']").click(function(e){
+    $("[data-role='spa-content-asset_list'] [data-column-form-role='apply']").click(function(e){
         var filter = [];
         const target_table = $(this).attr("data-table");
 
@@ -308,19 +336,69 @@
             filter.push($(this).attr("data-filter-by-columns"));
         });
 
-        if(filter.length > 0){
-            app.protocol.ajax(
-                'build/bridge.php',
-                { request_type: 'filter_by_column_name', filters: JSON.stringify(filter), table: target_table},
-                {c: show_asset_list}
-            ); 
+        app.protocol.ajax(
+            'build/bridge.php',
+            { request_type: 'filter_by_column_name', filters: JSON.stringify(filter), table: target_table},
+            {c: show_asset_list}
+        ); 
 
-            $(`[data-role='${spa_loaded}'] [data-role='show_columns']`).click();
-        }
+        $(`[data-role='${spa_loaded}'] [data-role='show_columns']`).click();
     });      
       
+    $("[data-role='spa-content-work_order'] [data-column-form-role='apply']").click(function(e){
+        var filter = [];
+        const target_table = $(this).attr("data-table");
 
+        $(`[data-role='${spa_loaded}'] [data-column-form] .dropzone [data-filter-by-columns]`).each(function (index, el) {
+            filter.push($(this).attr("data-filter-by-columns"));
+        });
 
+        app.protocol.ajax(
+            'build/bridge.php',
+            { request_type: 'filter_by_column_name', filters: JSON.stringify(filter), table: target_table},
+            {c: show_work_order}
+        ); 
+
+        $(`[data-role='${spa_loaded}'] [data-role='show_columns']`).click();
+    });   
+
+    $(`[data-role='export_list_type']`).click(function(){
+        $(this).data("collapse", !!!$(this).data("collapse"));
+        const collapse_state = $(this).data("collapse");
+
+        if(collapse_state){
+            $(this).parent().find(".dropdown-menu").css("display", "block");
+        }else{
+            $(this).parent().find(".dropdown-menu").css("display", "none");
+        }   
+    })
+    
+    $("[data-export='JSON']").click(function(){
+        const target_table = $(this).parent().attr("data-table");
+        var filter = [];
+        $(`[data-role='${spa_loaded}'] [data-column-form] .dropzone [data-filter-by-columns]`).each(function (index, el) {
+            filter.push($(this).attr("data-filter-by-columns"));
+        });
+
+        app.protocol.ajax(
+            'build/bridge.php',
+            { request_type: 'filter_by_column_name', filters: JSON.stringify(filter), table: target_table},
+            {c: (data) => {
+                app.export.saveBlobFile(`${target_table}_json.json`, 'json', data);
+            }}
+        ); 
+
+        $(`[data-role='export_list_type']`).click();
+    });
+
+    $(window).scroll(function(event) {
+        var scroll = $(window).scrollTop(); 
+        if(scroll > 20){ 
+            $("footer").removeClass("d-flex").css("display", "none");
+        }else{
+            $("footer").css("display", "flex");
+        }
+    });
     // $("[data-target-collapse]").click();
 
     app.init("site_summary");

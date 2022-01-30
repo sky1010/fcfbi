@@ -12,7 +12,14 @@ footer{
     background-color: rgb(248,249,250);
     margin: 0px;
     padding: 15px;
-    margin-top: 20px;
+    height: 100px;
+    background-color: #f48c06;
+    color: #fff;
+    font-weight: bold;
+    letter-spacing: 0.25em;
+    position: fixed;
+    bottom: 0px;
+    left: 0px;
 }
 
 .nav-link{
@@ -41,12 +48,12 @@ footer{
   cursor: pointer;
 }
 
-[data-role="spa-content-building_list"] thead{
+[data-role ^="spa-content"] thead{
   border-top: none !important;
   font-weight: lighter;
 }
 
-[data-role="spa-content-building_list"] tbody{
+[data-role ^="spa-content"] tbody{
   border-top: none !important;
 }
 

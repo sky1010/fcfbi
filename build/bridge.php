@@ -13,7 +13,7 @@
     define('USER', "root");
     define('PASSWORD', "");
     define('DB_NAME', "fcfbi");
-    define('SERVER_PORT', 3306);
+    define('SERVER_PORT', 3307);
     $request = $_REQUEST['request_type'];
 
     /*
@@ -104,7 +104,7 @@
             }                          
             break;
             
-            case 'get_asset_list':
+        case 'get_asset_list':
             try{
                 //creates a connection, selects the user and send the data as an JSON outstream
                 $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
@@ -121,6 +121,22 @@
             }                          
             break;    
 
+        case 'get_work_order':
+            try{
+                //creates a connection, selects the user and send the data as an JSON outstream
+                $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
+                $work_order = select($connection, "SELECT * FROM jobs ORDER BY Job_UID", []);
+
+                echo json_encode(['data' => $work_order]);
+
+                //destroy database connection
+                db_disconnect($connection);
+                http_response_code(200);
+            }catch(Exception $e){
+                //return bad http request when error is encountered
+                http_response_code(400);
+            }                          
+            break; 
         case 'get_buildings_sidebar_dataset':
             try{
                 //creates a connection, selects the user and send the data as an JSON outstream
@@ -516,12 +532,47 @@
         case 'filter_by_column_name':
             try{
                 $filters = implode(", ", json_decode($_REQUEST['filters']));
+                $filters = empty($filters)?"*":$filters;
 
                 //creates a connection, selects the user and send the data as an JSON outstream
                 $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
                 $dataset = select($connection, sprintf("SELECT %s FROM %s LIMIT 500", $filters, $_REQUEST['table']), []);
 
                 echo json_encode(['data' => $dataset]);
+
+                //destroy database connection
+                db_disconnect($connection);
+                http_response_code(200);
+            }catch(Exception $e){
+                //return bad http request when error is encountered
+                http_response_code(400);
+            }
+            break;
+        case 'get_work_priority':
+            try{
+                //creates a connection, selects the user and send the data as an JSON outstream
+                $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
+                $priority = select($connection, "SELECT COUNT(Priority) AS tot_priority, Priority 
+                    FROM jobs
+                    GROUP BY Priority", []);
+
+                echo json_encode(['data' => $priority]);
+
+                //destroy database connection
+                db_disconnect($connection);
+                http_response_code(200);
+            }catch(Exception $e){
+                //return bad http request when error is encountered
+                http_response_code(400);
+            }
+            break;
+        case 'get_work_type':
+            try{
+                //creates a connection, selects the user and send the data as an JSON outstream
+                $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
+                $priority = select($connection, "SELECT COUNT(WorkType) AS tot_work_type, WorkType FROM jobs GROUP BY WorkType", []);
+
+                echo json_encode(['data' => $priority]);
 
                 //destroy database connection
                 db_disconnect($connection);

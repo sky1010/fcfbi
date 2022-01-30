@@ -68,8 +68,8 @@ var app = {
                 var target = event.target;
                 var target_bounds = $(target)[0].getBoundingClientRect();
 
-                var x = event.clientX - (target_bounds.width / 2);
-                var y = event.clientY - (target_bounds.height / 2);
+                var x = (event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft) - (target_bounds.width / 2);
+                var y = (event.clientY + document.body.scrollTop + document.documentElement.scrollTop) - (target_bounds.height / 2);
 
                 $(target).css({position: "absolute", left: `${x}px`, top: `${y}px`}); 
 
@@ -142,5 +142,26 @@ var app = {
                 }, 5000);
             });
         }    
+    },
+
+    export: {
+        saveBlobFile : function(file_name, file_type, data){
+            var file = new Blob([data], {type: file_type});
+            if (window.navigator.msSaveOrOpenBlob) // IE10+
+                window.navigator.msSaveOrOpenBlob(file, file_name);
+            else {
+                var a = document.createElement("a"),
+                        url = URL.createObjectURL(file);
+                a.href = url;
+                a.download = file_name;
+                document.body.appendChild(a);
+                a.click();
+
+                setTimeout(function() {
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);  
+                }, 0); 
+            }
+        }
     }
 }

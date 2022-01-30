@@ -27,7 +27,7 @@
             <li class="nav-item mx-3" data-tab="site_summary"><a class="nav-link active" aria-current="page" href="#">Site summary</a></li>
             <li class="nav-item mx-3" data-tab="building" data-spa="spa-content-map" data-init-spa><a class="nav-link" href="#">Building</a></li>
             <li class="nav-item mx-3" data-tab="asset" data-spa="spa-content-summary" data-init-spa><a class="nav-link" href="#">Asset</a></li>
-            <li class="nav-item mx-3" data-tab="work_order"><a class="nav-link" href="#">Work order</a></li>
+            <li class="nav-item mx-3" data-tab="work_order" data-spa="spa-content-work_order" data-init-spa><a class="nav-link" href="#">Work order</a></li>
             <li class="nav-item mx-3" data-tab="contractor""><a class="nav-link" href="#">Contractor</a></li>
             <li class="nav-item mx-3" data-tab="finance"><a class="nav-link" href="#">Finance</a></li>
             <li class="nav-item mx-3" data-tab="new_report_request"><a class="nav-link" href="#">New report request</a></li>
@@ -91,13 +91,17 @@
                               <button class="btn btn-sm btn-warning">Sorting <span data-feather="filter"></span></button>
                               <button class="btn btn-sm btn-warning">Group by <span data-feather="filter"></span></button>
                               <div class="dropdown">
-                                <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="export_list_type" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-role="export_list_type" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                   Export <span data-feather="download"></span>
                                 </button>
-                                <div class="dropdown-menu" aria-labelledby="export_list_type">
-                                  <a class="dropdown-item" href="#">Action</a>
-                                  <a class="dropdown-item" href="#">Another action</a>
-                                  <a class="dropdown-item" href="#">Something else here</a>
+                                <div class="dropdown-menu" aria-labelledby="export_list_type" data-table="contacts">
+                                  <a class="dropdown-item" href="#">PDF</a>
+                                  <a class="dropdown-item" href="#">Word</a>
+                                  <a class="dropdown-item" href="#">Excel</a>
+                                  <a class="dropdown-item" href="#">XML</a>
+                                  <a class="dropdown-item active" href="#" data-export="JSON">JSON</a>
+                                  <a class="dropdown-item" href="#">CSV</a>
+                                  <a class="dropdown-item" href="#">RTF</a>
                                 </div>
                               </div>
                               <button class="btn btn-sm btn-warning">Search <span data-feather="search"></span></button>
@@ -170,13 +174,17 @@
                               <button class="btn btn-sm btn-warning">Sorting <span data-feather="filter"></span></button>
                               <button class="btn btn-sm btn-warning">Group by <span data-feather="filter"></span></button>
                               <div class="dropdown">
-                                <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="export_list_type" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-role="export_list_type" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                   Export <span data-feather="download"></span>
                                 </button>
-                                <div class="dropdown-menu" aria-labelledby="export_list_type">
-                                  <a class="dropdown-item" href="#">Action</a>
-                                  <a class="dropdown-item" href="#">Another action</a>
-                                  <a class="dropdown-item" href="#">Something else here</a>
+                                <div class="dropdown-menu" aria-labelledby="export_list_type" data-table="buildings">
+                                  <a class="dropdown-item" href="#">PDF</a>
+                                  <a class="dropdown-item" href="#">Word</a>
+                                  <a class="dropdown-item" href="#">Excel</a>
+                                  <a class="dropdown-item" href="#">XML</a>
+                                  <a class="dropdown-item active" href="#" data-export="JSON">JSON</a>
+                                  <a class="dropdown-item" href="#">CSV</a>
+                                  <a class="dropdown-item" href="#">RTF</a>
                                 </div>
                               </div>
                               <button class="btn btn-sm btn-warning">Search <span data-feather="search"></span></button>
@@ -249,13 +257,17 @@
                               <button class="btn btn-sm btn-warning">Sorting <span data-feather="filter"></span></button>
                               <button class="btn btn-sm btn-warning">Group by <span data-feather="filter"></span></button>
                               <div class="dropdown">
-                                <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="export_list_type" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-role="export_list_type" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                   Export <span data-feather="download"></span>
                                 </button>
-                                <div class="dropdown-menu" aria-labelledby="export_list_type">
-                                  <a class="dropdown-item" href="#">Action</a>
-                                  <a class="dropdown-item" href="#">Another action</a>
-                                  <a class="dropdown-item" href="#">Something else here</a>
+                                <div class="dropdown-menu" aria-labelledby="export_list_type" data-table="zcontrats">
+                                  <a class="dropdown-item" href="#">PDF</a>
+                                  <a class="dropdown-item" href="#">Word</a>
+                                  <a class="dropdown-item" href="#">Excel</a>
+                                  <a class="dropdown-item" href="#">XML</a>
+                                  <a class="dropdown-item active" href="#" data-export="JSON">JSON</a>
+                                  <a class="dropdown-item" href="#">CSV</a>
+                                  <a class="dropdown-item" href="#">RTF</a>
                                 </div>
                               </div>
                               <button class="btn btn-sm btn-warning">Search <span data-feather="search"></span></button>
@@ -328,13 +340,17 @@
                               <button class="btn btn-sm btn-warning">Sorting <span data-feather="filter"></span></button>
                               <button class="btn btn-sm btn-warning">Group by <span data-feather="filter"></span></button>
                               <div class="dropdown">
-                                <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="export_list_type" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-role="export_list_type" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                   Export <span data-feather="download"></span>
                                 </button>
-                                <div class="dropdown-menu" aria-labelledby="export_list_type">
-                                  <a class="dropdown-item" href="#">Action</a>
-                                  <a class="dropdown-item" href="#">Another action</a>
-                                  <a class="dropdown-item" href="#">Something else here</a>
+                                <div class="dropdown-menu" aria-labelledby="export_list_type" data-table="fplans">
+                                  <a class="dropdown-item" href="#">PDF</a>
+                                  <a class="dropdown-item" href="#">Word</a>
+                                  <a class="dropdown-item" href="#">Excel</a>
+                                  <a class="dropdown-item" href="#">XML</a>
+                                  <a class="dropdown-item active" href="#" data-export="JSON">JSON</a>
+                                  <a class="dropdown-item" href="#">CSV</a>
+                                  <a class="dropdown-item" href="#">RTF</a>
                                 </div>
                               </div>
                               <button class="btn btn-sm btn-warning">Search <span data-feather="search"></span></button>
@@ -428,13 +444,17 @@
                               <button class="btn btn-sm btn-warning">Sorting <span data-feather="filter"></span></button>
                               <button class="btn btn-sm btn-warning">Group by <span data-feather="filter"></span></button>
                               <div class="dropdown">
-                                <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="export_list_type" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-role="export_list_type" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                   Export <span data-feather="download"></span>
                                 </button>
-                                <div class="dropdown-menu" aria-labelledby="export_list_type">
-                                  <a class="dropdown-item" href="#">Action</a>
-                                  <a class="dropdown-item" href="#">Another action</a>
-                                  <a class="dropdown-item" href="#">Something else here</a>
+                                <div class="dropdown-menu" aria-labelledby="export_list_type" data-table="assets">
+                                  <a class="dropdown-item" href="#">PDF</a>
+                                  <a class="dropdown-item" href="#">Word</a>
+                                  <a class="dropdown-item" href="#">Excel</a>
+                                  <a class="dropdown-item" href="#">XML</a>
+                                  <a class="dropdown-item active" href="#" data-export="JSON">JSON</a>
+                                  <a class="dropdown-item" href="#">CSV</a>
+                                  <a class="dropdown-item" href="#">RTF</a>
                                 </div>
                               </div>
                               <button class="btn btn-sm btn-warning">Search <span data-feather="search"></span></button>
@@ -483,8 +503,106 @@
             <!--asset_list ends-->
             </div>
           </div>
-        </div>
 
+          <div data-tab-target="work_order">
+            <ul class="nav nav-tabs" id="csx-sub-nav-work_order" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="csx-work_order-tab" data-bs-toggle="tab" data-bs-target="#spa-content-work_order" type="button" role="tab" aria-controls="Work order" aria-selected="true">Work Order</button>
+              </li>
+            </ul>
+
+            <div class="tab-content" id="csx-tab-content-work">
+              <div class="tab-pane fade show active" id="spa-content-work_order" data-role="spa-content-work_order" role="tabpanel" aria-labelledby="csx-work_order-tab">
+                <div class="container-fluid">
+                  <div class="row">
+                      <div class="col-lg-6 col-sm-12">
+                        <div class="chart-container" style="height:auto; width: 100%">
+                            <canvas id="work_priority"></canvas>
+                        </div>
+                      </div>
+                      <div class="col-lg-6 col-sm-12">
+                          <div class="chart-container" style="height:auto; width: 100%">
+                            <canvas id="work_type"></canvas>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="row csx-full-vp">
+                    <div class="col-lg-12" data-target-pagination data-target-table>
+                      <div class="container-fluid mt-4">
+                        <div class="row">
+                            <div class="col-lg-3 col-sm-12">
+                              <div class="dropdown">
+                                <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="quick_search_form" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                  Quick search <span data-feather="search"></span>
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="quick_search_form">
+
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-lg-6 col-sm-12 d-flex justify-content-around flex-group">
+                                <button class="btn btn-sm btn-warning" data-table="jobs" data-role="show_columns">Column <span data-feather="bar-chart-2"></span></button>
+                                <button class="btn btn-sm btn-warning">Sorting <span data-feather="filter"></span></button>
+                                <button class="btn btn-sm btn-warning">Group by <span data-feather="filter"></span></button>
+                                <div class="dropdown">
+                                  <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-role="export_list_type" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Export <span data-feather="download"></span>
+                                  </button>
+                                  <div class="dropdown-menu" aria-labelledby="export_list_type" data-table="jobs">
+                                    <a class="dropdown-item" href="#">PDF</a>
+                                    <a class="dropdown-item" href="#">Word</a>
+                                    <a class="dropdown-item" href="#">Excel</a>
+                                    <a class="dropdown-item" href="#">XML</a>
+                                    <a class="dropdown-item active" href="#" data-export="JSON">JSON</a>
+                                    <a class="dropdown-item" href="#">CSV</a>
+                                    <a class="dropdown-item" href="#">RTF</a>
+                                  </div>
+                                </div>
+                                <button class="btn btn-sm btn-warning">Search <span data-feather="search"></span></button>
+                            </div>
+                            <div class="col-lg-3 col-sm-12">
+                              <div class="float-right">
+                                <button class="btn btn-sm btn-warning">Add new <span data-feather="plus"></span></button>
+                                <button class="btn btn-sm btn-warning">Reload <span data-feather="refresh-cw"></span></button>
+                              </div>
+                            </div>
+                        </div>
+                      </div>
+                      <div class="container-fluid mt-4 mb-4 no-display" data-column-form>
+                        <div class="row">
+                          <div class="col-lg-12 col-sm-12 float-right">
+                            <div class="d-lg-flex justify-content-end mt-3 mb-3">
+                              <button class="btn btn-sm btn-warning ms-3" data-column-form-role="apply" data-table="jobs">Apply <span data-feather="check"></span></button>
+                              <button class="btn btn-sm btn-warning ms-3" data-column-form-role="restore">Restore <span data-feather="x"></span></button>
+                              <button class="btn btn-sm btn-warning ms-3" data-column-form-role="cancel">Cancel <span data-feather="x"></span></button>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6 col-sm-6">
+                              <div class="csx-drop-col-zone d-flex flex-wrap" data-drop-col></div>
+                            </div> 
+                            <div class="col-lg-6 col-sm-6">
+                              <div class="csx-drop-col-zone d-flex flex-wrap dropzone">
+                                
+                              </div>
+                            </div>
+                        </div>
+                      </div>
+                      <div class="table-responsive mt-5">
+                        <table class="table table-striped">
+                          <thead class="csx-light-theme">
+                            <tr></tr>
+                          </thead>
+                          <tbody class="sm-font"></tbody>
+                        </table>
+                      </div>   
+                    </div>
+                  </div> 
+                </div>
+              </div>
+            </div>
+          </div>
       </main>
     </div>
 
@@ -493,7 +611,7 @@
         <button class="btn btn-sm btn-warning" data-role="popup_link" style="width: 100%;">View </button>
     </div>
 
-    <footer class="text-center no-display"></footer>
+    <footer class="text-center d-flex justify-content-center align-items-center"></footer>
 
 		<script type="text/javascript" src="build/assets/js/plugins/jquery-3.6.0.min.js"></script>
 		<script type="text/javascript" src="build/assets/js/plugins/bootstrap.bundle.min.js"></script>
@@ -506,6 +624,7 @@
     <script src='https://api.mapbox.com/mapbox.js/v3.3.1/mapbox.js'></script>
 		<script type="text/javascript" src="build/assets/js/global.js"></script>
     <script type="text/javascript" src="build/assets/js/injection.js"></script>
+    <script type="text/javascript" src="build/assets/js/chart.js"></script>
 		<script type="text/javascript" src="build/assets/js/main.js"></script>
 	</body>
 </html>
