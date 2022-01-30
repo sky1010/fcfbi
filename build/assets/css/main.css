@@ -1,5 +1,6 @@
 :root{
-  --theme-primary-color: #FFBA08;
+  --bg-color-opacity: 0.2;
+  --theme-primary-color: rgba(132,146,166, var(--bg-color-opacity));
 }
 
 .no-display{
@@ -55,4 +56,107 @@ footer{
 
 .bg-light{
   background-color: #fff !important;
+}
+
+.feather {
+  width: 16px;
+  height: 16px;
+  vertical-align: text-bottom;
+}
+
+.csx-light-theme{
+  background-color: var(--theme-primary-color);
+}
+
+.csx-collapse{
+  display: none;
+  transition: display 1s;
+}
+
+.rotate{
+  transform: rotate(-90deg);
+  transition: transform 0.5s;
+}
+
+.csx-right-separator{
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.csx-full-vp{
+  height: 80vh;
+}
+
+.sidebar-toggle{
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    border-radius: 24px;
+    background: #fff;
+    box-shadow: 0 0 0 1px rgb(9 30 66 / 8%), 0 2px 4px 1px rgb(9 30 66 / 8%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    transition: all .3s ease;
+    position: absolute;
+    top: 30.5%;
+    left: 16.41vw;
+}
+
+.csx-sidebar-collapse{
+  width: 0px;
+  transition: width 0.5s;
+}
+
+.mv-el{
+  left: 1.3vw;
+  transition: left 0.5s;
+}
+
+.paginationjs{
+  width: fit-content;
+  margin: 1.5em auto;
+}
+
+@media only screen and (max-width: 600px) {
+  .sidebar-toggle {
+    display: none;
+  }
+
+  [data-target-table] .btn{
+    width: 100% !important;
+    margin: 0.35em !important;
+  }
+
+  [data-target-table] .col-sm-12 .dropdown{
+    width: 100% !important;
+  } 
+
+  [data-target-table] .col-sm-12 .float-right{
+    width: 100% !important;
+  }
+
+  .flex-group{
+    flex-direction: column !important;
+  }
+}
+
+.float-right{
+  float: right !important;
+}
+
+.csx-drop-col-zone{
+  border: 1px dashed grey; height: auto; padding: 1%; min-height: 60px;
+}
+
+.col-items{
+  width: fit-content;
+  background-color: var(--theme-primary-color);
+  height: 40px;
+  padding: 10px;
+}
+
+.drop-active{
+  background-color: var(--theme-primary-color);
+  opacity: 0.5;
 }

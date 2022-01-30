@@ -37,7 +37,7 @@
       </div>
     </nav>
 
-    <div class="container mt-5">
+    <div class="container-fluid mt-5">
       <main>
         <div data-tab-target="building">
           <ul class="nav nav-tabs" id="csx-sub-nav" role="tablist">
@@ -69,26 +69,86 @@
               In development
             </div>
             <div class="tab-pane fade" id="spa-content-building_list" data-role="spa-content-building_list" role="tabpanel" aria-labelledby="csx-building_list-tab">
-              <div class="table-responsive mt-5">
-                <table class="table table-striped">
-                  <caption>List of buildings</caption>
-                  <thead>
-                    <tr>
-                      <th scope="col"></th>
-                      <th scope="col">BuildingNumber</th>
-                      <th scope="col">BuildingName</th>
-                      <th scope="col">Client</th>
-                      <th scope="col">Address</th>
-                      <th scope="col">PostCode</th>
-                      <th scope="col">Phone</th>
-                      <th scope="col">Region</th>
-                      <th scope="col">SubRegion</th>
-                      <th scope="col">TradingType</th>
-                      <th scope="col">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody class="sm-font"></tbody>
-                </table>
+              <div class="container-fluid">
+                <div class="sidebar-toggle" data-sidebar-collapse-target="left-filters-building">
+                  <span data-feather="chevron-left"></span>
+                </div>
+                <div class="row csx-full-vp">
+                  <div class="col-lg-2 csx-right-separator" data-sidebar-collapse="left-filters-building"></div>
+                  <div class="col-lg-10" data-target-pagination="building_pagination" data-target-table="buildings">
+                    <div class="container-fluid mt-4">
+                      <div class="row">
+                          <div class="col-lg-3 col-sm-12">
+                            <div class="dropdown">
+                              <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="quick_search_form" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Quick search <span data-feather="search"></span>
+                              </button>
+                              <div class="dropdown-menu" aria-labelledby="quick_search_form">
+
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-lg-6 col-sm-12 d-flex justify-content-around flex-group">
+                              <button class="btn btn-sm btn-warning">Column <span data-feather="bar-chart-2"></span></button>
+                              <button class="btn btn-sm btn-warning">Sorting <span data-feather="filter"></span></button>
+                              <button class="btn btn-sm btn-warning">Group by <span data-feather="filter"></span></button>
+                              <div class="dropdown">
+                                <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="export_list_type" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                  Export <span data-feather="download"></span>
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="export_list_type">
+                                  <a class="dropdown-item" href="#">Action</a>
+                                  <a class="dropdown-item" href="#">Another action</a>
+                                  <a class="dropdown-item" href="#">Something else here</a>
+                                </div>
+                              </div>
+                              <button class="btn btn-sm btn-warning">Search <span data-feather="search"></span></button>
+                          </div>
+                          <div class="col-lg-3 col-sm-12">
+                            <div class="float-right">
+                              <button class="btn btn-sm btn-warning">Add new <span data-feather="plus"></span></button>
+                              <button class="btn btn-sm btn-warning">Reload <span data-feather="refresh-cw"></span></button>
+                            </div>
+                          </div>
+                      </div>
+                    </div>
+                    <div class="container-fluid mt-4 mb-4">
+                      <div class="row">
+                          <div class="col-lg-6 col-sm-6">
+                            <div class="csx-drop-col-zone d-flex">
+                                <div class="col-items drag-drop m-2">BuildingName</div>
+                                <div class="col-items drag-drop m-2">Client</div>
+                            </div>
+                          </div> 
+                          <div class="col-lg-6 col-sm-6">
+                            <div class="csx-drop-col-zone dropzone">
+                              
+                            </div>
+                          </div>
+                      </div>
+                    </div>
+                    <div class="table-responsive mt-5">
+                      <table class="table table-striped">
+                        <thead class="csx-light-theme">
+                          <tr>
+                            <th scope="col"></th>
+                            <th scope="col">BuildingNumber</th>
+                            <th scope="col">BuildingName</th>
+                            <th scope="col">Client</th>
+                            <th scope="col">Address</th>
+                            <th scope="col">PostCode</th>
+                            <th scope="col">Phone</th>
+                            <th scope="col">Region</th>
+                            <th scope="col">SubRegion</th>
+                            <th scope="col">TradingType</th>
+                            <th scope="col">Status</th>
+                          </tr>
+                        </thead>
+                        <tbody class="sm-font"></tbody>
+                      </table>
+                    </div>   
+                  </div>
+                </div> 
               </div>
             </div>
             <div class="tab-pane fade" id="spa-content-contracts" data-role="spa-content-contracts" role="tabpanel" aria-labelledby="csx-contracts-tab">
@@ -110,8 +170,6 @@
         <button class="btn btn-sm btn-warning" data-role="popup_link" style="width: 100%;">View </button>
     </div>
 
-    <div class="alert alert-danger alert-pos hide-alert" role="alert"></div>
-
     <footer class="text-center no-display"></footer>
 
 		<script type="text/javascript" src="build/assets/js/plugins/jquery-3.6.0.min.js"></script>
@@ -121,6 +179,7 @@
 		<script type="text/javascript" src="build/assets/js/plugins/feather.min.js"></script>
 		<script type="text/javascript" src="build/assets/js/plugins/jquery.nice-select.min.js"></script>
     <script type="text/javascript" src="build/assets/js/plugins/pagination.min.js"></script>
+    <script type="text/javascript" src="build/assets/js/plugins/interact.min.js"></script>
     <script src='https://api.mapbox.com/mapbox.js/v3.3.1/mapbox.js'></script>
 		<script type="text/javascript" src="build/assets/js/global.js"></script>
     <script type="text/javascript" src="build/assets/js/injection.js"></script>

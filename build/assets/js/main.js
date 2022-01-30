@@ -90,11 +90,20 @@
     });
 
     $("[data-role='spa-content-building_list']").on("spaloaded", function(){
+
+        // generate the building table
         app.protocol.ajax(
             'build/bridge.php',
             { request_type: 'get_buildings'},
             {c: show_building }
         );  
+
+        // generate the left filters
+        app.protocol.ajax(
+            'build/bridge.php',
+            { request_type: 'get_buildings_sidebar_dataset'},
+            {c: show_buildings_sidebar_dataset}
+        )
     });
 
 
@@ -110,6 +119,84 @@
     $("[data-role='spa-content-images']").on("spaloaded", function(){
         // TODO pre processsing
     });
+
+    $("[data-sidebar-collapse-target]").click(function(){
+        $(this).data("collapse", !!!$(this).data("collapse"));
+
+        const collapse_state = $(this).data("collapse");
+        if(collapse_state){
+            $(`[data-sidebar-collapse=${$(this).attr('data-sidebar-collapse-target')}]`).addClass("csx-sidebar-collapse");
+            $(this).find("svg").addClass("rotate");
+            $(this).addClass("mv-el");
+        }else{
+            $(`[data-sidebar-collapse=${$(this).attr('data-sidebar-collapse-target')}]`).removeClass("csx-sidebar-collapse");
+            $(this).find("svg").removeClass("rotate");
+            $(this).removeClass("mv-el");
+        }
+    });
+
+
+    interact('.dropzone').dropzone({
+      // only accept elements matching this CSS selector
+      accept: '#drop_column',
+      // Require a 75% element overlap for a drop to be possible
+      overlap: 0.75,
+
+      // listen for drop related events:
+
+      ondropactivate: function (event) {
+        // add active dropzone feedback
+        console.log("element is being dragged");
+      },
+      ondragenter: function (event) {
+        var draggableElement = event.relatedTarget
+        var dropzoneElement = event.target
+
+        // feedback the possibility of a drop
+        console.log("can drop element");
+      },
+      ondragleave: function (event) {
+        // remove the drop feedback style
+        console.log("can remove dropped element");
+      },
+      ondrop: function (event) {
+        console.log("element dropped");
+      },
+      ondropdeactivate: function (event) {
+        // remove active dropzone feedback
+        console.log("element is no longer being dragged");
+      }
+    })
+
+    interact('.drag-drop')
+      .draggable({
+        inertia: true,
+        modifiers: [
+          interact.modifiers.restrictRect({
+            restriction: 'parent',
+            endOnly: true
+          })
+        ],
+        autoScroll: true,
+        // dragMoveListener from the dragging demo above
+        listeners: { move: dragMoveListener }
+    })
+
+    function dragMoveListener (event) {
+      var target = event.target
+      // keep the dragged position in the data-x/data-y attributes
+      var x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx
+      var y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy
+
+      // translate the element
+      target.style.transform = 'translate(' + x + 'px, ' + y + 'px)'
+
+      // update the posiion attributes
+      target.setAttribute('data-x', x)
+      target.setAttribute('data-y', y)
+    }
+
+    // $("[data-target-collapse]").click();
 
     app.init("site_summary");
     feather.replace();
