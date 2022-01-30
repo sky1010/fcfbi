@@ -26,7 +26,7 @@
           <ul class="navbar-nav">
             <li class="nav-item mx-3" data-tab="site_summary"><a class="nav-link active" aria-current="page" href="#">Site summary</a></li>
             <li class="nav-item mx-3" data-tab="building" data-spa="spa-content-map" data-init-spa><a class="nav-link" href="#">Building</a></li>
-            <li class="nav-item mx-3" data-tab="asset"><a class="nav-link" href="#">Asset</a></li>
+            <li class="nav-item mx-3" data-tab="asset" data-spa="spa-content-summary" data-init-spa><a class="nav-link" href="#">Asset</a></li>
             <li class="nav-item mx-3" data-tab="work_order"><a class="nav-link" href="#">Work order</a></li>
             <li class="nav-item mx-3" data-tab="contractor""><a class="nav-link" href="#">Contractor</a></li>
             <li class="nav-item mx-3" data-tab="finance"><a class="nav-link" href="#">Finance</a></li>
@@ -300,7 +300,6 @@
                   </div>
                 </div> 
               </div>
-            </div>
             <!--contracts ends-->
             </div>
             <div class="tab-pane fade" id="spa-content-floor_plans" data-role="spa-content-floor_plans" role="tabpanel" aria-labelledby="csx-floor_plans-tab">
@@ -382,12 +381,33 @@
               </div>
             </div>
             <!--floor_plans ends-->
-            </div>
             <div class="tab-pane fade" id="spa-content-images" data-role="spa-content-images" role="tabpanel" aria-labelledby="csx-images-tab">
               In development
             </div>
           </div>
         </div>
+
+        <div data-tab-target="asset">
+          <ul class="nav nav-tabs" id="csx-sub-nav-asset" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" id="csx-summary-tab" data-bs-toggle="tab" data-bs-target="#spa-content-summary" type="button" role="tab" aria-controls="Summary" aria-selected="true">Summary</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="csx-asset_list-tab" data-bs-toggle="tab" data-bs-target="#spa-content-asset_list" type="button" role="tab" aria-controls="Asset list" aria-selected="true">Asset list</button>
+            </li>
+          </ul>
+
+          <div class="tab-content" id="csx-tab-content-asset">
+            <div class="tab-pane fade" id="spa-content-summary" data-role="spa-content-summary" role="tabpanel" aria-labelledby="csx-summary-tab">
+              rendering summary ...
+            </div>
+
+            <div class="tab-pane fade" id="spa-content-asset_list" data-role="spa-content-asset_list" role="tabpanel" aria-labelledby="csx-asset_list-tab">
+              rendering asset ...
+            </div>
+          </div>
+        </div>
+
       </main>
     </div>
 

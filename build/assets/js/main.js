@@ -157,6 +157,15 @@
         // TODO pre processsing
     });
 
+    $("[data-role='spa-content-summary']").on("spaloaded", function(){
+        // TODO pre processsing
+    });
+
+    $("[data-role='spa-content-asset_list']").on("spaloaded", function(){
+        // TODO pre processsing
+    });
+
+
     $("[data-sidebar-collapse-target]").click(function(){
         $(this).data("collapse", !!!$(this).data("collapse"));
         const collapse_state = $(this).data("collapse");
