@@ -20,6 +20,7 @@ footer{
     position: fixed;
     bottom: 0px;
     left: 0px;
+    z-index: 1500;
 }
 
 .nav-link{

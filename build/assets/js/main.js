@@ -118,7 +118,6 @@
             { request_type: 'get_buildings_sidebar_dataset'},
             {c: show_buildings_sidebar_dataset}
         )
-
     });
 
 
@@ -392,13 +391,27 @@
     });
 
     $(window).scroll(function(event) {
-        var scroll = $(window).scrollTop(); 
-        if(scroll > 20){ 
-            $("footer").removeClass("d-flex").css("display", "none");
-        }else{
-            $("footer").css("display", "flex");
-        }
+        setTimeout(() => {
+            if(spa_loaded !== "spa-content-map"){
+                var scroll = $(window).scrollTop(); 
+                if(scroll > 20){ 
+                    $("footer").removeClass("d-flex").css("display", "none");
+                }else{
+                    $("footer").css("display", "flex");
+                }
+            }else if(spa_loaded == "spa-content-map"){
+                $("footer").css("position", "static");
+            }
+        }, 0);
     });
+
+
+    setTimeout(() => {
+        if(spa_loaded == "spa-content-map"){
+            $("footer").css("position", "static");
+        }
+    }, 100);
+
     // $("[data-target-collapse]").click();
 
     app.init("building");
