@@ -42,7 +42,7 @@
 
         map = L.map('map')
           .addLayer(mapboxTiles)
-          .setView([51.5, -0.09], 13);
+          .setView([46.2276, 2.2137], 6);
 
         app.protocol.ajax(
             'build/bridge.php',
@@ -70,7 +70,7 @@
 
                     }
 
-                    map.fitBounds(coords, {maxZoom: 16});
+                    map.fitBounds(coords, {maxZoom: 6});
 
                     map.on('popupopen', function() {  
                         $("[data-role='popup_link']").click(function(e){
