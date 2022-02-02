@@ -1,0 +1,198 @@
+<?xml version="1.0"?>
+<root>
+  <grid_contacts>
+    <UID>6</UID>
+    <BuildingID>4</BuildingID>
+    <Name>MANAGER SITE</Name>
+    <Email>renaud.l@odalys-vacances.com</Email>
+    <PrimaryContact>0</PrimaryContact>
+    <Details>Directeur Technique et S&#xE9;curit&#xE9; National</Details>
+    <Phone>0033 6 37 30 55 66</Phone>
+    <Fax/>
+    <Mobile/>
+    <Addressee/>
+    <Address/>
+    <IsResident>0</IsResident>
+    <HomePhone/>
+  </grid_contacts>
+  <grid_contacts>
+    <UID>8</UID>
+    <BuildingID>4</BuildingID>
+    <Name>ODALYS DEMANDEUR</Name>
+    <Email>support@forumconcepts.fr</Email>
+    <PrimaryContact>0</PrimaryContact>
+    <Details/>
+    <Phone>06 33 33 33 33</Phone>
+    <Fax/>
+    <Mobile/>
+    <Addressee/>
+    <Address/>
+    <IsResident>0</IsResident>
+    <HomePhone/>
+  </grid_contacts>
+  <grid_contacts>
+    <UID>9</UID>
+    <BuildingID>6</BuildingID>
+    <Name>ODALYS TECHNICIEN</Name>
+    <Email>support@forumconcepts.fr</Email>
+    <PrimaryContact>0</PrimaryContact>
+    <Details/>
+    <Phone>06 33 33 33 33 </Phone>
+    <Fax/>
+    <Mobile/>
+    <Addressee/>
+    <Address/>
+    <IsResident>0</IsResident>
+    <HomePhone/>
+  </grid_contacts>
+  <grid_contacts>
+    <UID>12</UID>
+    <BuildingID>1</BuildingID>
+    <Name>DEMO MANAGER</Name>
+    <Email>support@forumconcepts.fr</Email>
+    <PrimaryContact>0</PrimaryContact>
+    <Details/>
+    <Phone>33192837</Phone>
+    <Fax/>
+    <Mobile/>
+    <Addressee/>
+    <Address/>
+    <IsResident>0</IsResident>
+    <HomePhone/>
+  </grid_contacts>
+  <grid_contacts>
+    <UID>13</UID>
+    <BuildingID>1</BuildingID>
+    <Name>DEMO PRESTATAIRE</Name>
+    <Email>support@forumconcepts.fr</Email>
+    <PrimaryContact>0</PrimaryContact>
+    <Details/>
+    <Phone>33123456</Phone>
+    <Fax/>
+    <Mobile/>
+    <Addressee/>
+    <Address/>
+    <IsResident>0</IsResident>
+    <HomePhone/>
+  </grid_contacts>
+  <grid_contacts>
+    <UID>15</UID>
+    <BuildingID>1</BuildingID>
+    <Name>DEMO TECHNICIEN</Name>
+    <Email>support@forumconcepts.fr</Email>
+    <PrimaryContact>0</PrimaryContact>
+    <Details/>
+    <Phone>33987654</Phone>
+    <Fax/>
+    <Mobile/>
+    <Addressee/>
+    <Address/>
+    <IsResident>0</IsResident>
+    <HomePhone/>
+  </grid_contacts>
+  <grid_contacts>
+    <UID>21</UID>
+    <BuildingID>4</BuildingID>
+    <Name>LAURENT RENAUD</Name>
+    <Email>renaud.l@odalys-vacances.com</Email>
+    <PrimaryContact>1</PrimaryContact>
+    <Details>RESPONSABLE TECHNIQUE REGION</Details>
+    <Phone>04 42 25 99 91</Phone>
+    <Fax/>
+    <Mobile>06 37 30 55 66</Mobile>
+    <Addressee/>
+    <Address/>
+    <IsResident>0</IsResident>
+    <HomePhone/>
+  </grid_contacts>
+  <grid_contacts>
+    <UID>22</UID>
+    <BuildingID>4</BuildingID>
+    <Name>FREDERIC NADAL</Name>
+    <Email>nadal.f@odalys-vacances.com</Email>
+    <PrimaryContact>1</PrimaryContact>
+    <Details>DIRECTEUR TECHNIQUE ET SECURITE NATIONAL</Details>
+    <Phone>04 42 25 88 59</Phone>
+    <Fax/>
+    <Mobile/>
+    <Addressee/>
+    <Address/>
+    <IsResident>0</IsResident>
+    <HomePhone/>
+  </grid_contacts>
+  <grid_contacts>
+    <UID>23</UID>
+    <BuildingID>6</BuildingID>
+    <Name>LAURENT RENAUD</Name>
+    <Email>renaud.l@odalys-vacances.com</Email>
+    <PrimaryContact>1</PrimaryContact>
+    <Details>RESPONSABLE TECHNIQUE REGION</Details>
+    <Phone/>
+    <Fax/>
+    <Mobile>06 37 30 55 66</Mobile>
+    <Addressee/>
+    <Address/>
+    <IsResident>0</IsResident>
+    <HomePhone/>
+  </grid_contacts>
+  <grid_contacts>
+    <UID>24</UID>
+    <BuildingID>6</BuildingID>
+    <Name>FREDERIC NADAL</Name>
+    <Email>nadal.f@odalys-vacances.com</Email>
+    <PrimaryContact>1</PrimaryContact>
+    <Details>DIRECTEUR TECHNIQUE ET SECURITE NATIONAL</Details>
+    <Phone>04 42 25 88 59</Phone>
+    <Fax/>
+    <Mobile/>
+    <Addressee/>
+    <Address/>
+    <IsResident>0</IsResident>
+    <HomePhone/>
+  </grid_contacts>
+  <grid_contacts>
+    <UID>25</UID>
+    <BuildingID>6</BuildingID>
+    <Name>MME PANNETIER</Name>
+    <Email/>
+    <PrimaryContact>1</PrimaryContact>
+    <Details>DIRECTRICE</Details>
+    <Phone/>
+    <Fax/>
+    <Mobile/>
+    <Addressee/>
+    <Address/>
+    <IsResident>0</IsResident>
+    <HomePhone/>
+  </grid_contacts>
+  <grid_contacts>
+    <UID>26</UID>
+    <BuildingID>6</BuildingID>
+    <Name>Frederic NADAL</Name>
+    <Email>nadal.f@odalys-vacances.com</Email>
+    <PrimaryContact>0</PrimaryContact>
+    <Details/>
+    <Phone>04 42 25 88 59</Phone>
+    <Fax/>
+    <Mobile/>
+    <Addressee/>
+    <Address/>
+    <IsResident>0</IsResident>
+    <HomePhone/>
+  </grid_contacts>
+  <grid_contacts>
+    <UID>27</UID>
+    <BuildingID>6</BuildingID>
+    <Name>Morgane ZEBRAK</Name>
+    <Email>Zebrak.m@odalys-vacances.com</Email>
+    <PrimaryContact>0</PrimaryContact>
+    <Details/>
+    <Phone>+3304 42 25 88 90</Phone>
+    <Fax/>
+    <Mobile/>
+    <Addressee/>
+    <Address/>
+    <IsResident>0</IsResident>
+    <HomePhone/>
+  </grid_contacts>
+</root>
