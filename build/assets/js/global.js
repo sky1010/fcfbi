@@ -96,6 +96,12 @@ var app = {
                 $(ssel).trigger('spaloaded');
                 session.setItem('spa_loaded', spa_target);
                 spa_loaded = spa_target;
+                
+                if(spa_loaded == "spa-content-map"){
+                    $("footer").css("position", "static");
+                }else{
+                    $("footer").css("position", "fixed");
+                }
             }, 0);
         }
     },
@@ -146,22 +152,16 @@ var app = {
 
     export: {
         saveBlobFile : function(file_name, file_type, data){
-            var file = new Blob([data], {type: file_type});
-            if (window.navigator.msSaveOrOpenBlob) // IE10+
-                window.navigator.msSaveOrOpenBlob(file, file_name);
-            else {
-                var a = document.createElement("a"),
-                        url = URL.createObjectURL(file);
-                a.href = url;
-                a.download = file_name;
-                document.body.appendChild(a);
-                a.click();
-
-                setTimeout(function() {
-                    document.body.removeChild(a);
-                    window.URL.revokeObjectURL(url);  
-                }, 0); 
-            }
+            return new Promise((resolve, reject) => {
+                app.protocol.ajax(
+                    (['pdf', 'xlsx'].includes(file_type)?'build/report_generator.php':'build/bridge.php'),
+                    { request_type: 'upload_file', file_name: file_name, file_type: file_type, file_data: data},
+                    {c: (data) => {
+                        resolve(data);
+                    }},
+                    'POST'
+                );
+            }); 
         }
     }
 }

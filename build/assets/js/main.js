@@ -18,6 +18,8 @@
 
         $("[data-tab-target]").addClass("no-display");
         $("[data-tab-target] .nav-link").removeClass("active");
+        $("[data-tab] .nav-link").removeClass("active");
+        $(`[data-tab="${tab_target}"] .nav-link`).addClass("active");
         $(`[data-tab-target='${tab_target}'] .nav-link`).addClass("active");
         $(`[data-tab-target='${$(this).attr("data-tab")}']`).removeClass("no-display");
 
@@ -372,7 +374,7 @@
         }   
     })
     
-    $("[data-export='JSON']").click(function(){
+    $("[data-export]").click(function(){
         const target_table = $(this).parent().attr("data-table");
         var filter = [];
         $(`[data-role='${spa_loaded}'] [data-column-form] .dropzone [data-filter-by-columns]`).each(function (index, el) {
@@ -383,7 +385,15 @@
             'build/bridge.php',
             { request_type: 'filter_by_column_name', filters: JSON.stringify(filter), table: target_table},
             {c: (data) => {
-                app.export.saveBlobFile(`${target_table}_json.json`, 'json', data);
+                const dataset = JSON.stringify(JSON.parse(data).data);
+                app.export.saveBlobFile(target_table, $(this).attr("data-export"), dataset).then((data_arg) => {
+                    const parse = JSON.parse(data_arg);
+                    var a = document.createElement("a");
+                    $(a).attr("href", parse.path);
+                    $(a).attr("download", parse.file_name);
+                    document.body.appendChild(a);
+                    a.click();
+                });
             }}
         ); 
 
@@ -397,20 +407,13 @@
                 if(scroll > 20){ 
                     $("footer").removeClass("d-flex").css("display", "none");
                 }else{
-                    $("footer").css("display", "flex");
+                    $("footer").css({"display": "flex", "position": "fixed"});
                 }
             }else if(spa_loaded == "spa-content-map"){
                 $("footer").css("position", "static");
             }
         }, 0);
     });
-
-
-    setTimeout(() => {
-        if(spa_loaded == "spa-content-map"){
-            $("footer").css("position", "static");
-        }
-    }, 100);
 
     // $("[data-target-collapse]").click();
 

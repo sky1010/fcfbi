@@ -582,6 +582,56 @@
                 http_response_code(400);
             }
             break;
+        case 'upload_file':
+            $file_type = $_REQUEST['file_type'];
+            $destination = sprintf("uploads/files/%s.%s", $_REQUEST['file_name'], $_REQUEST['file_type']);
+            $target_dir = sprintf("../%s", $destination);
+
+            switch($file_type){
+                case 'json':
+                    file_put_contents($target_dir, $_REQUEST['file_data']);
+                    break;
+                case 'csv':
+                    $dataset = json_decode($_REQUEST['file_data'], true);  
+                    $headers = array_keys($dataset[0]);
+                    $values = array_values($dataset);
+
+                    $fp = fopen($target_dir, 'w');
+                    fputcsv($fp, $headers);
+
+                    foreach ($values as $v) {
+                        fputcsv($fp, $v);
+                    }
+
+                    fclose($fp);
+                    break;
+                case 'xml':
+                    $dataset = json_decode($_REQUEST['file_data'], true);  
+                    $fields = array_values($dataset);
+
+                    $doc = new DOMDocument();
+                    $doc->formatOutput = true;
+
+                    $doc_root = $doc->createElement("root");
+                    $doc->appendChild( $doc_root );
+
+                    foreach( $fields AS  $k => $f_block){
+                        $parent_node = $doc->createElement(sprintf("grid_%s", $_REQUEST['file_name']));
+                        foreach($f_block AS $z => $v){
+                            $el = $doc->createElement( $z, $v );
+                            $parent_node->appendChild($el);
+                        }
+                        $doc_root->appendChild($parent_node);
+                    }
+
+                    $xml_dump = $doc->saveXML();
+                    file_put_contents($target_dir, $xml_dump);
+                    break;
+            }
+
+            echo json_encode(["path" => $destination, "file_name" => basename($target_dir)]);
+
+            break;
         default:
 
             // HTTTP CODE BAD REQUEST
