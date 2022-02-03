@@ -8,8 +8,8 @@
 
 (function ($) {  
 
-    $("[data-bs-target]").click(function(){
-        var spa_target = $(this).attr("data-bs-target").replace("#", "");
+    $("[data-spa-page]").click(function(){
+        var spa_target = $(this).attr("data-spa-page");
         app.renderer.toggle('[data-role^=spa]', `[data-role=${spa_target}]`);
     });
 
@@ -20,8 +20,8 @@
         $("[data-tab-target] .nav-link").removeClass("active");
         $("[data-tab] .nav-link").removeClass("active");
         $(`[data-tab="${tab_target}"] .nav-link`).addClass("active");
-        $(`[data-tab-target='${tab_target}'] .nav-link`).addClass("active");
-        $(`[data-tab-target='${$(this).attr("data-tab")}']`).removeClass("no-display");
+
+        $(`[data-tab-target='${tab_target}']`).removeClass("no-display");
 
         if($(this)[0].hasAttribute("data-init-spa")){
             let spa_target = $(this).attr("data-spa");
@@ -75,7 +75,7 @@
                     map.on('popupopen', function() {  
                         $("[data-role='popup_link']").click(function(e){
                             session.setItem("building_in_view", $(this).attr("data-building"));
-                            $("[data-bs-target='#spa-content-building_list']").click();
+                            $("[data-spa-page='spa-content-building_list']").click();
                         });
                     });
 
@@ -106,20 +106,37 @@
 
 
     $("[data-role='spa-content-building_list']").on("spaloaded", function(){
+        var building_id = session.getItem("building_in_view");
 
-        // generate the building table
-        app.protocol.ajax(
-            'build/bridge.php',
-            { request_type: 'get_buildings'},
-            {c: show_building }
-        );  
+        console.log(building_id);
+        if(building_id === null){
+            $("[data-role='building_edit']").addClass("no-display");
+            $("[data-role='building_form']").removeClass("no-display");
 
-        // generate the left filters
-        app.protocol.ajax(
-            'build/bridge.php',
-            { request_type: 'get_buildings_sidebar_dataset'},
-            {c: show_buildings_sidebar_dataset}
-        )
+            // generate the building table
+            app.protocol.ajax(
+                'build/bridge.php',
+                { request_type: 'get_buildings'},
+                {c: show_building }
+            );  
+
+            // generate the left filters
+            app.protocol.ajax(
+                'build/bridge.php',
+                { request_type: 'get_buildings_sidebar_dataset'},
+                {c: show_buildings_sidebar_dataset}
+            )
+        }else{
+            $("[data-role='building_edit']").removeClass("no-display");
+            $("[data-role='building_form']").addClass("no-display");
+            $("#building-edit").click();
+
+            app.protocol.ajax(
+                'build/bridge.php',
+                { request_type: 'get_building_by_uid', building_id: building_id},
+                {c: fill_form_building}
+            )
+        }
     });
 
 
@@ -162,6 +179,11 @@
     $("[data-role='spa-content-summary']").on("spaloaded", function(){
         // TODO pre processsing
     });
+
+    $("[data-role='spa-building_edit']").on("spaloaded", function(){
+        console.log("....");
+    });
+
 
     $("[data-role='spa-content-asset_list']").on("spaloaded", function(){
         app.protocol.ajax(
@@ -470,6 +492,12 @@
                 $("footer").css("position", "static");
             }
         }, 0);
+    });
+
+    $("[data-role='back-building-edit']").click(function () {
+        console.log("...");
+        session.removeItem("building_in_view");
+        $("[data-spa-page='spa-content-building_list']").click();
     });
 
     // $("[data-target-collapse]").click();

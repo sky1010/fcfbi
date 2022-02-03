@@ -30,6 +30,8 @@ var buildingIcon = L.icon({
 var app = {
 
     init: function (page_name) {
+        session.clear();
+        
         $("[data-role='app_name']").text(app_name);
         $(`[data-tab='${page_name}']`).click();
 
@@ -88,8 +90,8 @@ var app = {
                 $(fsel).removeClass("show active");
                 $(ssel).addClass("show active");
 
-                $("[data-bs-target]").removeClass("active");
-                $(`[data-bs-target='#${spa_target}']`).addClass("active");
+                $("[data-spa-page]").removeClass("active");
+                $(`[data-spa-page='${spa_target}']`).addClass("active");
             }
             
             setTimeout(function(){

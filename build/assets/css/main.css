@@ -126,6 +126,10 @@ footer{
   margin: 1.5em auto;
 }
 
+.form-floating{
+  width: 25%;
+}
+
 @media only screen and (max-width: 600px) {
   .sidebar-toggle {
     display: none;

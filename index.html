@@ -168,22 +168,22 @@
         <div data-tab-target="building">
           <ul class="nav nav-tabs" id="csx-sub-nav" role="tablist">
             <li class="nav-item" role="presentation">
-              <button class="nav-link active" id="csx-map-tab" data-bs-toggle="tab" data-bs-target="#spa-content-map" type="button" role="tab" aria-controls="Map" aria-selected="true">Map</button>
+              <button class="nav-link active" id="csx-map-tab" data-bs-toggle="tab" data-bs-target="#spa-content-map" data-spa-page="spa-content-map" type="button" role="tab" aria-controls="Map" aria-selected="true">Map</button>
             </li>
             <li class="nav-item" role="presentation">
-              <button class="nav-link" id="csx-contacts-tab" data-bs-toggle="tab" data-bs-target="#spa-content-contacts" type="button" role="tab" aria-controls="Contacts" aria-selected="true">Contacts</button>
+              <button class="nav-link" id="csx-contacts-tab" data-bs-toggle="tab" data-bs-target="#spa-content-contacts" data-spa-page="spa-content-contacts" type="button" role="tab" aria-controls="Contacts" aria-selected="true">Contacts</button>
             </li>
             <li class="nav-item" role="presentation">
-              <button class="nav-link" id="csx-building_list-tab" data-bs-toggle="tab" data-bs-target="#spa-content-building_list" type="button" role="tab" aria-controls="Building List" aria-selected="true">Building List</button>
+              <button class="nav-link" id="csx-building_list-tab" data-bs-toggle="tab" data-bs-target="#spa-content-building_list" data-spa-page="spa-content-building_list" type="button" role="tab" aria-controls="Building List" aria-selected="true">Building List</button>
             </li>
             <li class="nav-item" role="presentation">
-              <button class="nav-link" id="csx-contracts-tab" data-bs-toggle="tab" data-bs-target="#spa-content-contracts" type="button" role="tab" aria-controls="Contracts" aria-selected="true">Contracts</button>
+              <button class="nav-link" id="csx-contracts-tab" data-bs-toggle="tab" data-bs-target="#spa-content-contracts"  data-spa-page="spa-content-contracts" type="button" role="tab" aria-controls="Contracts" aria-selected="true">Contracts</button>
             </li>
             <li class="nav-item" role="presentation">
-              <button class="nav-link" id="csx-floor_plans-tab" data-bs-toggle="tab" data-bs-target="#spa-content-floor_plans" type="button" role="tab" aria-controls="Floor Plans" aria-selected="true">Floor Plans</button>
+              <button class="nav-link" id="csx-floor_plans-tab" data-bs-toggle="tab" data-bs-target="#spa-content-floor_plans" data-spa-page="spa-content-floor_plans" type="button" role="tab" aria-controls="Floor Plans" aria-selected="true">Floor Plans</button>
             </li>
             <li class="nav-item" role="presentation">
-              <button class="nav-link" id="csx-images-tab" data-bs-toggle="tab" data-bs-target="#spa-content-images" type="button" role="tab" aria-controls="Images" aria-selected="true">Images</button>
+              <button class="nav-link" id="csx-images-tab" data-bs-toggle="tab" data-bs-target="#spa-content-images" data-spa-page="spa-content-images" type="button" role="tab" aria-controls="Images" aria-selected="true">Images</button>
             </li>
           </ul>
 
@@ -277,7 +277,7 @@
              <!-- contact ends-->
             <div class="tab-pane fade" id="spa-content-building_list" data-role="spa-content-building_list" role="tabpanel" aria-labelledby="csx-building_list-tab">
               <!--Buildings-->
-              <div class="container-fluid">
+              <div class="container-fluid" data-role="building_form">
                 <div class="sidebar-toggle" data-sidebar-collapse-target="left-filters-building">
                   <span data-feather="chevron-left"></span>
                 </div>
@@ -356,39 +356,48 @@
                   </div>
                 </div> 
               </div>
-<!-- 
-              <div class="container">
-                <div class="row mt-5">
-                  <ul class="nav nav-tabs" id="edit_tab" role="tablist">
-                    <li class="nav-item" role="presentation">
-                      <button class="nav-link active" id="building_edit_tab" data-bs-toggle="tab" data-bs-target="#building_edit" type="button" role="tab" aria-controls="building_edit" aria-selected="true">
-                        Building info
-                      </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                      <button class="nav-link" id="map_edit_tab" data-bs-toggle="tab" data-bs-target="#map_edit" type="button" role="tab" aria-controls="map_edit" aria-selected="false">Map</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                      <button class="nav-link" id="contact_edit_tab" data-bs-toggle="tab" data-bs-target="#contact_edit" type="button" role="tab" aria-controls="contact_edit" aria-selected="false">Contact</button>
-                    </li>
-                  </ul>
-                  <div class="tab-content" id="myTabContent">
-                    <div class="tab-pane fade show active" id="building_edit" role="tabpanel" aria-labelledby="building_edit_tab">.</div>
-                    <div class="tab-pane fade" id="map_edit" role="tabpanel" aria-labelledby="map_edit_tab">..</div>
-                    <div class="tab-pane fade" id="contact_edit" role="tabpanel" aria-labelledby="contact_edit_tab">...</div>
-                  </div>
 
-                 <div class="col-lg-4 col-sm-12">
-                    
+              <div class="container mt-5" data-role="building_edit">
+                <div class="row">
+                  <div class="col-lg-12 d-flex justify-content-between mt-5 mb-5">
+                    <div>
+                      <button class="btn btn-sm btn-warning">Add</button>
+                    </div>
+                    <div>
+                      <button class="btn btn-sm btn-warning">Reload</button>
+                      <button class="btn btn-sm btn-warning" data-role="back-building-edit">Back</button>
+                    </div>
                   </div>
-                  <div class="col-lg-4 col-sm-12">
-                    
+                </div>
+                <div class="row">
+                  <div class="col-lg-12">
+                    <ul class="nav nav-tabs" id="building_nav_edit" role="tablist">
+                        <li class="nav-item" role="presentation">
+                          <button class="nav-link active" id="building-edit_tab" data-bs-toggle="tab" data-bs-target="#building-edit" type="button" role="tab" aria-controls="building-edit_ aria-selected="true">
+                            Building info
+                          </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                          <button class="nav-link" id="map_edit-tab" data-bs-toggle="tab" data-bs-target="#map_edit" type="button" role="tab" aria-controls="map_edit" aria-selected="false">Map</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                          <button class="nav-link" id="contact_edit-tab" data-bs-toggle="tab" data-bs-target="#contact_edit" type="button" role="tab" aria-controls="contact_edit" aria-selected="false">Contacts</button>
+                        </li>
+                      </ul>
+                      <div class="tab-content" id="building_tab_edit">
+                        <div class="tab-pane fade show active" id="building-edit" role="tabpanel" aria-labelledby="building-edit_tab">
+                          <div class="container-fluid">
+                            <div class="col-lg-12 col-sm-12">
+                              <form class="mt-5 d-flex flex-row flex-wrap" id="building_edit_inputs"></form>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="tab-pane fade" id="map_edit" role="tabpanel" aria-labelledby="map_edit-tab">...</div>
+                        <div class="tab-pane fade" id="contact_edit" role="tabpanel" aria-labelledby="contact-tab">....</div>
+                      </div>
                   </div>
-                  <div class="col-lg-4 col-sm-12">
-                    
-                  </div>
-                </div> 
-              </div> -->
+                </div>
+              </div>
             </div>
             <!--building ends-->
             <div class="tab-pane fade" id="spa-content-contracts" data-role="spa-content-contracts" role="tabpanel" aria-labelledby="csx-contracts-tab">
@@ -566,10 +575,10 @@
         <div data-tab-target="asset">
           <ul class="nav nav-tabs" id="csx-sub-nav-asset" role="tablist">
             <li class="nav-item" role="presentation">
-              <button class="nav-link active" id="csx-summary-tab" data-bs-toggle="tab" data-bs-target="#spa-content-summary" type="button" role="tab" aria-controls="Summary" aria-selected="true">Summary</button>
+              <button class="nav-link active" id="csx-summary-tab" data-bs-toggle="tab" data-bs-target="#spa-content-summary" data-spa-page="spa-content-summary" type="button" role="tab" aria-controls="Summary" aria-selected="true">Summary</button>
             </li>
             <li class="nav-item" role="presentation">
-              <button class="nav-link" id="csx-asset_list-tab" data-bs-toggle="tab" data-bs-target="#spa-content-asset_list" type="button" role="tab" aria-controls="Asset list" aria-selected="true">Asset list</button>
+              <button class="nav-link" id="csx-asset_list-tab" data-bs-toggle="tab" data-bs-target="#spa-content-asset_list" data-spa-page="spa-content-asset_list" type="button" role="tab" aria-controls="Asset list" aria-selected="true">Asset list</button>
             </li>
           </ul>
 
@@ -667,7 +676,7 @@
           <div data-tab-target="work_order">
             <ul class="nav nav-tabs" id="csx-sub-nav-work_order" role="tablist">
               <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="csx-work_order-tab" data-bs-toggle="tab" data-bs-target="#spa-content-work_order" type="button" role="tab" aria-controls="Work order" aria-selected="true">Work Order</button>
+                <button class="nav-link active" id="csx-work_order-tab" data-bs-toggle="tab" data-bs-target="#spa-content-work_order" data-bs-target="spa-content-work_order" type="button" role="tab" aria-controls="Work order" aria-selected="true">Work Order</button>
               </li>
             </ul>
 

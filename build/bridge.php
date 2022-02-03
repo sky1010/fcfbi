@@ -648,6 +648,22 @@
                 http_response_code(400);
             }
             break;
+        case 'get_building_by_uid':
+            try{
+                //creates a connection, selects the user and send the data as an JSON outstream
+                $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
+                $building = select($connection, "SELECT * FROM buildings WHERE UID = ?", [$_REQUEST['building_id']]);
+
+                echo json_encode(['data' => $building]);
+
+                //destroy database connection
+                db_disconnect($connection);
+                http_response_code(200);
+            }catch(Exception $e){
+                //return bad http request when error is encountered
+                http_response_code(400);
+            }
+            break;
         default:
 
             // HTTTP CODE BAD REQUEST

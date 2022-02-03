@@ -26,7 +26,7 @@ function show_building(data){
     for(let x in buildings.data){
 
         var tr = $("<tr></tr>").attr("data-building", buildings.data[x].UID );
-        var edit_btn = $("<th scope='row'> <span class='hover-pointer' data-feather='edit-3'></span></th>");
+        var edit_btn = $("<th scope='row'></th>").append($("<button type='button' class='btn btn-sm btn-dark'><span class='hover-pointer' data-feather='edit-3'></span></button>"));
 
         $(tr).append(edit_btn);
         
@@ -37,20 +37,22 @@ function show_building(data){
 
         $(container).find("tbody").append(tr);
 
-        // $(edit_btn).click(function(){
-        //     // TODO
-        // });
+        $(edit_btn).find("button").click(function(){
+            var building_id = $(this).parent().parent().attr("data-building");
+            session.setItem("building_in_view", building_id);
+            $("[data-spa-page='spa-content-building_list']").click();
+        });
 
     }
 
-    $(`[data-role='${spa_loaded}'] [data-target-pagination]`).pagination({
-        dataSource: [...$(`[data-role='${spa_loaded}'] [data-target-table] tbody tr`)],
-        pageSize: 9,
-        callback: function(data, pagination) {
-            var html = template(data);
-            $(`[data-role='${spa_loaded}'] [data-target-table] tbody`).html(html);
-        }
-    })
+    // $(`[data-role='${spa_loaded}'] [data-target-pagination]`).pagination({
+    //     dataSource: [...$(`[data-role='${spa_loaded}'] [data-target-table] tbody tr`)],
+    //     pageSize: 9,
+    //     callback: function(data, pagination) {
+    //         var html = template(data);
+    //         $(`[data-role='${spa_loaded}'] [data-target-table] tbody`).html(html);
+    //     }
+    // })
 
     feather.replace();
 }
@@ -704,7 +706,6 @@ function show_site_summary(data){
 
     for(let x in site_summary.data[0]){
         if(key_transform.hasOwnProperty(x)){
-            console.log(x);
             var th_node = $("<th scope='row'></th>").text(key_transform[x]);
             var td_node = $("<td></td>").text(site_summary.data[0][x]);
             var tr_node = $("<tr></tr>");
@@ -712,6 +713,22 @@ function show_site_summary(data){
             $(tr_node).append(th_node).append(td_node);
             $(container).append(tr_node);
         }
+    }
+}
+
+function fill_form_building(data) {
+    const parse = JSON.parse(data);
+
+    const container = $("#building_edit_inputs");
+    $(container).children().remove();
+
+    for(x in parse.data[0]){
+        var div_node = $("<div></div>").addClass("form-floating m-4");
+        var input_node = $("<input type='text'>").attr({id: x, placeholder: x, value: parse.data[0][x]}).addClass("form-control");
+        var label_node = $("<label></label>").attr("for", x).text(x);
+
+        $(div_node).append(input_node).append(label_node);
+        $(container).append(div_node);
     }
 }
 
