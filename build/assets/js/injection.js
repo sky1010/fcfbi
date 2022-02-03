@@ -672,6 +672,49 @@ function show_work_order(data){
     feather.replace();
 }
 
+function show_site_summary(data){
+    const site_summary = JSON.parse(data);
+    const container = $(`[data-role='${spa_loaded}'] #tbl_summary`);
+
+    $(container).children().remove();
+
+    var key_transform = {
+        BuildingPicture: 'Site image',
+        BuildingNumber: 'Site number',
+        Client: 'Client',
+        Address: 'Address',
+        PostCode: 'Postal code',
+        Phone: 'Telephone',
+        Fax: 'Fax', 
+        Region: 'Region',
+        SubRegion: 'Subregion',
+        EmailAddress: 'Email',
+        Division: 'Division',
+        Landlord: 'Landlord', 
+        InsuranceBroker: 'Insurance broker',
+        EstatesManager: 'Estates manager',
+        RegionalOperationsManager: 'Regional operations manager',
+        Status: 'Status',
+        Longitude: 'Longitude',
+        Latitude: 'Latitude',
+        Website: 'Website',
+        LocalAuthority: 'LocalAuthority',
+
+    };
+
+    for(let x in site_summary.data[0]){
+        if(key_transform.hasOwnProperty(x)){
+            console.log(x);
+            var th_node = $("<th scope='row'></th>").text(key_transform[x]);
+            var td_node = $("<td></td>").text(site_summary.data[0][x]);
+            var tr_node = $("<tr></tr>");
+
+            $(tr_node).append(th_node).append(td_node);
+            $(container).append(tr_node);
+        }
+    }
+}
+
 function show_columns(sel, data){
     const dataset = JSON.parse(data);
     const container = $(sel);

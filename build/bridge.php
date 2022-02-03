@@ -632,6 +632,22 @@
             echo json_encode(["path" => $destination, "file_name" => basename($target_dir)]);
 
             break;
+        case 'get_site_summary':
+            try{
+                //creates a connection, selects the user and send the data as an JSON outstream
+                $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
+                $building = select($connection, "SELECT * FROM buildings LIMIT 1", []);
+
+                echo json_encode(['data' => $building]);
+
+                //destroy database connection
+                db_disconnect($connection);
+                http_response_code(200);
+            }catch(Exception $e){
+                //return bad http request when error is encountered
+                http_response_code(400);
+            }
+            break;
         default:
 
             // HTTTP CODE BAD REQUEST

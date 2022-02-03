@@ -24,7 +24,7 @@
         </button>
         <div class="collapse navbar-collapse justify-content-center" id="main_navbar">
           <ul class="navbar-nav">
-            <li class="nav-item mx-3" data-tab="site_summary"><a class="nav-link active" aria-current="page" href="#">Site summary</a></li>
+            <li class="nav-item mx-3" data-tab="site_summary" data-spa="spa-content-site" data-init-spa><a class="nav-link active" aria-current="page" href="#">Site summary</a></li>
             <li class="nav-item mx-3" data-tab="building" data-spa="spa-content-map" data-init-spa><a class="nav-link" href="#">Building</a></li>
             <li class="nav-item mx-3" data-tab="asset" data-spa="spa-content-summary" data-init-spa><a class="nav-link" href="#">Asset</a></li>
             <li class="nav-item mx-3" data-tab="work_order" data-spa="spa-content-work_order" data-init-spa><a class="nav-link" href="#">Work order</a></li>
@@ -39,6 +39,132 @@
 
     <div class="container-fluid mt-5">
       <main>
+
+        <div data-tab-target="site_summary">
+            <div data-role="spa-content-site">
+              <div class="container">
+                <div class="row">
+                  <div class="col-lg-6 col-sm-12">
+                    <button class="btn btn-sm btn-warning"><span data-feather="search"></span> Dynamic search</button>
+                    <div class="table-responsive mt-5">
+                      <table class="table table-striped">
+                        <thead class="csx-light-theme">
+                          <tr>
+                            <th scope="col" width="25%"></th>
+                            <th scope="col" width="75%"></th>
+                          </tr>
+                        </thead>
+                        <tbody class="sm-font" id="tbl_summary"></tbody>
+                      </table>
+                      </div>  
+                    </div>
+                  <div class="col-lg-6 col-sm-12">
+                    <div class="mt-5">
+                      <button class="btn btn-sm btn-warning float-right">Export</button>
+                      <div class="chart-container" style="height:auto; width: 100%">
+                          <canvas id="number_intervention"></canvas>
+                      </div>
+                    </div>
+                    <div class="mt-5">
+                      <button class="btn btn-sm btn-warning float-right">Export</button>
+                      <div class="chart-container" style="height:auto; width: 50%; margin: 0px auto;">
+                          <canvas id="number_intervention_by_nature"></canvas>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row" style="margin-top: 150px;">
+                  <div class="col-lg-6 col-sm-12">
+                    <button class="btn btn-sm btn-warning float-right">Export</button>
+                    <div class="chart-container" style="height:auto; width: 100%">
+                      <canvas id="number_intervention_by_category"></canvas>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12">
+                    <button class="btn btn-sm btn-warning float-right">Export</button>
+                    <div class="chart-container" style="height:auto; width: 50%; margin: 0px auto;">
+                      <canvas id="number_intervention_by_state"></canvas>
+                    </div>
+                  </div>
+                </div>
+                <div class="row" style="margin-top: 150px;">
+                  <div class="col-lg-6 col-sm-12">
+                    <button class="btn btn-sm btn-warning float-right">Export</button>
+                    <div class="chart-container" style="height:auto; width: 100%">
+                      <canvas id="number_intervention_by_priority"></canvas>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12">
+                    <button class="btn btn-sm btn-warning float-right">Export</button>
+                    <div class="chart-container" style="height:auto; width: 100%">
+                      <canvas id="number_intervention_by_service_provider"></canvas>
+                    </div>
+                  </div>
+                </div>
+                <h1 class="header" style="margin-top: 150px; margin-bottom: 50px; text-align: center;">Intervention in progress</h1>
+                <div class="row mt-5">
+                  <div class="col-lg-3 col-sm-12">
+                    <div class="dropdown">
+                      <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="quick_search_form" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Quick search <span data-feather="search"></span>
+                      </button>
+                      <div class="dropdown-menu" aria-labelledby="quick_search_form">
+
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12 d-flex justify-content-around flex-group">
+                      <button class="btn btn-sm btn-warning" data-table="zcontrats" data-role="show_columns">Column <span data-feather="bar-chart-2"></span></button>
+                      <button class="btn btn-sm btn-warning">Sorting <span data-feather="filter"></span></button>
+                      <button class="btn btn-sm btn-warning">Group by <span data-feather="filter"></span></button>
+                      <div class="dropdown">
+                        <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-role="export_list_type" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          Export <span data-feather="download"></span>
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="export_list_type" data-table="zcontrats">
+                          <a class="dropdown-item" href="#">PDF</a>
+                          <a class="dropdown-item" href="#">Word</a>
+                          <a class="dropdown-item" href="#">Excel</a>
+                          <a class="dropdown-item" href="#">XML</a>
+                          <a class="dropdown-item" href="#">JSON</a>
+                          <a class="dropdown-item" href="#">CSV</a>
+                          <a class="dropdown-item" href="#">RTF</a>
+                        </div>
+                      </div>
+                      <button class="btn btn-sm btn-warning">Search <span data-feather="search"></span></button>
+                  </div>
+                  <div class="col-lg-3 col-sm-12">
+                    <div class="float-right" style="width: 100%;">
+                      <button class="btn btn-sm btn-warning">Add new <span data-feather="plus"></span></button>
+                      <button class="btn btn-sm btn-warning">Reload <span data-feather="refresh-cw"></span></button>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-12">
+                    <div class="table-responsive mt-5">
+                      <table class="table table-striped">
+                        <thead class="csx-light-theme">
+                          <tr>
+                            <th scope="col">Number of the intervention</th>
+                            <th scope="col">Description of the intervention</th>
+                            <th scope="col">Service provider</th>
+                            <th scope="col">No. of Equipment</th>
+                            <th scope="col">State</th>
+                            <th scope="col">Start date</th>
+                            <th scope="col">Deadline</th>
+                            <th scope="col">Date of last monitoring</th>
+                          </tr>
+                        </thead>
+                        <tbody class="sm-font"></tbody>
+                      </table>
+                    </div> 
+                  </div>  
+                </div>
+              </div>
+            </div>
+        </div>
+
         <div data-tab-target="building">
           <ul class="nav nav-tabs" id="csx-sub-nav" role="tablist">
             <li class="nav-item" role="presentation">
@@ -147,10 +273,11 @@
                 </div> 
               </div>
             </div>
+
              <!-- contact ends-->
             <div class="tab-pane fade" id="spa-content-building_list" data-role="spa-content-building_list" role="tabpanel" aria-labelledby="csx-building_list-tab">
               <!--Buildings-->
-              <div class="container-fluid">
+              <div class="container-fluid no-display">
                 <div class="sidebar-toggle" data-sidebar-collapse-target="left-filters-building">
                   <span data-feather="chevron-left"></span>
                 </div>
@@ -228,6 +355,39 @@
                     </div>   
                   </div>
                 </div> 
+              </div>
+
+              <div class="container">
+                <div class="row mt-5">
+                  <ul class="nav nav-tabs" id="edit_tab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link active" id="building_edit_tab" data-bs-toggle="tab" data-bs-target="#building_edit" type="button" role="tab" aria-controls="building_edit" aria-selected="true">
+                        Building info
+                      </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link" id="map_edit_tab" data-bs-toggle="tab" data-bs-target="#map_edit" type="button" role="tab" aria-controls="map_edit" aria-selected="false">Map</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link" id="contact_edit_tab" data-bs-toggle="tab" data-bs-target="#contact_edit" type="button" role="tab" aria-controls="contact_edit" aria-selected="false">Contact</button>
+                    </li>
+                  </ul>
+                  <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="building_edit" role="tabpanel" aria-labelledby="building_edit_tab">.</div>
+                    <div class="tab-pane fade" id="map_edit" role="tabpanel" aria-labelledby="map_edit_tab">..</div>
+                    <div class="tab-pane fade" id="contact_edit" role="tabpanel" aria-labelledby="contact_edit_tab">...</div>
+                  </div>
+
+<!--                   <div class="col-lg-4 col-sm-12">
+                    
+                  </div>
+                  <div class="col-lg-4 col-sm-12">
+                    
+                  </div>
+                  <div class="col-lg-4 col-sm-12">
+                    
+                  </div> -->
+                </div>
               </div>
             </div>
             <!--building ends-->

@@ -178,6 +178,63 @@
         )
     });
 
+    $("[data-role='spa-content-site']").on("spaloaded", function(){
+        app.protocol.ajax(
+            'build/bridge.php',
+            { request_type: 'get_site_summary'},
+            {c: show_site_summary }
+        ); 
+
+        if(ref_chart['number_intervention'] == undefined)
+            chart_.gen_chart_number_intervention();
+        else{
+            ref_chart['number_intervention'].destroy();
+            ref_chart['number_intervention'] = undefined;
+            chart_.gen_chart_number_intervention();
+        }
+
+        if(ref_chart['number_intervention_by_nature'] == undefined)
+            chart_.gen_chart_number_intervention_nature();
+        else{
+            ref_chart['number_intervention_by_nature'].destroy();
+            ref_chart['number_intervention_by_nature'] = undefined;
+            chart_.gen_chart_number_intervention_nature();
+        }
+        
+        if(ref_chart['number_intervention_by_category'] == undefined)
+            chart_.gen_chart_number_intervention_category();
+        else{
+            ref_chart['number_intervention_by_category'].destroy();
+            ref_chart['number_intervention_by_category'] = undefined;
+            chart_.gen_chart_number_intervention_category();
+        }
+        
+        if(ref_chart['number_intervention_by_state'] == undefined)
+            chart_.gen_chart_number_intervention_state();
+        else{
+            ref_chart['number_intervention_by_state'].destroy();
+            ref_chart['number_intervention_by_state'] = undefined;
+            chart_.gen_chart_number_intervention_state();
+        }
+
+        if(ref_chart['number_intervention_by_priority'] == undefined)
+            chart_.gen_chart_number_intervention_priority();
+        else{
+            ref_chart['number_intervention_by_priority'].destroy();
+            ref_chart['number_intervention_by_priority'] = undefined;
+            chart_.gen_chart_number_intervention_priority();
+        }
+
+        if(ref_chart['number_intervention_by_service_provider'] == undefined)
+            chart_.gen_chart_number_intervention_service_provider();
+        else{
+            ref_chart['number_intervention_by_service_provider'].destroy();
+            ref_chart['number_intervention_by_service_provider'] = undefined;
+            chart_.gen_chart_number_intervention_service_provider();
+        }
+
+    });
+
     $("[data-role='spa-content-work_order']").on("spaloaded", function(){
         app.protocol.ajax(
             'build/bridge.php',
@@ -404,7 +461,7 @@
         setTimeout(() => {
             if(spa_loaded !== "spa-content-map"){
                 var scroll = $(window).scrollTop(); 
-                if(scroll > 20){ 
+                if(scroll > 10){ 
                     $("footer").removeClass("d-flex").css("display", "none");
                 }else{
                     $("footer").css({"display": "flex", "position": "fixed"});
@@ -417,6 +474,6 @@
 
     // $("[data-target-collapse]").click();
 
-    app.init("building");
+    app.init("site_summary");
     feather.replace();
 })(jQuery);
