@@ -507,9 +507,7 @@
             app.protocol.ajax(
                 'build/bridge.php',
                 { request_type: 'get_col_values', filters: JSON.stringify(select_val), table: 'buildings'},
-                {c: (data) => {
-                    console.log(data);
-                }}
+                {c: show_site_summary}
             );
         }else{
             $("#site_dataset_warning").removeClass("no-display");
