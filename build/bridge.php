@@ -707,7 +707,9 @@
 
                 $dataset['interventions'] = select($connection, "SELECT COUNT(Job_UID) AS number_intervention, JobDescription 
                     AS intervention_desc, ReportedByName AS service_provider, StartDate, CurrentStatus, EstimatedCompletionDateTime AS 
-                    Deadline, LatestChaseDate AS date_last_monitoring, AssetCode FROM jobs WHERE Building_UID = ? GROUP BY Building_UID",[$dataset[0]['UID']]);
+                    Deadline, LatestChaseDate AS date_last_monitoring, AssetCode FROM jobs WHERE Building_UID = ? 
+                    GROUP BY Building_UID, JobDescription, ReportedByName, StartDate, CurrentStatus, EstimatedCompletionDateTime,
+                    Deadline, LatestChaseDate, AssetCode",[$dataset[0]['UID']]);
 
                 $dataset_date = select($connection, "SELECT StartDate FROM jobs WHERE Building_UID = ?", [$dataset[0]['UID']]);
 
