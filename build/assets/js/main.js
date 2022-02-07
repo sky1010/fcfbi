@@ -202,14 +202,14 @@
     $("[data-role='spa-content-site']").on("spaloaded", function(){
         var building_id = session.getItem("site_in_view");
         
-        if(building_id !== null){
+        // if(building_id !== null){
             app.page.onrendered().then(() => {
                 $("#filter_site_summary").click();
             });
-        }else{
-            $("#site_dataset_warning").removeClass("no-display");
-            $("#site_dataset").addClass("no-display");
-        }
+        // }else{
+        //     $("#site_dataset_warning").removeClass("no-display");
+        //     $("#site_dataset").addClass("no-display");
+        // }
 
         app.page.onrendered().then(() => {
             var selects_col = [];
@@ -489,7 +489,8 @@
      * SPA: spa-content-site
      * ********************************************************/
     $("#filter_site_summary").click(function(){
-        var select_val = {};
+        var select_val = {}
+        var building_id = session.getItem("site_in_view");
 
         $(`[data-role='${spa_loaded}'] [data-select]`).each(function(i, el){
             const el_val = $(el).val();
@@ -497,6 +498,10 @@
             if(el_val != "-1")
                 select_val[$(el).attr("data-select")] = el_val;
         });   
+
+        if(building_id === null){
+            select_val = {BuildingNumber: '1'};
+        }
 
         if(Object.keys(select_val).length > 0){
             app.protocol.ajax(
