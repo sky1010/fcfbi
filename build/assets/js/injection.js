@@ -680,38 +680,112 @@ function show_site_summary(data){
 
     $(container).children().remove();
 
-    var key_transform = {
-        BuildingPicture: 'Site image',
-        BuildingNumber: 'Site number',
-        Client: 'Client',
-        Address: 'Address',
-        PostCode: 'Postal code',
-        Phone: 'Telephone',
-        Fax: 'Fax', 
-        Region: 'Region',
-        SubRegion: 'Subregion',
-        EmailAddress: 'Email',
-        Division: 'Division',
-        Landlord: 'Landlord', 
-        InsuranceBroker: 'Insurance broker',
-        EstatesManager: 'Estates manager',
-        RegionalOperationsManager: 'Regional operations manager',
-        Status: 'Status',
-        Longitude: 'Longitude',
-        Latitude: 'Latitude',
-        Website: 'Website',
-        LocalAuthority: 'LocalAuthority',
+    if(site_summary.data.length == 0){
+        $("#site_dataset_warning").removeClass("no-display");
+        $("#site_dataset").addClass("no-display");
+    }else{
+        $("#site_dataset_warning").addClass("no-display");
+        $("#site_dataset").removeClass("no-display");
 
-    };
+        var key_transform = {
+            BuildingPicture: 'Site image',
+            BuildingNumber: 'Site number',
+            Client: 'Client',
+            Address: 'Address',
+            PostCode: 'Postal code',
+            Phone: 'Telephone',
+            Fax: 'Fax', 
+            Region: 'Region',
+            SubRegion: 'Subregion',
+            EmailAddress: 'Email',
+            Division: 'Division',
+            Landlord: 'Landlord', 
+            InsuranceBroker: 'Insurance broker',
+            EstatesManager: 'Estates manager',
+            RegionalOperationsManager: 'Regional operations manager',
+            Status: 'Status',
+            Longitude: 'Longitude',
+            Latitude: 'Latitude',
+            Website: 'Website',
+            LocalAuthority: 'LocalAuthority',
 
-    for(let x in site_summary.data[0]){
-        if(key_transform.hasOwnProperty(x)){
-            var th_node = $("<th scope='row'></th>").text(key_transform[x]);
-            var td_node = $("<td></td>").text(site_summary.data[0][x]);
-            var tr_node = $("<tr></tr>");
+        };
 
-            $(tr_node).append(th_node).append(td_node);
-            $(container).append(tr_node);
+        session.setItem("site_in_view", site_summary.data[0].BuildingNumber);
+        for(let x in site_summary.data[0]){
+            if(key_transform.hasOwnProperty(x)){
+                var th_node = $("<th scope='row'></th>").text(key_transform[x]);
+                var td_node = $("<td></td>").text((site_summary.data[0][x] === 'NULL')?' - ':site_summary.data[0][x]);
+                var tr_node = $("<tr></tr>");
+
+                $(tr_node).append(th_node).append(td_node);
+                $(container).append(tr_node);
+            }
+        }
+
+        if(site_summary.data.interventions.length > 0){
+            var container_inv = $("#inv_summary");
+            $(container_inv).children().remove();
+
+            for(let x in site_summary.data.interventions){
+                var tr_node = $("<tr></tr>");
+                var th_node = $("<th scope='row'></th>").text(site_summary.data.interventions[x].number_intervention);
+                var inv_desc = $("<td></td>").text(site_summary.data.interventions[x].intervention_desc);
+                var inv_sp = $("<td></td>").text(site_summary.data.interventions[x].service_provider);
+                var inv_no_eq = $("<td></td>").text(site_summary.data.interventions[x].AssetCode);
+                var inv_state = $("<td></td>").text(site_summary.data.interventions[x].CurrentStatus);
+                var inv_start_dt = $("<td></td>").text(site_summary.data.interventions[x].StartDate);
+                var inv_end_dt = $("<td></td>").text(site_summary.data.interventions[x].Deadline);
+                var inv_last_dt = $("<td></td>").text(site_summary.data.interventions[x].date_last_monitoring);
+
+                $(tr_node)
+                    .append(th_node)
+                    .append(inv_desc)
+                    .append(inv_sp)
+                    .append(inv_no_eq)
+                    .append(inv_state)
+                    .append(inv_start_dt)
+                    .append(inv_end_dt)
+                    .append(inv_last_dt);
+                $(container_inv).append(tr_node);
+            }
+        }
+
+        var temp_chart_config = {
+            number_intervention: {
+                data: site_summary.data.chart.intervention_date,
+                callback: chart_.gen_chart_number_intervention
+            },
+            number_intervention_by_nature:{
+                data: site_summary.data.chart.intervention_type,
+                callback: chart_.gen_chart_number_intervention_nature
+            },
+            number_intervention_by_category:{
+                data: site_summary.data.chart.intervention_action,
+                callback: chart_.gen_chart_number_intervention_category
+            },
+            number_intervention_by_state:{
+                data: site_summary.data.chart.intervention_status,
+                callback: chart_.gen_chart_number_intervention_state
+            },
+            number_intervention_by_priority:{
+                data: site_summary.data.chart.intervention_priority,
+                callback: chart_.gen_chart_number_intervention_priority
+            },
+            number_intervention_by_service_provider:{
+                data: site_summary.data.chart.intervention_service_provider,
+                callback: chart_.gen_chart_number_intervention_service_provider   
+            }
+        };
+
+        for(let x in temp_chart_config){
+
+            if(ref_chart[x] != undefined){
+                ref_chart[x].destroy();
+                ref_chart[x] = undefined;
+            }
+
+            temp_chart_config[x].callback(temp_chart_config[x].data);
         }
     }
 }
@@ -744,6 +818,38 @@ function show_columns(sel, data){
             .attr("data-filter-by-columns", dataset.data[x].column_name);
         $(container).append(div_node);
     }
+}
+
+function fillSelect(data){
+    const dataset = JSON.parse(data);
+    var key_transform = {
+        BuildingNumber: 'Site number',
+        BuildingName: 'Site name',
+        Client: 'Client',
+        Region: 'Region'
+    };
+
+    for(let x in dataset.data){
+        var container = $(`[data-select='${x}']`);
+        var opt = $(`<option data-display='${key_transform[x]}'>Choose ${key_transform[x]}</option>`).val(-1);
+        $(container).append(opt);
+
+        for(let y in dataset.data[x]){
+            var opt_text = dataset.data[x][y][x];
+            if(dataset.data[x][y][x] === null){
+                dataset.data[x][y][x] = 0;
+                opt_text = 'Empty';
+            }
+            
+            var opt = $("<option></option>").val(dataset.data[x][y][x]).text(opt_text);
+            $(container).append(opt);
+        }
+    }
+
+    $(`[data-role='${spa_loaded}'] [data-select]`).each(function(i, el){
+        $(el).niceSelect("update");
+    });
+
 }
 
 function template(nodes){

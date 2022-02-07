@@ -636,7 +636,7 @@
             try{
                 //creates a connection, selects the user and send the data as an JSON outstream
                 $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
-                $building = select($connection, "SELECT * FROM buildings LIMIT 1", []);
+                $building = select($connection, "SELECT * FROM buildings WHERE BuildingNumber = ? LIMIT 1", [$_REQUEST['building_id']]);
 
                 echo json_encode(['data' => $building]);
 
@@ -663,6 +663,88 @@
                 //return bad http request when error is encountered
                 http_response_code(400);
             }
+            break;
+        case 'get_col_grp':
+            try{
+                $cols = json_decode($_REQUEST['fields'], true);
+                $temp = [];
+
+                //creates a connection, selects the user and send the data as an JSON outstream
+                $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
+
+                foreach($cols AS $v){
+                    $temp[$v] = select($connection, sprintf("SELECT %s FROM %s GROUP BY %s", $v, $_REQUEST['table'], $v), []);
+                }
+
+                echo json_encode(['data' => $temp]);
+
+                //destroy database connection
+                db_disconnect($connection);
+                http_response_code(200);
+            }catch(Exception $e){
+                //return bad http request when error is encountered
+                http_response_code(400);
+            }
+            break;
+        case 'get_col_values':
+            try{
+                $cols = json_decode($_REQUEST['filters'], true);
+                $temp = [];
+                $date_count = [];
+
+                foreach($cols AS $k => $v){
+                    $temp[] = sprintf(" %s = '%s' ", $k, $v);
+                }
+
+                $filters = implode("AND", $temp);
+
+                //creates a connection, selects the user and send the data as an JSON outstream
+                $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
+
+                foreach($cols AS $v){
+                    $dataset = select($connection, sprintf("SELECT * FROM %s WHERE %s LIMIT 1", $_REQUEST['table'], $filters), []);
+                }
+
+                $dataset['interventions'] = select($connection, "SELECT COUNT(Job_UID) AS number_intervention, JobDescription 
+                    AS intervention_desc, ReportedByName AS service_provider, StartDate, CurrentStatus, EstimatedCompletionDateTime AS 
+                    Deadline, LatestChaseDate AS date_last_monitoring, AssetCode FROM jobs WHERE Building_UID = ? GROUP BY Building_UID",[$dataset[0]['UID']]);
+
+                $dataset_date = select($connection, "SELECT StartDate FROM jobs WHERE Building_UID = ?", [$dataset[0]['UID']]);
+
+                foreach($dataset_date AS $v){
+                    $dt = new DateTime($v['StartDate']);
+                    $key = $dt->format('M/Y');
+
+                    if(!array_key_exists($key, $date_count)){
+                        $date_count[$key] = 0;
+                    }else{
+                        $date_count[$key]++;
+                    }
+                    
+                }
+
+                $dataset_type = select($connection, "SELECT Count(jobs.JobNumber) AS jobcount, jobs.WorkType FROM jobs WHERE Building_UID = ? GROUP BY jobs.WorkType", [$dataset[0]['UID']]);
+                $dataset_action = select($connection, "SELECT Count(jobs.JobNumber) AS jobcount, jobs.ActionType FROM jobs WHERE Building_UID = ? GROUP BY jobs.ActionType", [$dataset[0]['UID']]);
+                $dataset_status = select($connection, "SELECT Count(jobs.JobNumber) AS jobcount, jobs.CurrentStatus FROM jobs WHERE Building_UID = ? GROUP BY jobs.CurrentStatus", [$dataset[0]['UID']]);
+                $dataset_priority = select($connection, "SELECT Count(jobs.JobNumber) AS jobcount, jobs.Priority FROM jobs WHERE Building_UID = ? GROUP BY jobs.Priority", [$dataset[0]['UID']]);
+                $dataset_service_provider = select($connection, "SELECT Count(jobs.JobNumber) AS jobcount, jobs.ContractorType FROM jobs WHERE Building_UID = ? GROUP BY jobs.ContractorType", [$dataset[0]['UID']]);
+
+                $dataset['chart']['intervention_date'] = $date_count;
+                $dataset['chart']['intervention_type'] = $dataset_type;
+                $dataset['chart']['intervention_action'] = $dataset_action;
+                $dataset['chart']['intervention_status'] = $dataset_status;
+                $dataset['chart']['intervention_priority'] = $dataset_priority;
+                $dataset['chart']['intervention_service_provider'] = $dataset_service_provider;
+
+                echo json_encode(['data' => $dataset]);
+
+                //destroy database connection
+                db_disconnect($connection);
+                http_response_code(200);
+            }catch(Exception $e){
+                //return bad http request when error is encountered
+                http_response_code(400);
+            }            
             break;
         default:
 

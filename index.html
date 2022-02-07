@@ -8,6 +8,7 @@
 		<link rel="stylesheet" href="build/assets/css/plugins/owl.carousel.min.css"/>
 		<link rel="stylesheet" href="build/assets/css/plugins/owl.theme.default.min.css"/>
     <link rel="stylesheet" href="build/assets/css/plugins/pagination.css"/>
+    <link rel="stylesheet" type="text/css" href="build/assets/css/plugins/nice-select.css">
 		<link rel="stylesheet" type="text/css" href="build/assets/css/main.css">
     <link href='https://api.mapbox.com/mapbox.js/v3.3.1/mapbox.css' rel='stylesheet' />
 
@@ -42,124 +43,139 @@
 
         <div data-tab-target="site_summary">
             <div data-role="spa-content-site">
-              <div class="container">
+              <div class="container" >
                 <div class="row">
-                  <div class="col-lg-6 col-sm-12">
-                    <button class="btn btn-sm btn-warning"><span data-feather="search"></span> Dynamic search</button>
-                    <div class="table-responsive mt-5">
-                      <table class="table table-striped">
-                        <thead class="csx-light-theme">
-                          <tr>
-                            <th scope="col" width="25%"></th>
-                            <th scope="col" width="75%"></th>
-                          </tr>
-                        </thead>
-                        <tbody class="sm-font" id="tbl_summary"></tbody>
-                      </table>
-                      </div>  
+                    <div class="d-flex justify-content-between" style="width: 100%;">
+                      <select data-select="BuildingNumber"></select>
+                      <select data-select="BuildingName"></select>
+                      <select data-select="Client"></select>
+                      <select data-select="Region"></select>
+                      <button class="btn btn-sm btn-warning" id="filter_site_summary"><span data-feather="search"></span> Apply filters </button>
                     </div>
-                  <div class="col-lg-6 col-sm-12">
-                    <div class="mt-5">
-                      <button class="btn btn-sm btn-warning float-right">Export</button>
-                      <div class="chart-container" style="height:auto; width: 100%">
-                          <canvas id="number_intervention"></canvas>
-                      </div>
-                    </div>
-                    <div class="mt-5">
-                      <button class="btn btn-sm btn-warning float-right">Export</button>
-                      <div class="chart-container" style="height:auto; width: 50%; margin: 0px auto;">
-                          <canvas id="number_intervention_by_nature"></canvas>
-                      </div>
-                    </div>
+                </div>
+                <div class="row" id="site_dataset_warning">
+                  <div class="col-lg-12 d-flex justify-content-center align-items-center flex-column" style="height: 80vh;">
+                      <h6>No record matches the current criteria</h6>
                   </div>
                 </div>
-                <div class="row" style="margin-top: 150px;">
-                  <div class="col-lg-6 col-sm-12">
-                    <button class="btn btn-sm btn-warning float-right">Export</button>
-                    <div class="chart-container" style="height:auto; width: 100%">
-                      <canvas id="number_intervention_by_category"></canvas>
-                    </div>
-                  </div>
-                  <div class="col-lg-6 col-sm-12">
-                    <button class="btn btn-sm btn-warning float-right">Export</button>
-                    <div class="chart-container" style="height:auto; width: 50%; margin: 0px auto;">
-                      <canvas id="number_intervention_by_state"></canvas>
-                    </div>
-                  </div>
-                </div>
-                <div class="row" style="margin-top: 150px;">
-                  <div class="col-lg-6 col-sm-12">
-                    <button class="btn btn-sm btn-warning float-right">Export</button>
-                    <div class="chart-container" style="height:auto; width: 100%">
-                      <canvas id="number_intervention_by_priority"></canvas>
-                    </div>
-                  </div>
-                  <div class="col-lg-6 col-sm-12">
-                    <button class="btn btn-sm btn-warning float-right">Export</button>
-                    <div class="chart-container" style="height:auto; width: 100%">
-                      <canvas id="number_intervention_by_service_provider"></canvas>
-                    </div>
-                  </div>
-                </div>
-                <h1 class="header" style="margin-top: 150px; margin-bottom: 50px; text-align: center;">Intervention in progress</h1>
-                <div class="row mt-5">
-                  <div class="col-lg-3 col-sm-12">
-                    <div class="dropdown">
-                      <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="quick_search_form" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Quick search <span data-feather="search"></span>
-                      </button>
-                      <div class="dropdown-menu" aria-labelledby="quick_search_form">
-
+                <div id="site_dataset">
+                  <div class="row">
+                    <div class="col-lg-4 col-sm-12">
+                      <div class="table-responsive mt-5">
+                        <table class="table table-striped">
+                          <thead class="csx-light-theme">
+                            <tr>
+                              <th scope="col" width="25%"></th>
+                              <th scope="col" width="75%"></th>
+                            </tr>
+                          </thead>
+                          <tbody class="sm-font" id="tbl_summary"></tbody>
+                        </table>
+                        </div>  
                       </div>
-                    </div>
-                  </div>
-                  <div class="col-lg-6 col-sm-12 d-flex justify-content-around flex-group">
-                      <button class="btn btn-sm btn-warning" data-table="zcontrats" data-role="show_columns">Column <span data-feather="bar-chart-2"></span></button>
-                      <button class="btn btn-sm btn-warning">Sorting <span data-feather="filter"></span></button>
-                      <button class="btn btn-sm btn-warning">Group by <span data-feather="filter"></span></button>
-                      <div class="dropdown">
-                        <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-role="export_list_type" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                          Export <span data-feather="download"></span>
-                        </button>
-                        <div class="dropdown-menu" aria-labelledby="export_list_type" data-table="zcontrats">
-                          <a class="dropdown-item" href="#">PDF</a>
-                          <a class="dropdown-item" href="#">Word</a>
-                          <a class="dropdown-item" href="#">Excel</a>
-                          <a class="dropdown-item" href="#">XML</a>
-                          <a class="dropdown-item" href="#">JSON</a>
-                          <a class="dropdown-item" href="#">CSV</a>
-                          <a class="dropdown-item" href="#">RTF</a>
+                    <div class="col-lg-8 col-sm-12">
+                      <div class="mt-5">
+                        <button class="btn btn-sm btn-warning float-right">Export</button>
+                        <div class="chart-container" style="height:auto; width: 100%">
+                            <canvas id="number_intervention"></canvas>
                         </div>
                       </div>
-                      <button class="btn btn-sm btn-warning">Search <span data-feather="search"></span></button>
-                  </div>
-                  <div class="col-lg-3 col-sm-12">
-                    <div class="float-right" style="width: 100%;">
-                      <button class="btn btn-sm btn-warning">Add new <span data-feather="plus"></span></button>
-                      <button class="btn btn-sm btn-warning">Reload <span data-feather="refresh-cw"></span></button>
+                      <div class="mt-5">
+                        <button class="btn btn-sm btn-warning float-right">Export</button>
+                        <div class="chart-container" style="height:auto; width: 50%; margin: 0px auto;">
+                            <canvas id="number_intervention_by_nature"></canvas>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div class="row">
-                  <div class="col-lg-12">
-                    <div class="table-responsive mt-5">
-                      <table class="table table-striped">
-                        <thead class="csx-light-theme">
-                          <tr>
-                            <th scope="col">Number of the intervention</th>
-                            <th scope="col">Description of the intervention</th>
-                            <th scope="col">Service provider</th>
-                            <th scope="col">No. of Equipment</th>
-                            <th scope="col">State</th>
-                            <th scope="col">Start date</th>
-                            <th scope="col">Deadline</th>
-                            <th scope="col">Date of last monitoring</th>
-                          </tr>
-                        </thead>
-                        <tbody class="sm-font"></tbody>
-                      </table>
-                    </div> 
-                  </div>  
+                  <div class="row" style="margin-top: 150px;">
+                    <div class="col-lg-6 col-sm-12">
+                      <button class="btn btn-sm btn-warning float-right">Export</button>
+                      <div class="chart-container" style="height:auto; width: 100%">
+                        <canvas id="number_intervention_by_category"></canvas>
+                      </div>
+                    </div>
+                    <div class="col-lg-6 col-sm-12">
+                      <button class="btn btn-sm btn-warning float-right">Export</button>
+                      <div class="chart-container" style="height:auto; width: 50%; margin: 0px auto;">
+                        <canvas id="number_intervention_by_state"></canvas>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row" style="margin-top: 150px;">
+                    <div class="col-lg-6 col-sm-12">
+                      <button class="btn btn-sm btn-warning float-right">Export</button>
+                      <div class="chart-container" style="height:auto; width: 100%">
+                        <canvas id="number_intervention_by_priority"></canvas>
+                      </div>
+                    </div>
+                    <div class="col-lg-6 col-sm-12">
+                      <button class="btn btn-sm btn-warning float-right">Export</button>
+                      <div class="chart-container" style="height:auto; width: 100%">
+                        <canvas id="number_intervention_by_service_provider"></canvas>
+                      </div>
+                    </div>
+                  </div>
+                  <h1 class="header" style="margin-top: 150px; margin-bottom: 50px; text-align: center;">Intervention in progress</h1>
+                  <div class="row mt-5">
+                    <div class="col-lg-3 col-sm-12">
+                      <div class="dropdown">
+                        <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="quick_search_form" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          Quick search <span data-feather="search"></span>
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="quick_search_form">
+
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-6 col-sm-12 d-flex justify-content-around flex-group">
+                        <button class="btn btn-sm btn-warning" data-table="zcontrats" data-role="show_columns">Column <span data-feather="bar-chart-2"></span></button>
+                        <button class="btn btn-sm btn-warning">Sorting <span data-feather="filter"></span></button>
+                        <button class="btn btn-sm btn-warning">Group by <span data-feather="filter"></span></button>
+                        <div class="dropdown">
+                          <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-role="export_list_type" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Export <span data-feather="download"></span>
+                          </button>
+                          <div class="dropdown-menu" aria-labelledby="export_list_type" data-table="zcontrats">
+                            <a class="dropdown-item" href="#">PDF</a>
+                            <a class="dropdown-item" href="#">Word</a>
+                            <a class="dropdown-item" href="#">Excel</a>
+                            <a class="dropdown-item" href="#">XML</a>
+                            <a class="dropdown-item" href="#">JSON</a>
+                            <a class="dropdown-item" href="#">CSV</a>
+                            <a class="dropdown-item" href="#">RTF</a>
+                          </div>
+                        </div>
+                        <button class="btn btn-sm btn-warning">Search <span data-feather="search"></span></button>
+                    </div>
+                    <div class="col-lg-3 col-sm-12">
+                      <div class="float-right" style="width: 100%;">
+                        <button class="btn btn-sm btn-warning">Add new <span data-feather="plus"></span></button>
+                        <button class="btn btn-sm btn-warning">Reload <span data-feather="refresh-cw"></span></button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-12">
+                      <div class="table-responsive mt-5">
+                        <table class="table table-striped">
+                          <thead class="csx-light-theme">
+                            <tr>
+                              <th scope="col">Number of the intervention</th>
+                              <th scope="col">Description of the intervention</th>
+                              <th scope="col">Service provider</th>
+                              <th scope="col">No. of Equipment</th>
+                              <th scope="col">State</th>
+                              <th scope="col">Start date</th>
+                              <th scope="col">Deadline</th>
+                              <th scope="col">Date of last monitoring</th>
+                            </tr>
+                          </thead>
+                          <tbody class="sm-font" id="inv_summary"></tbody>
+                        </table>
+                      </div> 
+                    </div>  
+                  </div>
                 </div>
               </div>
             </div>

@@ -108,7 +108,6 @@
     $("[data-role='spa-content-building_list']").on("spaloaded", function(){
         var building_id = session.getItem("building_in_view");
 
-        console.log(building_id);
         if(building_id === null){
             $("[data-role='building_edit']").addClass("no-display");
             $("[data-role='building_form']").removeClass("no-display");
@@ -201,60 +200,30 @@
     });
 
     $("[data-role='spa-content-site']").on("spaloaded", function(){
-        app.protocol.ajax(
-            'build/bridge.php',
-            { request_type: 'get_site_summary'},
-            {c: show_site_summary }
-        ); 
-
-        if(ref_chart['number_intervention'] == undefined)
-            chart_.gen_chart_number_intervention();
-        else{
-            ref_chart['number_intervention'].destroy();
-            ref_chart['number_intervention'] = undefined;
-            chart_.gen_chart_number_intervention();
-        }
-
-        if(ref_chart['number_intervention_by_nature'] == undefined)
-            chart_.gen_chart_number_intervention_nature();
-        else{
-            ref_chart['number_intervention_by_nature'].destroy();
-            ref_chart['number_intervention_by_nature'] = undefined;
-            chart_.gen_chart_number_intervention_nature();
-        }
+        var building_id = session.getItem("site_in_view");
         
-        if(ref_chart['number_intervention_by_category'] == undefined)
-            chart_.gen_chart_number_intervention_category();
-        else{
-            ref_chart['number_intervention_by_category'].destroy();
-            ref_chart['number_intervention_by_category'] = undefined;
-            chart_.gen_chart_number_intervention_category();
-        }
-        
-        if(ref_chart['number_intervention_by_state'] == undefined)
-            chart_.gen_chart_number_intervention_state();
-        else{
-            ref_chart['number_intervention_by_state'].destroy();
-            ref_chart['number_intervention_by_state'] = undefined;
-            chart_.gen_chart_number_intervention_state();
+        if(building_id !== null){
+            app.page.onrendered().then(() => {
+                $("#filter_site_summary").click();
+            });
+        }else{
+            $("#site_dataset_warning").removeClass("no-display");
+            $("#site_dataset").addClass("no-display");
         }
 
-        if(ref_chart['number_intervention_by_priority'] == undefined)
-            chart_.gen_chart_number_intervention_priority();
-        else{
-            ref_chart['number_intervention_by_priority'].destroy();
-            ref_chart['number_intervention_by_priority'] = undefined;
-            chart_.gen_chart_number_intervention_priority();
-        }
+        app.page.onrendered().then(() => {
+            var selects_col = [];
 
-        if(ref_chart['number_intervention_by_service_provider'] == undefined)
-            chart_.gen_chart_number_intervention_service_provider();
-        else{
-            ref_chart['number_intervention_by_service_provider'].destroy();
-            ref_chart['number_intervention_by_service_provider'] = undefined;
-            chart_.gen_chart_number_intervention_service_provider();
-        }
+            $(`[data-role='${spa_loaded}'] [data-select]`).each(function(i, el){
+                selects_col.push($(el).attr("data-select"));
+            });
 
+            app.protocol.ajax(
+                'build/bridge.php',
+                { request_type: 'get_col_grp', fields: JSON.stringify(selects_col), table: 'buildings'},
+                {c: fillSelect}
+            )  
+        });
     });
 
     $("[data-role='spa-content-work_order']").on("spaloaded", function(){
@@ -453,7 +422,15 @@
         }   
     })
     
+    /***********************************************************
+     * Function: Export
+     * Usage: As per the table, each export are handle via 
+     * app.export.saveBlobFile app.protocol.ajax
+     * *********************************************************/
     $("[data-export]").click(function(){
+        // Get the related table associated with the export
+        // Get all the filters done by column sorting
+        // Send an ajax requrest via 
         const target_table = $(this).parent().attr("data-table");
         var filter = [];
         $(`[data-role='${spa_loaded}'] [data-column-form] .dropzone [data-filter-by-columns]`).each(function (index, el) {
@@ -464,6 +441,7 @@
             'build/bridge.php',
             { request_type: 'filter_by_column_name', filters: JSON.stringify(filter), table: target_table},
             {c: (data) => {
+                // Post processing response received from API bridge
                 const dataset = JSON.stringify(JSON.parse(data).data);
                 app.export.saveBlobFile(target_table, $(this).attr("data-export"), dataset).then((data_arg) => {
                     const parse = JSON.parse(data_arg);
@@ -479,8 +457,13 @@
         $(`[data-role='export_list_type']`).click();
     });
 
-    $(window).scroll(function(event) {
-        setTimeout(() => {
+    /***********************************************************
+     * Add all code outside spaonloaded in this promise, as some
+     * variable may not yet be available ( SPA rendering )
+     * *********************************************************/
+    app.page.onrendered().then(() => {
+
+        $(window).scroll(function(event) {
             if(spa_loaded !== "spa-content-map"){
                 var scroll = $(window).scrollTop(); 
                 if(scroll > 10){ 
@@ -491,16 +474,41 @@
             }else if(spa_loaded == "spa-content-map"){
                 $("footer").css("position", "static");
             }
-        }, 0);
+        });
+
     });
 
     $("[data-role='back-building-edit']").click(function () {
-        console.log("...");
         session.removeItem("building_in_view");
         $("[data-spa-page='spa-content-building_list']").click();
     });
 
-    // $("[data-target-collapse]").click();
+    /**********************************************************
+     * Register the event apply filters with respect to select
+     * values
+     * SPA: spa-content-site
+     * ********************************************************/
+    $("#filter_site_summary").click(function(){
+        var select_val = {};
+
+        $(`[data-role='${spa_loaded}'] [data-select]`).each(function(i, el){
+            const el_val = $(el).val();
+
+            if(el_val != "-1")
+                select_val[$(el).attr("data-select")] = el_val;
+        });   
+
+        if(Object.keys(select_val).length > 0){
+            app.protocol.ajax(
+                'build/bridge.php',
+                { request_type: 'get_col_values', filters: JSON.stringify(select_val), table: 'buildings'},
+                {c: show_site_summary}
+            );
+        }else{
+            $("#site_dataset_warning").removeClass("no-display");
+            $("#site_dataset").addClass("no-display");
+        }
+    });
 
     app.init("site_summary");
     feather.replace();

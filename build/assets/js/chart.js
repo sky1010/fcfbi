@@ -110,15 +110,13 @@ var chart_ = {
       ref_chart['work_type'] = work_type;
   },
 
-  gen_chart_number_intervention: function(data_arg){
-      // const parse = JSON.parse(data_arg);
-
+  gen_chart_number_intervention: function(data){
       const ctx = document.getElementById('number_intervention').getContext('2d');
       const number_intervention = new Chart(ctx, {
           type: 'bar',
           data: {
-              labels: ['Octobre/2021'],
-              datasets: [{ data: [1], backgroundColor: ["#2a9d8f"]}]
+              labels: Object.keys(data),
+              datasets: [{ data: Object.values(data), backgroundColor: ["#2a9d8f"]}]
           },
           options: {
             responsive: true,
@@ -129,7 +127,8 @@ var chart_ = {
             scales: {
               x: {
                 display: true,
-                title: { display: true, text: 'Month and Year' }
+                title: { display: true, text: 'Month and Year' },
+                ticks: { minRotation : 90}
             },
               y: {
                   beginAtZero: false,
@@ -145,20 +144,25 @@ var chart_ = {
   },
 
   gen_chart_number_intervention_nature: function(data_arg){
-      // const parse = JSON.parse(data_arg);
+      var ds = {k: [], v: []};
+
+      for(let x in data_arg){
+        ds.k.push(data_arg[x].WorkType);
+        ds.v.push(data_arg[x].jobcount);
+      }
 
       const ctx = document.getElementById('number_intervention_by_nature').getContext('2d');
       const number_intervention_by_nature = new Chart(ctx, {
           type: 'pie',
           data: {
-              labels: ['Categorie'],
-              datasets: [{ data: [1], backgroundColor: ["#2a9d8f"]}]
+              labels: ds.k,
+              datasets: [{ data: ds.v, backgroundColor: app.page.fillColors(ds.v.length) }]
           },
           options: {
             responsive: true,
             plugins: {
                 title: { display: true, text: 'Intervention by nature' },
-                legend: { display: false }
+                legend: { display: true }
             }
           }
       });
@@ -167,14 +171,19 @@ var chart_ = {
   },
 
   gen_chart_number_intervention_category: function(data_arg){
-      // const parse = JSON.parse(data_arg);
+      var ds = {k: [], v: []};
+
+      for(let x in data_arg){
+        ds.k.push(data_arg[x].ActionType);
+        ds.v.push(data_arg[x].jobcount);
+      }
 
       const ctx = document.getElementById('number_intervention_by_category').getContext('2d');
       const number_intervention_by_category = new Chart(ctx, {
           type: 'bar',
           data: {
-              labels: ['Category'],
-              datasets: [{ data: [1], backgroundColor: ["#2a9d8f"]}]
+              labels: ds.k,
+              datasets: [{ data: ds.v, backgroundColor: ["#2a9d8f"]}]
           },
           options: {
             responsive: true,
@@ -184,7 +193,8 @@ var chart_ = {
             },
             scales: {
               x: {
-                display: true
+                display: true,
+                ticks: { minRotation : 90}
             },
             y: {
                 beginAtZero: false,
@@ -200,20 +210,25 @@ var chart_ = {
   },
 
   gen_chart_number_intervention_state: function(data_arg){
-      // const parse = JSON.parse(data_arg);
+      var ds = {k: [], v: []};
+
+      for(let x in data_arg){
+        ds.k.push(data_arg[x].CurrentStatus);
+        ds.v.push(data_arg[x].jobcount);
+      }
 
       const ctx = document.getElementById('number_intervention_by_state').getContext('2d');
       const number_intervention_by_state = new Chart(ctx, {
           type: 'doughnut',
           data: {
-              labels: ['Status'],
-              datasets: [{ data: [1], backgroundColor: ["#2a9d8f"]}]
+              labels: ds.k,
+              datasets: [{ data: ds.v, backgroundColor: app.page.fillColors(ds.v.length)}]
           },
           options: {
             responsive: true,
             plugins: {
                 title: { display: true, text: 'Intervention by status' },
-                legend: { display: false }
+                legend: { display: true }
             }
           }
       });
@@ -222,14 +237,19 @@ var chart_ = {
   },
 
   gen_chart_number_intervention_priority: function(data_arg){
-      // const parse = JSON.parse(data_arg);
+      var ds = {k: [], v: []};
+
+      for(let x in data_arg){
+        ds.k.push(data_arg[x].Priority);
+        ds.v.push(data_arg[x].jobcount);
+      }
 
       const ctx = document.getElementById('number_intervention_by_priority').getContext('2d');
       const number_intervention_by_priority = new Chart(ctx, {
           type: 'bar',
           data: {
-              labels: ['Intervention delay'],
-              datasets: [{ data: [1], backgroundColor: ["#2a9d8f"]}]
+              labels: ds.k,
+              datasets: [{ data: ds.v, backgroundColor: ["#2a9d8f"]}]
           },
           options: {
             responsive: true,
@@ -239,7 +259,8 @@ var chart_ = {
             },
             scales: {
               x: {
-                display: true
+                display: true,
+                ticks: { minRotation : 90}
             },
             y: {
                 beginAtZero: false,
@@ -255,14 +276,19 @@ var chart_ = {
   },
 
   gen_chart_number_intervention_service_provider: function(data_arg){
-      // const parse = JSON.parse(data_arg);
+      var ds = {k: [], v: []};
 
+      for(let x in data_arg){
+        ds.k.push(data_arg[x].ContractorType);
+        ds.v.push(data_arg[x].jobcount);
+      }
+      
       const ctx = document.getElementById('number_intervention_by_service_provider').getContext('2d');
       const number_intervention_by_service_provider = new Chart(ctx, {
           type: 'bar',
           data: {
-              labels: [''],
-              datasets: [{ data: [1], backgroundColor: ["#2a9d8f"]}]
+              labels: ds.k,
+              datasets: [{ data: ds.v, backgroundColor: ["#2a9d8f"]}]
           },
           options: {
             indexAxis: 'y',

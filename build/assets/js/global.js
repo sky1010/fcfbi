@@ -31,7 +31,8 @@ var app = {
 
     init: function (page_name) {
         session.clear();
-        
+        $("[data-select]").niceSelect();
+
         $("[data-role='app_name']").text(app_name);
         $(`[data-tab='${page_name}']`).click();
 
@@ -149,7 +150,29 @@ var app = {
                     $("[role='alert']").fadeOut(500, "swing");
                 }, 5000);
             });
-        }    
+        },
+
+        onrendered: function (callback) {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    resolve(callback)
+                }, 0);
+            });
+        },
+
+        fillColors: function(amount){
+            const colors = [
+                "f94144", "f3722c", "f8961e", "f9844a", "f9c74f", "90be6d", "43aa8b", "4d908e", "577590", "277da1", "cb997e", "ddbea9", "ffe8d6", "b7b7a4", 
+                "a5a58d", "6b705c", "0a9396", "94d2bd", "e9d8a6", "ee9b00", "ca6702", "bb3e03", "ae2012", "9b2226", "2a9d8f", "e9c46a", "f4a261", "e76f51", 
+                "e63946", "f1faee", "a8dadc", "457b9d", "1d3557"
+            ];
+
+            var palette = [];
+            for(let x = 0; x < amount; x++)
+                palette.push(`#${colors[x]}`);
+
+            return palette;
+        } 
     },
 
     export: {
