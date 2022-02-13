@@ -793,16 +793,25 @@ function show_site_summary(data){
 function fill_form_building(data) {
     const parse = JSON.parse(data);
 
-    const container = $("#building_edit_inputs");
-    $(container).children().remove();
+    const building_container = $("#building_edit_inputs");
+    const map_container = $("#map_edit_inputs");
+
+    $(building_container).children().remove();
+    $(map_container).children().remove();
 
     for(x in parse.data[0]){
         var div_node = $("<div></div>").addClass("form-floating m-4");
-        var input_node = $("<input type='text'>").attr({id: x, placeholder: x, value: parse.data[0][x]}).addClass("form-control");
+        var input_node = $("<input type='text'>").attr({id: x, placeholder: x, value: parse.data[0][x], name: x}).addClass("form-control");
         var label_node = $("<label></label>").attr("for", x).text(x);
 
         $(div_node).append(input_node).append(label_node);
-        $(container).append(div_node);
+
+        if(['Latitude', 'Longitude'].includes(x)){
+            $(map_container).append(div_node);
+        }else{
+            $(building_container).append(div_node);
+        }
+        
     }
 }
 

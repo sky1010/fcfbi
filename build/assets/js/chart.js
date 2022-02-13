@@ -313,5 +313,92 @@ var chart_ = {
       });
 
       ref_chart['number_intervention_by_service_provider'] = number_intervention_by_service_provider;
+  },
+
+  gen_chart_finance: function(data){
+      const parse = JSON.parse(data);
+
+      var ds = {k: [], v: []};
+
+      for(let x in parse.data){
+        ds.k.push(parse.data[x].WorkType);
+        ds.v.push(parse.data[x].jobcount);
+      }
+        
+      const ctx = document.getElementById('finance_chart').getContext('2d');
+      const finance_chart = new Chart(ctx, {
+          type: 'pie',
+          data: {
+              labels: ds.k,
+              datasets: [{ data: ds.v, backgroundColor: app.page.fillColors(ds.k.length)}]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+                title: { display: true},
+                legend: { display: true }
+            }
+          }
+      });
+
+      ref_chart['finance_chart'] = finance_chart;
+  },
+
+  gen_chart_contractor_chart: function(data){
+      const parse = JSON.parse(data);
+
+      var ds = {k: [], v: []};
+
+      for(let x in parse.data){
+        ds.k.push(parse.data[x].CurrentStatus);
+        ds.v.push(parse.data[x].jobcount);
+      }
+        
+      const ctx = document.getElementById('contractor_chart').getContext('2d');
+      const contractor_chart = new Chart(ctx, {
+          type: 'pie',
+          data: {
+              labels: ds.k,
+              datasets: [{ data: ds.v, backgroundColor: app.page.fillColors(ds.k.length)}]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+                title: { display: true},
+                legend: { display: true }
+            }
+          }
+      });
+
+      ref_chart['contractor_chart'] = contractor_chart;
+  },
+
+  gen_chart_asset_summary: function(data){
+      const parse = JSON.parse(data);
+
+      var ds = {k: [], v: []};
+
+      for(let x in parse.data){
+        ds.k.push(parse.data[x].ActionType);
+        ds.v.push(parse.data[x].jobcount);
+      }
+        
+      const ctx = document.getElementById('asset_chart').getContext('2d');
+      const asset_chart = new Chart(ctx, {
+          type: 'pie',
+          data: {
+              labels: ds.k,
+              datasets: [{ data: ds.v, backgroundColor: app.page.fillColors(ds.k.length)}]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+                title: { display: true},
+                legend: { display: true }
+            }
+          }
+      });
+
+      ref_chart['asset_chart'] = asset_chart;
   }
 }

@@ -33,14 +33,6 @@ footer{
   height: 75vh;
 }
 
-.hide-alert{
-  opacity: 0;
-}
-
-.alert-pos{
-  position: absolute; bottom: 20px; right: 20px; z-index: 1000;
-}
-
 .sm-font{
   font-size: 14px;
 }
@@ -172,4 +164,24 @@ footer{
 .drop-active{
   background-color: var(--theme-primary-color);
   opacity: 0.5;
+}
+
+.alert-pos{
+  position: absolute; bottom: 100px; right: 20px; z-index: 1000;
+}
+
+.hide-alert{
+  opacity: 0;
+}
+
+[role=alert]{
+  font-size: 12px;
+}
+
+.form-floating{
+  width: 100%;
+}
+
+.nice-select.wide{
+  margin-bottom: 20px !important;
 }

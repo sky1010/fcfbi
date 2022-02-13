@@ -61,7 +61,8 @@
                             {icon: buildingIcon}
                         ).addTo(map);
 
-                        $(popup_dom).find("[data-role='popup_header']").text(buildings.data[x].BuildingName);
+                        $(popup_dom).find("[data-role='popup_header']").html(`${buildings.data[x].BuildingName} 
+                            <br> <p>Latitude: ${buildings.data[x].Longitude}</p><p>Longitude: ${buildings.data[x].Latitude}</p>`);
                         $(popup_dom).find("[data-role='popup_link']").attr("data-building", buildings.data[x].UID);
 
                         marker.bindPopup($(popup_dom)[0].outerHTML);
@@ -176,7 +177,19 @@
     });
 
     $("[data-role='spa-content-summary']").on("spaloaded", function(){
-        // TODO pre processsing
+        app.protocol.ajax(
+            'build/bridge.php',
+            { request_type: 'get_asset_summary'},
+            {c: (data) => {
+                if(ref_chart['asset_chart'] == undefined)
+                    chart_.gen_chart_asset_summary(data);
+                else{
+                    ref_chart['asset_chart'].destroy();
+                    ref_chart['asset_chart'] = undefined;
+                    chart_.gen_chart_asset_summary(data);
+                }
+            }}
+        );   
     });
 
     $("[data-role='spa-building_edit']").on("spaloaded", function(){
@@ -202,14 +215,9 @@
     $("[data-role='spa-content-site']").on("spaloaded", function(){
         var building_id = session.getItem("site_in_view");
         
-        // if(building_id !== null){
-            app.page.onrendered().then(() => {
-                $("#filter_site_summary").click();
-            });
-        // }else{
-        //     $("#site_dataset_warning").removeClass("no-display");
-        //     $("#site_dataset").addClass("no-display");
-        // }
+        app.page.onrendered().then(() => {
+            $("#filter_site_summary").click();
+        });
 
         app.page.onrendered().then(() => {
             var selects_col = [];
@@ -224,6 +232,7 @@
                 {c: fillSelect}
             )  
         });
+
     });
 
     $("[data-role='spa-content-work_order']").on("spaloaded", function(){
@@ -260,6 +269,48 @@
                 }
             }}
         );         
+    });
+
+    $("[data-role='spa-setting']").on("spaloaded", function(){
+        $("[data-select='lang']").niceSelect();
+    });
+
+    $("[data-role='spa-report']").on("spaloaded", function(){
+        $("[data-select='report_style']").niceSelect();
+        $("[data-select='report_graph']").niceSelect();
+    });
+
+    $("[data-role='spa-finance']").on("spaloaded", function(){
+        app.protocol.ajax(
+            'build/bridge.php',
+            { request_type: 'get_finance'},
+            {c: (data) => {
+                if(ref_chart['finance_chart'] == undefined)
+                    chart_.gen_chart_finance(data);
+                else{
+                    ref_chart['finance_chart'].destroy();
+                    ref_chart['finance_chart'] = undefined;
+                    chart_.gen_chart_finance(data);
+                }
+            }}
+        );   
+    });
+
+
+    $("[data-role='spa-contractor']").on("spaloaded", function(){
+        app.protocol.ajax(
+            'build/bridge.php',
+            { request_type: 'get_contractor'},
+            {c: (data) => {
+                if(ref_chart['contractor_chart'] == undefined)
+                    chart_.gen_chart_contractor_chart(data);
+                else{
+                    ref_chart['contractor_chart'].destroy();
+                    ref_chart['contractor_chart'] = undefined;
+                    chart_.gen_chart_contractor_chart(data);
+                }
+            }}
+        );   
     });
 
     $("[data-sidebar-collapse-target]").click(function(){
@@ -500,19 +551,44 @@
         });   
 
         if(building_id === null){
-            select_val = {BuildingNumber: '1'};
+            select_val = {BuildingName: 'CITYFM LAKANAL'};
         }
 
         if(Object.keys(select_val).length > 0){
+            console.log({ request_type: 'get_col_values', filters: JSON.stringify(select_val), table: 'buildings'});
             app.protocol.ajax(
                 'build/bridge.php',
                 { request_type: 'get_col_values', filters: JSON.stringify(select_val), table: 'buildings'},
-                {c: show_site_summary}
+                {c: (data) => {
+                    show_site_summary(data);
+                }}
             );
         }else{
             $("#site_dataset_warning").removeClass("no-display");
             $("#site_dataset").addClass("no-display");
         }
+    });
+
+    $("[data-canvas]").click(function(){
+        app.page.exportCanvas($(`#${$(this).attr("data-canvas")}`));
+    });
+
+    $("#map-edit-form").click(function(){
+        var serialize_form = $("#map_edit_inputs").serialize();
+
+        const urlParams = new URLSearchParams(serialize_form);
+        const params = Object.fromEntries(urlParams);
+
+        params.UID = session.getItem("building_in_view");
+        params.request_type = 'update_map';
+
+        app.protocol.ajax(
+            'build/bridge.php',
+            params,
+            {c: (data) => {
+                app.page.toast("SUCCESS", "The map has data has been succesfully updated !");
+            }}
+        );
     });
 
     app.init("site_summary");
