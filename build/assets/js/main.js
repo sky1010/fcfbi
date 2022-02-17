@@ -8,6 +8,49 @@
 
 (function ($) {  
 
+    var myDropzone = null;
+    var dz_options= {
+
+          autoProcessQueue: false,
+          uploadMultiple: true,
+          parallelUploads: 100,
+          maxFiles: 1,
+
+          init: function() {
+            myDropzone = this;
+
+            $("[data-role='upload_image']").click(function(e) {
+              // Make sure that the form isn't actually being sent.
+              e.preventDefault();
+              e.stopPropagation();
+              myDropzone.processQueue();
+            });
+
+            this.on("sendingmultiple", function() {
+              // Gets triggered when the form is actually being sent.
+              // Hide the success button or the complete form.
+            });
+            this.on("successmultiple", function(files, response) {
+                $("#back_image").click();
+                app.page.toast("SUCCESS", "Image uploaded successfully");
+
+                app.protocol.ajax(
+                    'build/bridge.php',
+                    { request_type: 'get_bimage'},
+                    {c: fill_bimage}
+                );   
+            });
+            this.on("errormultiple", function(files, response) {});
+
+            this.on("maxfilesexceeded", function(file){
+                myDropzone.removeFile(file);
+            });
+          }
+         
+    }
+
+    var file_dz = new Dropzone("#file_src_scid", dz_options);
+
     $("[data-spa-page]").click(function(){
         var spa_target = $(this).attr("data-spa-page");
         app.renderer.toggle('[data-role^=spa]', `[data-role=${spa_target}]`);
@@ -173,7 +216,19 @@
     });
 
     $("[data-role='spa-content-images']").on("spaloaded", function(){
-        // TODO pre processsing
+        $("#back_image").click();
+
+        app.protocol.ajax(
+            'build/bridge.php',
+            { request_type: 'get_building_uid'},
+            {c: fillUIDSelect}
+        ); 
+
+        app.protocol.ajax(
+            'build/bridge.php',
+            { request_type: 'get_bimage'},
+            {c: fill_bimage}
+        );   
     });
 
     $("[data-role='spa-content-summary']").on("spaloaded", function(){
@@ -214,11 +269,7 @@
 
     $("[data-role='spa-content-site']").on("spaloaded", function(){
         var building_id = session.getItem("site_in_view");
-        
-        app.page.onrendered().then(() => {
-            $("#filter_site_summary").click();
-        });
-
+       
         app.page.onrendered().then(() => {
             var selects_col = [];
 
@@ -229,10 +280,12 @@
             app.protocol.ajax(
                 'build/bridge.php',
                 { request_type: 'get_col_grp', fields: JSON.stringify(selects_col), table: 'buildings'},
-                {c: fillSelect}
+                {c: (data) => {
+                    fillSelect(data);
+                    $("#filter_site_summary").click();
+                }}
             )  
         });
-
     });
 
     $("[data-role='spa-content-work_order']").on("spaloaded", function(){
@@ -273,6 +326,19 @@
 
     $("[data-role='spa-setting']").on("spaloaded", function(){
         $("[data-select='lang']").niceSelect();
+        $("[data-select='column_format']").niceSelect();
+    });
+
+    $("[data-select='column_format']").change(function(){
+        const sel_val = $(this).val();
+
+        if(sel_val !== -1){
+            app.protocol.ajax(
+                'build/bridge.php',
+                { request_type: 'get_column_name', table: sel_val},
+                {c: fill_form_fields}
+            )
+        }
     });
 
     $("[data-role='spa-report']").on("spaloaded", function(){
@@ -512,22 +578,22 @@
      * Add all code outside spaonloaded in this promise, as some
      * variable may not yet be available ( SPA rendering )
      * *********************************************************/
-    app.page.onrendered().then(() => {
+    // app.page.onrendered().then(() => {
 
-        $(window).scroll(function(event) {
-            if(spa_loaded !== "spa-content-map"){
-                var scroll = $(window).scrollTop(); 
-                if(scroll > 10){ 
-                    $("footer").removeClass("d-flex").css("display", "none");
-                }else{
-                    $("footer").css({"display": "flex", "position": "fixed"});
-                }
-            }else if(spa_loaded == "spa-content-map"){
-                $("footer").css("position", "static");
-            }
-        });
+    //     $(window).scroll(function(event) {
+    //         if(spa_loaded !== "spa-content-map"){
+    //             var scroll = $(window).scrollTop(); 
+    //             if(scroll > 10){ 
+    //                 $("footer").removeClass("d-flex").css("display", "none");
+    //             }else{
+    //                 $("footer").css({"display": "flex", "position": "fixed"});
+    //             }
+    //         }else if(spa_loaded == "spa-content-map"){
+    //             $("footer").css("position", "static");
+    //         }
+    //     });
 
-    });
+    // });
 
     $("[data-role='back-building-edit']").click(function () {
         session.removeItem("building_in_view");
@@ -546,22 +612,19 @@
         $(`[data-role='${spa_loaded}'] [data-select]`).each(function(i, el){
             const el_val = $(el).val();
 
-            if(el_val != "-1")
+            if(el_val != "-1" && el_val !== null)
                 select_val[$(el).attr("data-select")] = el_val;
         });   
 
-        if(building_id === null){
-            select_val = {BuildingName: 'CITYFM LAKANAL'};
+        if(Object.keys(select_val).length === 0){
+            select_val = {Client: $("[data-select='Client'] option:nth-child(3)").text().trim()};
         }
 
         if(Object.keys(select_val).length > 0){
-            console.log({ request_type: 'get_col_values', filters: JSON.stringify(select_val), table: 'buildings'});
             app.protocol.ajax(
                 'build/bridge.php',
                 { request_type: 'get_col_values', filters: JSON.stringify(select_val), table: 'buildings'},
-                {c: (data) => {
-                    show_site_summary(data);
-                }}
+                {c: show_site_summary}
             );
         }else{
             $("#site_dataset_warning").removeClass("no-display");
@@ -589,6 +652,62 @@
                 app.page.toast("SUCCESS", "The map has data has been succesfully updated !");
             }}
         );
+    });
+
+    $("#export_to_pdf").click(function(){
+
+        var element = document.getElementById('element-to-print');
+        var opt = {
+          margin:       0.5,
+          filename:     'site_summary.pdf',
+          image:        { type: 'jpeg', quality: 1 },
+          html2canvas:  { scale: 4 },
+          pagebreak: { mode: ['avoid-all', 'css', 'legacy'] },
+          jsPDF:        { unit: 'cm', format: 'a2', orientation: 'portrait' },
+          after: ["#number_intervention"]
+        };
+        
+        $("#element-to-print button").addClass("no-display");
+        // New Promise-based usage:
+        html2pdf().set(opt).from(element).save().then(() => {
+            $("#element-to-print button").removeClass("no-display");
+        });
+     
+    });
+
+    $("#transform_fields").unbind().click(function(){
+        var fields = {};
+
+        $("#fill_fields input").each(function(i, el){
+            const field_val = $(el).val();
+
+            if(field_val !== ''){
+                fields[$(el).attr("name")] = field_val;
+            }
+        });
+
+        app.protocol.ajax(
+            'build/bridge.php',
+            {request_type: 'col_to_json', fields_: JSON.stringify(fields), table: $("[data-select='column_format']").val()},
+            {c: (data) => {
+                app.page.toast("SUCCESS", "The fields name has been succesfully updated !");
+            }}
+        );        
+    });
+
+    $("#add_image").click(function(){
+        $("#image_dataset").addClass("no-display");
+        $("#add_image_container").removeClass("no-display");
+        myDropzone.removeAllFiles();
+    });
+
+    $("#back_image").click(function(){
+        $("#image_dataset").removeClass("no-display");
+        $("#add_image_container").addClass("no-display");
+    });
+
+    $("[data-select='building_uid_list']").change(function(){
+        $("#building_image_uid").val($(this).val());
     });
 
     app.init("site_summary");

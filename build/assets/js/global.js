@@ -14,12 +14,8 @@ var session = window.sessionStorage;
 
 var buildingIcon = L.icon({
     iconUrl: 'build/assets/res/svg/building_map.png',
-    shadowUrl: 'build/assets/res/svg/building_map_shadow.png',
-
     iconSize:     [60, 60],
-    shadowSize:   [70, 70],
     iconAnchor:   [22, 60],
-    shadowAnchor: [4, 50], 
     popupAnchor:  [-3, -60] 
 });
 

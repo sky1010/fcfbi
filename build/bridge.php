@@ -13,7 +13,7 @@
     define('USER', "root");
     define('PASSWORD', "");
     define('DB_NAME', "fcfbi");
-    define('SERVER_PORT', 3307);
+    define('SERVER_PORT', 3306);
     $request = $_REQUEST['request_type'];
 
     /*
@@ -809,6 +809,120 @@
                 //creates a connection, selects the user and send the data as an JSON outstream
                 $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
                 $dataset = select($connection, "SELECT Count(jobs.JobNumber) AS jobcount, jobs.ActionType FROM jobs WHERE Building_UID = ? GROUP BY jobs.ActionType LIMIT 10", [6]);
+
+                echo json_encode(['data' => $dataset]);
+
+                //destroy database connection
+                db_disconnect($connection);
+                http_response_code(200);
+            }catch(Exception $e){
+                //return bad http request when error is encountered
+                http_response_code(400);
+            }
+            break;
+        case 'col_to_json':
+            $fields = json_decode($_REQUEST["fields_"]);
+            $table = $_REQUEST['table'];
+
+            $file = fopen("col_transform.json","r");
+            $file_size = filesize("col_transform.json");
+            $contents = fread($file,"100000");
+            $out_file = null;
+
+            if($file_size == 0){
+
+                $array = [];
+                $array[$table] = $fields;
+                $out_file = json_encode($array,JSON_PRETTY_PRINT);
+
+            }else{
+
+                $contents_ = json_decode($contents, true);
+                $keys = array_keys($contents_);
+
+                if(in_array($table, $keys)){
+                    $contents_[$table] = $fields;
+
+                    $out_file = json_encode($contents_,JSON_PRETTY_PRINT);
+                }
+
+            }
+
+            fclose($file);
+
+            $file = fopen("col_transform.json","w");
+
+            if(!empty($out_file)){
+                fwrite($file, $out_file);
+            }
+
+            fclose($file);
+
+            echo json_encode(['status' => 200]);
+            break;
+        case 'get_col_json':
+            $file = fopen("col_transform.json","r");
+            $file_size = filesize("col_transform.json");
+            $contents = fread($file,"100000");
+            $out_json = null;
+
+            if($file_size !== 0){
+                $contents_ = json_decode($contents, true);
+                $keys = array_keys($contents_);
+
+                if(array_key_exists($_REQUEST['table'], $contents_)){
+                    $out_json = $contents_[$_REQUEST['table']];
+                }
+                
+            }
+            
+            fclose($file);
+            echo json_encode(['data' => $out_json]);
+
+            break;
+        case 'get_building_uid':
+            try{
+                //creates a connection, selects the user and send the data as an JSON outstream
+                $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
+                $dataset = select($connection, "SELECT UID, BuildingName FROM buildings ORDER BY UID", []);
+
+                echo json_encode(['data' => $dataset]);
+
+                //destroy database connection
+                db_disconnect($connection);
+                http_response_code(200);
+            }catch(Exception $e){
+                //return bad http request when error is encountered
+                http_response_code(400);
+            }
+            break;
+        case 'file_upload':
+            try{
+                $target_dir = "../uploads/images/";
+                $target_file = $target_dir.basename($_FILES["file"]["name"][0]);
+                $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
+
+                if(move_uploaded_file($_FILES["file"]["tmp_name"][0], $target_file)){
+                    exec_sql(
+                        $connection,
+                        'INSERT INTO bimage ( UID, bimage ) VALUES (?, ?)',
+                        [intval($_REQUEST['building_image_uid']),$target_file]
+                    );
+                }
+
+                echo json_encode(['status' => 200]);
+                db_disconnect($connection);
+                http_response_code(200);
+            }catch(Exception $e){
+                //return bad http request when error is encountered
+                http_response_code(400);
+            }
+            break;
+        case 'get_bimage':
+            try{
+                //creates a connection, selects the user and send the data as an JSON outstream
+                $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
+                $dataset = select($connection, "SELECT b.UID, b.bimage, bd.BuildingName FROM bimage b INNER JOIN buildings bd ON b.UID = bd.UID ORDER BY b.UID", []);
 
                 echo json_encode(['data' => $dataset]);
 

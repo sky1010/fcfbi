@@ -167,7 +167,7 @@ footer{
 }
 
 .alert-pos{
-  position: absolute; bottom: 100px; right: 20px; z-index: 1000;
+  position: fixed; bottom: 100px; right: 20px; z-index: 1000;
 }
 
 .hide-alert{
@@ -177,11 +177,20 @@ footer{
 [role=alert]{
   font-size: 12px;
 }
-
+/*
 .form-floating{
   width: 100%;
-}
+}*/
 
 .nice-select.wide{
   margin-bottom: 20px !important;
+}
+
+.dropzone .dz-preview{
+  z-index: 1 !important;
+}
+
+.td_image{
+  width: 40%;
+  height: auto;
 }

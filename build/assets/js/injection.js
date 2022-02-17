@@ -11,17 +11,26 @@ function show_building(data){
     $(container).find("tbody").children().remove();
     $(container).find("thead").children().remove();
 
-    // gen header
-    var col_name = Object.keys(buildings.data[0]);
-    var tr_node = $("<tr></tr>");
-    $(tr_node).append($("<th></th>"));
+    app.protocol.ajax(
+        'build/bridge.php',
+        { request_type: 'get_col_json', table: 'buildings'},
+        {c: (data) => {
+            const parse = JSON.parse(data);
 
-    for(let x in col_name){
-        var th_node = $("<th></th>").text(col_name[x]);
-        $(tr_node).append(th_node);
-    }
+            // gen header
+            var col_name = Object.keys(buildings.data[0]);
+            var tr_node = $("<tr></tr>");
+            $(tr_node).append($("<th></th>"));
 
-    $(container).find("thead").append(tr_node);
+            for(let x in col_name){
+                var th_node = $("<th></th>").text(parse.data.hasOwnProperty(col_name[x])?parse.data[col_name[x]]:col_name[x]);
+                $(tr_node).append(th_node);
+            }
+
+            $(container).find("thead").append(tr_node);
+
+        }}
+    ); 
 
     for(let x in buildings.data){
 
@@ -678,6 +687,7 @@ function show_site_summary(data){
     const site_summary = JSON.parse(data);
     const container = $(`[data-role='${spa_loaded}'] #tbl_summary`);
 
+    console.log(site_summary);
     $(container).children().remove();
 
     if(site_summary.data.length == 0){
@@ -711,7 +721,6 @@ function show_site_summary(data){
 
         };
 
-        session.setItem("site_in_view", site_summary.data[0].BuildingNumber);
         for(let x in site_summary.data[0]){
             if(key_transform.hasOwnProperty(x)){
                 var th_node = $("<th scope='row'></th>").text(key_transform[x]);
@@ -822,9 +831,9 @@ function show_columns(sel, data){
 
     for(let x in dataset.data){
         var div_node = $("<div></div>")
-            .text(dataset.data[x].column_name)
+            .text(dataset.data[x].COLUMN_NAME)
             .addClass("col-items drag-drop m-2")
-            .attr("data-filter-by-columns", dataset.data[x].column_name);
+            .attr("data-filter-by-columns", dataset.data[x].COLUMN_NAME);
         $(container).append(div_node);
     }
 }
@@ -840,6 +849,8 @@ function fillSelect(data){
 
     for(let x in dataset.data){
         var container = $(`[data-select='${x}']`);
+
+        $(container).children().remove();
         var opt = $(`<option data-display='${key_transform[x]}'>Choose ${key_transform[x]}</option>`).val(-1);
         $(container).append(opt);
 
@@ -859,6 +870,73 @@ function fillSelect(data){
         $(el).niceSelect("update");
     });
 
+}
+
+
+function fill_form_fields(data) {
+    const parse = JSON.parse(data);
+    const container = $("#fill_fields");
+
+    $(container).children().remove();
+
+    app.protocol.ajax(
+        'build/bridge.php',
+        { request_type: 'get_col_json', table: 'buildings'},
+        {c: (data) => {
+            const parse_ = JSON.parse(data);
+
+            for(x in parse.data){
+                var col_name = parse.data[x].COLUMN_NAME;
+                var div_node = $("<div></div>").addClass("form-floating m-4");
+                var input_node = $("<input type='text'>").attr({id: col_name, placeholder: col_name, name: col_name}).addClass("form-control");
+                var label_node = $("<label></label>").attr("for", col_name).text(col_name);
+
+                if(parse_.data.hasOwnProperty(col_name)){
+                    $(input_node).attr("value", parse_.data[col_name]);
+                }
+
+                $(div_node).append(input_node).append(label_node);
+                $(container).append(div_node);
+            }
+        }}
+    ); 
+}
+
+function fillUIDSelect(data) {
+    const parse = JSON.parse(data);
+    const container = $("[data-select='building_uid_list']");
+    $(container).children().remove();
+
+    var opt = $(`<option data-display='Choose'> a building</option>`).val(-1);
+    $(container).append(opt);
+
+    for(let x in parse.data){
+        var opt = $("<option></option>").val(parse.data[x]['UID']).text(parse.data[x]['BuildingName']);
+        $(container).append(opt);
+    }    
+
+    $("[data-select='building_uid_list']").niceSelect("update")
+}
+
+function fill_bimage(data){
+    const parse = JSON.parse(data);
+    var container = $("[data-role='spa-content-images'] tbody");
+    $(container).children().remove();
+
+    for(let x in parse.data){
+        var tr_node = $("<tr></tr>").attr('uid', parse.data[x]['UID']);
+        var th_node = $("<th scope='row'></th>").text(parse.data[x]['UID']);
+        var bname = $("<td></td>").text(parse.data[x]['BuildingName']);
+
+        var b_file = parse.data[x]['bimage'].split("/");
+        b_file.shift();
+        b_file = b_file.join("/");
+
+        var bimage = $("<td></td>").append($(`<img src='${b_file}' class='td_image'>`));
+
+        $(tr_node).append(th_node).append(bname).append(bimage);
+        $(container).append(tr_node);
+    }
 }
 
 function template(nodes){
