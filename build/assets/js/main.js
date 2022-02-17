@@ -336,7 +336,7 @@
             app.protocol.ajax(
                 'build/bridge.php',
                 { request_type: 'get_column_name', table: sel_val},
-                {c: fill_form_fields}
+                {c: (data) => {fill_form_fields(data, sel_val)}}
             )
         }
     });

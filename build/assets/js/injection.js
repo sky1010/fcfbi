@@ -74,15 +74,27 @@ function show_contacts(data){
     $(container).find("tbody").children().remove();
     $(container).find("thead").children().remove();
 
-    // gen header
-    var col_name = Object.keys(contacts.data[0]);
-    var tr_node = $("<tr></tr>");
-    $(tr_node).append($("<th></th>"));
+    app.protocol.ajax(
+        'build/bridge.php',
+        { request_type: 'get_col_json', table: 'contacts'},
+        {c: (data) => {
+            const parse = JSON.parse(data);
 
-    for(let x in col_name){
-        var th_node = $("<th></th>").text(col_name[x]);
-        $(tr_node).append(th_node);
-    }
+            // gen header
+            var col_name = Object.keys(contacts.data[0]);
+            var tr_node = $("<tr></tr>");
+            $(tr_node).append($("<th></th>"));
+
+            for(let x in col_name){
+                var th_node = $("<th></th>").text(parse.data.hasOwnProperty(col_name[x])?parse.data[col_name[x]]:col_name[x]);
+                $(tr_node).append(th_node);
+            }
+
+            $(container).find("thead").append(tr_node);
+
+        }}
+    ); 
+
 
     $(container).find("thead").append(tr_node);
 
@@ -831,9 +843,9 @@ function show_columns(sel, data){
 
     for(let x in dataset.data){
         var div_node = $("<div></div>")
-            .text(dataset.data[x].COLUMN_NAME)
+            .text(dataset.data[x].column_name)
             .addClass("col-items drag-drop m-2")
-            .attr("data-filter-by-columns", dataset.data[x].COLUMN_NAME);
+            .attr("data-filter-by-columns", dataset.data[x].column_name);
         $(container).append(div_node);
     }
 }
@@ -873,7 +885,7 @@ function fillSelect(data){
 }
 
 
-function fill_form_fields(data) {
+function fill_form_fields(data , table) {
     const parse = JSON.parse(data);
     const container = $("#fill_fields");
 
@@ -881,19 +893,22 @@ function fill_form_fields(data) {
 
     app.protocol.ajax(
         'build/bridge.php',
-        { request_type: 'get_col_json', table: 'buildings'},
+        { request_type: 'get_col_json', table: table},
         {c: (data) => {
             const parse_ = JSON.parse(data);
 
             for(x in parse.data){
-                var col_name = parse.data[x].COLUMN_NAME;
+                var col_name = parse.data[x].column_name;
                 var div_node = $("<div></div>").addClass("form-floating m-4");
                 var input_node = $("<input type='text'>").attr({id: col_name, placeholder: col_name, name: col_name}).addClass("form-control");
                 var label_node = $("<label></label>").attr("for", col_name).text(col_name);
 
-                if(parse_.data.hasOwnProperty(col_name)){
-                    $(input_node).attr("value", parse_.data[col_name]);
+                if (parse_.data !==null){
+                    if(parse_.data.hasOwnProperty(col_name)){
+                        $(input_node).attr("value", parse_.data[col_name]);
+                    }  
                 }
+
 
                 $(div_node).append(input_node).append(label_node);
                 $(container).append(div_node);
