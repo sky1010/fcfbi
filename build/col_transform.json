@@ -1,0 +1,23 @@
+{
+    "contacts": {
+        "UID": "Ident"
+    },
+    "buildings": {
+        "BuildingNumber": "Building number"
+    },
+    "zcontrats": {
+        "WorkType": "Work type"
+    },
+    "fplans": {
+        "fplan": "Floor plan"
+    },
+    "assets": {
+        "AssetCode": "Asset code"
+    },
+    "jobs": {
+        "Job_UID": "Job uid"
+    },
+    "bimage": {
+        "bimage": "Images"
+    }
+}

@@ -13,7 +13,7 @@
     define('USER', "root");
     define('PASSWORD', "");
     define('DB_NAME', "fcfbi");
-    define('SERVER_PORT', 3306);
+    define('SERVER_PORT', 3307);
     $request = $_REQUEST['request_type'];
 
     /*
@@ -836,16 +836,11 @@
                 $out_file = json_encode($array,JSON_PRETTY_PRINT);
 
             }else{
-
                 $contents_ = json_decode($contents, true);
                 $keys = array_keys($contents_);
 
-                if(in_array($table, $keys)){
-                    $contents_[$table] = $fields;
-
-                    $out_file = json_encode($contents_,JSON_PRETTY_PRINT);
-                }
-
+                $contents_[$table] = $fields;
+                $out_file = json_encode($contents_,JSON_PRETTY_PRINT);
             }
 
             fclose($file);

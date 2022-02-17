@@ -23,7 +23,15 @@ function show_building(data){
             $(tr_node).append($("<th></th>"));
 
             for(let x in col_name){
-                var th_node = $("<th></th>").text(parse.data.hasOwnProperty(col_name[x])?parse.data[col_name[x]]:col_name[x]);
+
+                var temp_val = null
+                if(parse.data !== null){
+                    temp_val = parse.data.hasOwnProperty(col_name[x])?parse.data[col_name[x]]:col_name[x]
+                }else{
+                    temp_val = col_name[x];
+                }
+
+                var th_node = $("<th></th>").text(temp_val);
                 $(tr_node).append(th_node);
             }
 
@@ -86,7 +94,15 @@ function show_contacts(data){
             $(tr_node).append($("<th></th>"));
 
             for(let x in col_name){
-                var th_node = $("<th></th>").text(parse.data.hasOwnProperty(col_name[x])?parse.data[col_name[x]]:col_name[x]);
+
+                var temp_val = null
+                if(parse.data !== null){
+                    temp_val = parse.data.hasOwnProperty(col_name[x])?parse.data[col_name[x]]:col_name[x]
+                }else{
+                    temp_val = col_name[x];
+                }
+
+                var th_node = $("<th></th>").text(temp_val);
                 $(tr_node).append(th_node);
             }
 
@@ -94,9 +110,6 @@ function show_contacts(data){
 
         }}
     ); 
-
-
-    $(container).find("thead").append(tr_node);
 
     for(let x in contacts.data){
 
@@ -136,17 +149,36 @@ function show_contracts(data){
 
     $(container).find("tbody").children().remove();
     $(container).find("thead").children().remove();
-    // gen header
-    var col_name = Object.keys(contracts.data[0]);
-    var tr_node = $("<tr></tr>");
-    $(tr_node).append($("<th></th>"));
 
-    for(let x in col_name){
-        var th_node = $("<th></th>").text(col_name[x]);
-        $(tr_node).append(th_node);
-    }
+    app.protocol.ajax(
+        'build/bridge.php',
+        { request_type: 'get_col_json', table: 'zcontrats'},
+        {c: (data) => {
+            const parse = JSON.parse(data);
 
-    $(container).find("thead").append(tr_node);
+            // gen header
+            var col_name = Object.keys(contracts.data[0]);
+            var tr_node = $("<tr></tr>");
+            $(tr_node).append($("<th></th>"));
+
+            for(let x in col_name){
+
+                var temp_val = null
+                if(parse.data !== null){
+                    temp_val = parse.data.hasOwnProperty(col_name[x])?parse.data[col_name[x]]:col_name[x]
+                }else{
+                    temp_val = col_name[x];
+                }
+
+                var th_node = $("<th></th>").text(temp_val);
+                $(tr_node).append(th_node);
+            }
+
+            $(container).find("thead").append(tr_node);
+
+        }}
+    ); 
+
 
     for(let x in contracts.data){
 
@@ -186,17 +218,35 @@ function show_floor_plans(data){
 
     $(container).find("tbody").children().remove();
     $(container).find("thead").children().remove();
-    // gen header
-    var col_name = Object.keys(fplan.data[0]);
-    var tr_node = $("<tr></tr>");
-    $(tr_node).append($("<th></th>"));
 
-    for(let x in col_name){
-        var th_node = $("<th></th>").text(col_name[x]);
-        $(tr_node).append(th_node);
-    }
+    app.protocol.ajax(
+        'build/bridge.php',
+        { request_type: 'get_col_json', table: 'fplans'},
+        {c: (data) => {
+            const parse = JSON.parse(data);
+            
+            // gen header
+            var col_name = Object.keys(fplan.data[0]);
+            var tr_node = $("<tr></tr>");
+            $(tr_node).append($("<th></th>"));
 
-    $(container).find("thead").append(tr_node);
+            for(let x in col_name){
+
+                var temp_val = null
+                if(parse.data !== null){
+                    temp_val = parse.data.hasOwnProperty(col_name[x])?parse.data[col_name[x]]:col_name[x]
+                }else{
+                    temp_val = col_name[x];
+                }
+
+                var th_node = $("<th></th>").text(temp_val);
+                $(tr_node).append(th_node);
+            }
+
+            $(container).find("thead").append(tr_node);
+
+        }}
+    ); 
 
     for(let x in fplan.data){
 
@@ -224,17 +274,35 @@ function show_asset_list(data){
     const container = $(`[data-role='${spa_loaded}'] [data-target-table]`);
     $(container).find("tbody").children().remove();
     $(container).find("thead").children().remove();
-    // gen header
-    var col_name = Object.keys(asset_list.data[0]);
-    var tr_node = $("<tr></tr>");
-    $(tr_node).append($("<th></th>"));
 
-    for(let x in col_name){
-        var th_node = $("<th></th>").text(col_name[x]);
-        $(tr_node).append(th_node);
-    }
+    app.protocol.ajax(
+        'build/bridge.php',
+        { request_type: 'get_col_json', table: 'assets'},
+        {c: (data) => {
+            const parse = JSON.parse(data);
+            
+            // gen header
+            var col_name = Object.keys(asset_list.data[0]);
+            var tr_node = $("<tr></tr>");
+            $(tr_node).append($("<th></th>"));
 
-    $(container).find("thead").append(tr_node);
+            for(let x in col_name){
+
+                var temp_val = null
+                if(parse.data !== null){
+                    temp_val = parse.data.hasOwnProperty(col_name[x])?parse.data[col_name[x]]:col_name[x]
+                }else{
+                    temp_val = col_name[x];
+                }
+
+                var th_node = $("<th></th>").text(temp_val);
+                $(tr_node).append(th_node);
+            }
+
+            $(container).find("thead").append(tr_node);
+
+        }}
+    ); 
 
     for(let x in asset_list.data){
 
@@ -650,18 +718,37 @@ function show_work_order(data){
     const work_order = JSON.parse(data);
     const container = $(`[data-role='${spa_loaded}'] [data-target-table]`);
     $(container).find("tbody").children().remove();
+
     $(container).find("thead").children().remove();
-    // gen header
-    var col_name = Object.keys(work_order.data[0]);
-    var tr_node = $("<tr></tr>");
-    $(tr_node).append($("<th></th>"));
 
-    for(let x in col_name){
-        var th_node = $("<th></th>").text(col_name[x]);
-        $(tr_node).append(th_node);
-    }
+    app.protocol.ajax(
+        'build/bridge.php',
+        { request_type: 'get_col_json', table: 'jobs'},
+        {c: (data) => {
+            const parse = JSON.parse(data);
+            
+            // gen header
+            var col_name = Object.keys(work_order.data[0]);
+            var tr_node = $("<tr></tr>");
+            $(tr_node).append($("<th></th>"));
 
-    $(container).find("thead").append(tr_node);
+            for(let x in col_name){
+
+                var temp_val = null
+                if(parse.data !== null){
+                    temp_val = parse.data.hasOwnProperty(col_name[x])?parse.data[col_name[x]]:col_name[x]
+                }else{
+                    temp_val = col_name[x];
+                }
+
+                var th_node = $("<th></th>").text(temp_val);
+                $(tr_node).append(th_node);
+            }
+
+            $(container).find("thead").append(tr_node);
+
+        }}
+    ); 
 
     for(let x in work_order.data){
 
@@ -934,22 +1021,51 @@ function fillUIDSelect(data) {
 }
 
 function fill_bimage(data){
-    const parse = JSON.parse(data);
-    var container = $("[data-role='spa-content-images'] tbody");
-    $(container).children().remove();
+    const bimage_ = JSON.parse(data);
+    var container = $("[data-role='spa-content-images'] [data-target-table]");
+    $(container).find("tbody").children().remove();
+    $(container).find("thead").children().remove();
 
-    for(let x in parse.data){
-        var tr_node = $("<tr></tr>").attr('uid', parse.data[x]['UID']);
-        var th_node = $("<th scope='row'></th>").text(parse.data[x]['UID']);
-        var bname = $("<td></td>").text(parse.data[x]['BuildingName']);
+    app.protocol.ajax(
+        'build/bridge.php',
+        { request_type: 'get_col_json', table: 'bimage'},
+        {c: (data) => {
+            const parse = JSON.parse(data);
+            
+            // gen header
+            var col_name = Object.keys(bimage_.data[0]);
+            var tr_node = $("<tr></tr>");
 
-        var b_file = parse.data[x]['bimage'].split("/");
+            for(let x in col_name){
+
+                var temp_val = null
+                if(parse.data !== null){
+                    temp_val = parse.data.hasOwnProperty(col_name[x])?parse.data[col_name[x]]:col_name[x]
+                }else{
+                    temp_val = col_name[x];
+                }
+
+                var th_node = $("<th scope='col' width='5%'></th>").text(temp_val);
+                $(tr_node).append(th_node);
+            }
+
+            $(container).find("thead").append(tr_node);
+
+        }}
+    ); 
+
+    for(let x in bimage_.data){
+        var tr_node = $("<tr></tr>").attr('uid', bimage_.data[x]['UID']);
+        var th_node = $("<th scope='row'></th>").text(bimage_.data[x]['UID']);
+        var bname = $("<td></td>").text(bimage_.data[x]['BuildingName']);
+
+        var b_file = bimage_.data[x]['bimage'].split("/");
         b_file.shift();
         b_file = b_file.join("/");
 
         var bimage = $("<td></td>").append($(`<img src='${b_file}' class='td_image'>`));
 
-        $(tr_node).append(th_node).append(bname).append(bimage);
+        $(tr_node).append(th_node).append(bimage).append(bname);
         $(container).append(tr_node);
     }
 }
