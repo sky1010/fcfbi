@@ -297,6 +297,20 @@
 
         app.protocol.ajax(
             'build/bridge.php',
+            { request_type: 'get_work_orders'},
+            {c: (data) => {
+                if(ref_chart['work_orders'] == undefined)
+                    chart_.gen_chart_work_orders(data);
+                else{
+                    ref_chart['work_orders'].destroy();
+                    ref_chart['work_orders'] = undefined;
+                    chart_.gen_chart_work_orders(data);
+                }
+            }}
+        ); 
+
+        app.protocol.ajax(
+            'build/bridge.php',
             { request_type: 'get_work_priority'},
             {c: (data) => {
                 if(ref_chart['work_priority'] == undefined)

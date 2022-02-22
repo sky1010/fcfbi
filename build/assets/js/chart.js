@@ -16,7 +16,7 @@ var chart_ = {
           type: 'bar',
           data: {
               labels: temp.key,
-              datasets: [{ data: temp.val, backgroundColor: ["#005f73", "#94d2bd", "#e9d8a6", "#ee9b00", "#ca6702", "#bb3e03", "#ae2012", "#c9184a", "#ff8fa3", "#a5a58d"]}]
+              datasets: [{ data: temp.val, backgroundColor: ["#f8961e"]}]
           },
           options: {
             responsive: true,
@@ -27,7 +27,8 @@ var chart_ = {
             scales: {
               x: {
                 display: true,
-                title: { display: true, text: 'Priority' }
+                title: { display: true, text: 'Priority' },
+                ticks: { minRotation : 90}
             },
               y: {
                   beginAtZero: true,
@@ -70,8 +71,7 @@ var chart_ = {
           type: 'bar',
           data: {
               labels: temp.key,
-              datasets: [{ data: temp.val, backgroundColor: ["#005f73", "#94d2bd", "#e9d8a6", "#ee9b00", 
-              "#ca6702", "#bb3e03", "#ae2012", "#c9184a", "#ff8fa3", "#a5a58d"]}]
+              datasets: [{ data: temp.val, backgroundColor: ["#f8961e"]}]
           },
           options: {
             responsive: true,
@@ -82,7 +82,8 @@ var chart_ = {
             scales: {
               x: {
                 display: true,
-                title: { display: true, text: 'Work type' }
+                title: { display: true, text: 'Work type' },
+                ticks: { minRotation : 90}
             },
               y: {
                   beginAtZero: true,
@@ -400,5 +401,114 @@ var chart_ = {
       });
 
       ref_chart['asset_chart'] = asset_chart;
+  },
+
+  gen_chart_work_orders: function(data){
+      const parse = JSON.parse(data);
+
+      class template {
+        #dps = null;
+        #type = ""
+        #root_name = null;
+        #color = null;
+        static datapoints = [];
+
+        constructor(dps, name, type){
+          this.dps = dps;
+          this.type = type;
+          this.root_name = name
+          this.color = app.page.fillColors(Math.random() * (10 - 1) + 1).pop();
+        }
+
+        genTemplate(){
+          let temp = {};
+          temp[this.root_name] = [];
+
+          temp[this.root_name].push({
+            color: this.color,
+            name: this.root_name,
+            type: this.type,
+            dataPoints: [this.dps]
+          });
+
+          template.datapoints.push({y: this.dps.y, name: this.root_name, color: this.color});
+
+          return temp;
+        }
+
+        static get_data_points(){
+          return this.datapoints;
+        }
+      };
+
+      var objects = [];
+
+      for(let x in parse.data){
+
+        let obj = new template({
+          x: parse.data[x].Client,
+          y: parse.data[x].tot_client
+        }, parse.data[x].Client, 'pie');
+
+        objects.push(obj.genTemplate());
+      }
+
+      var chart_data = {
+        "Work orders created": [{
+          click: chartDrilldownHandler,
+          cursor: "pointer",
+          explodeOnClick: false,
+          innerRadius: "75%",
+          legendMarkerType: "square",
+          name: "Work orders created",
+          radius: "100%",
+          showInLegend: true,
+          startAngle: 90,
+          type: "pie",
+          dataPoints: template.get_data_points()
+        }]
+      };
+
+      for(let z in objects){
+        for(let y in objects[z]){
+          chart_data[y] = objects[z][y];
+        }
+      }
+
+      var chart_options = {
+        animationEnabled: true,
+        theme: "light2",
+        title: {text: "Work orders created"},
+        legend: {fontFamily: "calibri",fontSize: 14},
+        data: []
+      };
+
+      var drilldownedChartOptions = {
+        animationEnabled: true,
+        theme: "light2",
+        axisX: {labelFontColor: "#717171",lineColor: "#a2a2a2", tickColor: "#a2a2a2"},
+        axisY: {gridThickness: 0,includeZero: false,labelFontColor: "#717171", lineColor: "#a2a2a2",tickColor: "#a2a2a2",lineThickness: 1},
+        data: []
+      };
+
+      var chart = new CanvasJS.Chart("work_orders", chart_options);
+      chart.options.data = chart_data["Work orders created"];
+      chart.render();
+
+      function chartDrilldownHandler(e) {
+        chart = new CanvasJS.Chart("work_orders", drilldownedChartOptions);
+        chart.options.data = chart_data[e.dataPoint.name];
+        chart.options.title = { text: e.dataPoint.name }
+
+        chart.render();
+        $("#chart_drill_back").toggleClass("invisible");
+      }
+
+      $("#chart_drill_back").unbind().click(function() { 
+        $(this).toggleClass("invisible");
+        chart = new CanvasJS.Chart("work_orders", chart_options);
+        chart.options.data = chart_data["Work orders created"];
+        chart.render();
+      });
   }
 }

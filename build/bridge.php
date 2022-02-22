@@ -929,6 +929,22 @@
                 http_response_code(400);
             }
             break;
+        case 'get_work_orders':
+            try{
+                //creates a connection, selects the user and send the data as an JSON outstream
+                $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
+                $dataset = select($connection, "SELECT COUNT(Client) AS tot_client, Client FROM jobs GROUP BY Client", []);
+
+                echo json_encode(['data' => $dataset]);
+
+                //destroy database connection
+                db_disconnect($connection);
+                http_response_code(200);
+            }catch(Exception $e){
+                //return bad http request when error is encountered
+                http_response_code(400);
+            }
+            break;
         default:
 
             // HTTTP CODE BAD REQUEST

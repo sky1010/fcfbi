@@ -786,7 +786,6 @@ function show_site_summary(data){
     const site_summary = JSON.parse(data);
     const container = $(`[data-role='${spa_loaded}'] #tbl_summary`);
 
-    console.log(site_summary);
     $(container).children().remove();
 
     if(site_summary.data.length == 0){

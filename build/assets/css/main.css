@@ -194,3 +194,7 @@ footer{
   width: 40%;
   height: auto;
 }
+
+.invisible {
+  display: none;
+}
