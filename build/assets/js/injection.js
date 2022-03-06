@@ -152,7 +152,7 @@ function show_contracts(data){
 
     app.protocol.ajax(
         'build/bridge.php',
-        { request_type: 'get_col_json', table: 'zcontrats'},
+        { request_type: 'get_col_json', table: 'contracts'},
         {c: (data) => {
             const parse = JSON.parse(data);
 
@@ -842,8 +842,8 @@ function show_site_summary(data){
                 var inv_no_eq = $("<td></td>").text(site_summary.data.interventions[x].AssetCode);
                 var inv_state = $("<td></td>").text(site_summary.data.interventions[x].CurrentStatus);
                 var inv_start_dt = $("<td></td>").text(site_summary.data.interventions[x].StartDate);
-                var inv_end_dt = $("<td></td>").text(site_summary.data.interventions[x].Deadline);
-                var inv_last_dt = $("<td></td>").text(site_summary.data.interventions[x].date_last_monitoring);
+                // var inv_end_dt = $("<td></td>").text(site_summary.data.interventions[x].Deadline);
+                // var inv_last_dt = $("<td></td>").text(site_summary.data.interventions[x].date_last_monitoring);
 
                 $(tr_node)
                     .append(th_node)
@@ -852,8 +852,8 @@ function show_site_summary(data){
                     .append(inv_no_eq)
                     .append(inv_state)
                     .append(inv_start_dt)
-                    .append(inv_end_dt)
-                    .append(inv_last_dt);
+                    // .append(inv_end_dt)
+                    // .append(inv_last_dt);
                 $(container_inv).append(tr_node);
             }
         }
@@ -918,7 +918,6 @@ function fill_form_building(data) {
         }else{
             $(building_container).append(div_node);
         }
-        
     }
 }
 

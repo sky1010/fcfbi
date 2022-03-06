@@ -12,7 +12,7 @@
     define('HOST', "localhost");
     define('USER', "root");
     define('PASSWORD', "");
-    define('DB_NAME', "fcfbi");
+    define('DB_NAME', "fcfbin");
     define('SERVER_PORT', 3307);
     $request = $_REQUEST['request_type'];
 
@@ -75,7 +75,7 @@
             try{
                 //creates a connection, selects the user and send the data as an JSON outstream
                 $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
-                $contracts = select($connection, "SELECT * FROM zcontrats ORDER BY BuildingName", []);
+                $contracts = select($connection, "SELECT * FROM contracts ORDER BY Building", []);
 
                 echo json_encode(['data' => $contracts]);
 
@@ -256,25 +256,25 @@
                 $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
 
                 $temp = [];
-                  $client = select($connection, "SELECT COUNT(BuildingName) AS tot_col, (CASE 
+                  $client = select($connection, "SELECT COUNT(Building) AS tot_col, (CASE 
                     WHEN Client IS NULL THEN 'Empty'
                     ELSE Client
                     END) AS col_name
-                    FROM zcontrats GROUP BY Client", []);
+                    FROM contracts GROUP BY Client", []);
                 $temp['Client'] = $client;
 
-                $region = select($connection, "SELECT COUNT(BuildingName) AS tot_col, (CASE 
+                $region = select($connection, "SELECT COUNT(Building) AS tot_col, (CASE 
                     WHEN Region IS NULL THEN 'Empty'
                     ELSE Region
                     END) AS col_name
-                    FROM zcontrats GROUP BY Region", []);
+                    FROM contracts GROUP BY Region", []);
                 $temp['Region'] = $region;
 
-                $building_name = select($connection, "SELECT COUNT(BuildingName) AS tot_col, (CASE 
-                    WHEN BuildingName IS NULL THEN 'Empty'
-                    ELSE BuildingName
+                $building_name = select($connection, "SELECT COUNT(Building) AS tot_col, (CASE 
+                    WHEN Building IS NULL THEN 'Empty'
+                    ELSE Building
                     END) AS col_name
-                    FROM zcontrats GROUP BY BuildingName", []);
+                    FROM contracts GROUP BY Building", []);
                 $temp['BuildingName'] = $building_name;
 
                 echo json_encode(['data' => $temp]);
@@ -501,9 +501,9 @@
 
                 //creates a connection, selects the user and send the data as an JSON outstream
                 $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
-                $zcontrats = select($connection, sprintf("SELECT * FROM zcontrats WHERE %s ", $where_clauses), []);
+                $contracts = select($connection, sprintf("SELECT * FROM contracts WHERE %s ", $where_clauses), []);
 
-                echo json_encode(['data' => $zcontrats]);
+                echo json_encode(['data' => $contracts]);
 
                 //destroy database connection
                 db_disconnect($connection);
@@ -708,10 +708,8 @@
 
                 if(!empty($dataset)){
                     $dataset['interventions'] = select($connection, "SELECT COUNT(Job_UID) AS number_intervention, JobDescription 
-                        AS intervention_desc, ReportedByName AS service_provider, StartDate, CurrentStatus, EstimatedCompletionDateTime AS 
-                        Deadline, LatestChaseDate AS date_last_monitoring, AssetCode FROM jobs WHERE Building_UID = ? 
-                        GROUP BY Building_UID, JobDescription, ReportedByName, StartDate, CurrentStatus, EstimatedCompletionDateTime,
-                        Deadline, LatestChaseDate, AssetCode",[$dataset[0]['UID']]);
+                        AS intervention_desc, ReportedByName AS service_provider, StartDate, CurrentStatus, AssetCode FROM jobs WHERE Building_UID = ? 
+                        GROUP BY Building_UID, JobDescription, ReportedByName, StartDate, CurrentStatus, AssetCode",[$dataset[0]['UID']]);
 
                     $dataset_date = select($connection, "SELECT StartDate FROM jobs WHERE Building_UID = ?", [$dataset[0]['UID']]);
 
@@ -728,10 +726,10 @@
                     }
 
                     $dataset_type = select($connection, "SELECT Count(jobs.JobNumber) AS jobcount, jobs.WorkType FROM jobs WHERE Building_UID = ? GROUP BY jobs.WorkType", [$dataset[0]['UID']]);
-                    $dataset_action = select($connection, "SELECT Count(jobs.JobNumber) AS jobcount, jobs.ActionType FROM jobs WHERE Building_UID = ? GROUP BY jobs.ActionType", [$dataset[0]['UID']]);
+                    $dataset_action = select($connection, "SELECT Count(jobs.JobNumber) AS jobcount, jobs.JobDescription FROM jobs WHERE Building_UID = ? GROUP BY jobs.JobDescription", [$dataset[0]['UID']]);
                     $dataset_status = select($connection, "SELECT Count(jobs.JobNumber) AS jobcount, jobs.CurrentStatus FROM jobs WHERE Building_UID = ? GROUP BY jobs.CurrentStatus", [$dataset[0]['UID']]);
                     $dataset_priority = select($connection, "SELECT Count(jobs.JobNumber) AS jobcount, jobs.Priority FROM jobs WHERE Building_UID = ? GROUP BY jobs.Priority", [$dataset[0]['UID']]);
-                    $dataset_service_provider = select($connection, "SELECT Count(jobs.JobNumber) AS jobcount, jobs.ContractorType FROM jobs WHERE Building_UID = ? GROUP BY jobs.ContractorType", [$dataset[0]['UID']]);
+                    $dataset_service_provider = select($connection, "SELECT Count(jobs.JobNumber) AS jobcount, jobs.WorkerName FROM jobs WHERE Building_UID = ? GROUP BY jobs.WorkerName", [$dataset[0]['UID']]);
 
                     $dataset['chart']['intervention_date'] = $date_count;
                     $dataset['chart']['intervention_type'] = $dataset_type;
@@ -808,7 +806,7 @@
             try{
                 //creates a connection, selects the user and send the data as an JSON outstream
                 $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
-                $dataset = select($connection, "SELECT Count(jobs.JobNumber) AS jobcount, jobs.ActionType FROM jobs WHERE Building_UID = ? GROUP BY jobs.ActionType LIMIT 10", [6]);
+                $dataset = select($connection, "SELECT Count(jobs.JobNumber) AS jobcount, jobs.JobDescription FROM jobs WHERE Building_UID = ? GROUP BY jobs.JobDescription LIMIT 10", [6]);
 
                 echo json_encode(['data' => $dataset]);
 

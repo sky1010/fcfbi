@@ -236,6 +236,7 @@
             'build/bridge.php',
             { request_type: 'get_asset_summary'},
             {c: (data) => {
+                console.log(data);
                 if(ref_chart['asset_chart'] == undefined)
                     chart_.gen_chart_asset_summary(data);
                 else{
@@ -382,6 +383,7 @@
             'build/bridge.php',
             { request_type: 'get_contractor'},
             {c: (data) => {
+                console.log(data);
                 if(ref_chart['contractor_chart'] == undefined)
                     chart_.gen_chart_contractor_chart(data);
                 else{
