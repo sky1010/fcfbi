@@ -6,70 +6,65 @@
 
 function show_building(data){
     const buildings = JSON.parse(data);
-    const container = $(`[data-role='${spa_loaded}'] [data-target-table]`);
 
-    $(container).find("tbody").children().remove();
-    $(container).find("thead").children().remove();
+    if(buildings.data.length !== 0){
+        const container = $(`[data-role='${spa_loaded}'] [data-target-table]`);
 
-    app.protocol.ajax(
-        'build/bridge.php',
-        { request_type: 'get_col_json', table: 'buildings'},
-        {c: (data) => {
-            const parse = JSON.parse(data);
+        $(container).find("tbody").children().remove();
+        $(container).find("thead").children().remove();
 
-            // gen header
-            var col_name = Object.keys(buildings.data[0]);
-            var tr_node = $("<tr></tr>");
-            $(tr_node).append($("<th></th>"));
+        app.protocol.ajax(
+            'build/bridge.php',
+            { request_type: 'get_col_json', table: 'TabsBuildings'},
+            {c: (data) => {
+                const parse = JSON.parse(data);
 
-            for(let x in col_name){
+                // gen header
+                var col_name = Object.keys(buildings.data[0]);
+                var tr_node = $("<tr></tr>");
+                $(tr_node).append($("<th></th>"));
 
-                var temp_val = null
-                if(parse.data !== null){
-                    temp_val = parse.data.hasOwnProperty(col_name[x])?parse.data[col_name[x]]:col_name[x]
-                }else{
-                    temp_val = col_name[x];
+                for(let x in col_name){
+
+                    var temp_val = null
+                    if(parse.data !== null){
+                        temp_val = parse.data.hasOwnProperty(col_name[x])?parse.data[col_name[x]]:col_name[x]
+                    }else{
+                        temp_val = col_name[x];
+                    }
+
+                    var th_node = $("<th></th>").text(temp_val);
+                    $(tr_node).append(th_node);
                 }
 
-                var th_node = $("<th></th>").text(temp_val);
-                $(tr_node).append(th_node);
+                $(container).find("thead").append(tr_node);
+
+            }}
+        ); 
+    
+        for(let x in buildings.data){
+
+            var tr = $("<tr></tr>").attr("data-building", buildings.data[x].UID );
+            var edit_btn = $("<th scope='row'></th>").append($("<button type='button' class='btn btn-sm btn-dark'><span class='hover-pointer' data-feather='edit-3'></span></button>"));
+
+            $(tr).append(edit_btn);
+            
+            for(let y in buildings.data[x]){
+                var td_node = $("<td></td>").text(buildings.data[x][y]);
+                $(tr).append(td_node);
             }
 
-            $(container).find("thead").append(tr_node);
+            $(container).find("tbody").append(tr);
 
-        }}
-    ); 
+            $(edit_btn).find("button").click(function(){
+                var building_id = $(this).parent().parent().attr("data-building");
+                session.setItem("building_in_view", building_id);
+                $("[data-spa-page='spa-content-building_list']").click();
+            });
 
-    for(let x in buildings.data){
-
-        var tr = $("<tr></tr>").attr("data-building", buildings.data[x].UID );
-        var edit_btn = $("<th scope='row'></th>").append($("<button type='button' class='btn btn-sm btn-dark'><span class='hover-pointer' data-feather='edit-3'></span></button>"));
-
-        $(tr).append(edit_btn);
-        
-        for(let y in buildings.data[x]){
-            var td_node = $("<td></td>").text(buildings.data[x][y]);
-            $(tr).append(td_node);
         }
 
-        $(container).find("tbody").append(tr);
-
-        $(edit_btn).find("button").click(function(){
-            var building_id = $(this).parent().parent().attr("data-building");
-            session.setItem("building_in_view", building_id);
-            $("[data-spa-page='spa-content-building_list']").click();
-        });
-
     }
-
-    // $(`[data-role='${spa_loaded}'] [data-target-pagination]`).pagination({
-    //     dataSource: [...$(`[data-role='${spa_loaded}'] [data-target-table] tbody tr`)],
-    //     pageSize: 9,
-    //     callback: function(data, pagination) {
-    //         var html = template(data);
-    //         $(`[data-role='${spa_loaded}'] [data-target-table] tbody`).html(html);
-    //     }
-    // })
 
     feather.replace();
 }
@@ -152,7 +147,7 @@ function show_contracts(data){
 
     app.protocol.ajax(
         'build/bridge.php',
-        { request_type: 'get_col_json', table: 'contracts'},
+        { request_type: 'get_col_json', table: 'COContracts'},
         {c: (data) => {
             const parse = JSON.parse(data);
 
@@ -261,11 +256,6 @@ function show_floor_plans(data){
         }
 
         $(container).find("tbody").append(tr);
-
-        // $(edit_btn).click(function(){
-        //     // TODO
-        // });
-
     }
 }
 
@@ -297,6 +287,7 @@ function show_asset_list(data){
 
                 var th_node = $("<th></th>").text(temp_val);
                 $(tr_node).append(th_node);
+
             }
 
             $(container).find("thead").append(tr_node);
@@ -312,15 +303,13 @@ function show_asset_list(data){
         $(tr).append(edit_btn);
         
         for(let y in asset_list.data[x]){
+
             var td_node = $("<td></td>").text(asset_list.data[x][y]);
             $(tr).append(td_node);
+
         }
 
         $(container).find("tbody").append(tr);
-
-        // $(edit_btn).click(function(){
-        //     // TODO
-        // });
 
     }
 
@@ -785,7 +774,6 @@ function show_work_order(data){
 function show_site_summary(data){
     const site_summary = JSON.parse(data);
     const container = $(`[data-role='${spa_loaded}'] #tbl_summary`);
-
     $(container).children().remove();
 
     if(site_summary.data.length == 0){
@@ -806,12 +794,10 @@ function show_site_summary(data){
             Region: 'Region',
             SubRegion: 'Subregion',
             EmailAddress: 'Email',
-            Division: 'Division',
             Landlord: 'Landlord', 
             InsuranceBroker: 'Insurance broker',
             EstatesManager: 'Estates manager',
             RegionalOperationsManager: 'Regional operations manager',
-            Status: 'Status',
             Longitude: 'Longitude',
             Latitude: 'Latitude',
             Website: 'Website',
@@ -830,16 +816,19 @@ function show_site_summary(data){
             }
         }
 
-        if(site_summary.data.interventions.length > 0){
-            var container_inv = $("#inv_summary");
-            $(container_inv).children().remove();
+        var container_inv = $("#inv_summary");
+        $(container_inv).children().remove();
 
+        if(site_summary.data.interventions.length > 0){
             for(let x in site_summary.data.interventions){
                 var tr_node = $("<tr></tr>");
-                var th_node = $("<th scope='row'></th>").text(site_summary.data.interventions[x].number_intervention);
+                var th_node = $("<th scope='row'></th>").text(site_summary.data.interventions[x].BuildingName);
                 var inv_desc = $("<td></td>").text(site_summary.data.interventions[x].intervention_desc);
-                var inv_sp = $("<td></td>").text(site_summary.data.interventions[x].service_provider);
-                var inv_no_eq = $("<td></td>").text(site_summary.data.interventions[x].AssetCode);
+                // var inv_sp = $("<td></td>").text(site_summary.data.interventions[x].service_provider);
+                let assetCode = site_summary.data.interventions[x].AssetCode;
+                assetCode = (assetCode === null)?'N/A':assetCode;
+
+                var inv_no_eq = $("<td></td>").text(assetCode);
                 var inv_state = $("<td></td>").text(site_summary.data.interventions[x].CurrentStatus);
                 var inv_start_dt = $("<td></td>").text(site_summary.data.interventions[x].StartDate);
                 // var inv_end_dt = $("<td></td>").text(site_summary.data.interventions[x].Deadline);
@@ -848,7 +837,7 @@ function show_site_summary(data){
                 $(tr_node)
                     .append(th_node)
                     .append(inv_desc)
-                    .append(inv_sp)
+                    // .append(inv_sp)
                     .append(inv_no_eq)
                     .append(inv_state)
                     .append(inv_start_dt)
@@ -885,15 +874,16 @@ function show_site_summary(data){
             }
         };
 
-        for(let x in temp_chart_config){
+        // DEPRECATED, KEPT IN CASE OF ROLLBACK
+        // for(let x in temp_chart_config){
 
-            if(ref_chart[x] != undefined){
-                ref_chart[x].destroy();
-                ref_chart[x] = undefined;
-            }
+        //     if(ref_chart[x] != undefined){
+        //         ref_chart[x].destroy();
+        //         ref_chart[x] = undefined;
+        //     }
 
-            temp_chart_config[x].callback(temp_chart_config[x].data);
-        }
+        //     temp_chart_config[x].callback(temp_chart_config[x].data);
+        // }
     }
 }
 
@@ -928,9 +918,9 @@ function show_columns(sel, data){
 
     for(let x in dataset.data){
         var div_node = $("<div></div>")
-            .text(dataset.data[x].column_name)
+            .text(dataset.data[x].COLUMN_NAME)
             .addClass("col-items drag-drop m-2")
-            .attr("data-filter-by-columns", dataset.data[x].column_name);
+            .attr("data-filter-by-columns", dataset.data[x].COLUMN_NAME);
         $(container).append(div_node);
     }
 }
@@ -941,11 +931,18 @@ function fillSelect(data){
         BuildingNumber: 'Site number',
         BuildingName: 'Site name',
         Client: 'Client',
-        Region: 'Region'
+        RegionName: 'Region'
+    };
+
+    // fields remapped is not compatible with the initial tables specs
+    var key_remapped_fields = {
+        BuildingName: 'c.BuildingName', 
+        Client: 'tc.Client',
+        RegionName: 'tr.RegionName'
     };
 
     for(let x in dataset.data){
-        var container = $(`[data-select='${x}']`);
+        var container = $(`[data-select='${key_remapped_fields[x]}']`);
 
         $(container).children().remove();
         var opt = $(`<option data-display='${key_transform[x]}'>Choose ${key_transform[x]}</option>`).val(-1);
@@ -971,6 +968,7 @@ function fillSelect(data){
 
 
 function fill_form_fields(data , table) {
+
     const parse = JSON.parse(data);
     const container = $("#fill_fields");
 
@@ -983,7 +981,7 @@ function fill_form_fields(data , table) {
             const parse_ = JSON.parse(data);
 
             for(x in parse.data){
-                var col_name = parse.data[x].column_name;
+                var col_name = parse.data[x].COLUMN_NAME;
                 var div_node = $("<div></div>").addClass("form-floating m-4");
                 var input_node = $("<input type='text'>").attr({id: col_name, placeholder: col_name, name: col_name}).addClass("form-control");
                 var label_node = $("<label></label>").attr("for", col_name).text(col_name);
@@ -993,7 +991,6 @@ function fill_form_fields(data , table) {
                         $(input_node).attr("value", parse_.data[col_name]);
                     }  
                 }
-
 
                 $(div_node).append(input_node).append(label_node);
                 $(container).append(div_node);
@@ -1024,47 +1021,129 @@ function fill_bimage(data){
     $(container).find("tbody").children().remove();
     $(container).find("thead").children().remove();
 
-    app.protocol.ajax(
-        'build/bridge.php',
-        { request_type: 'get_col_json', table: 'bimage'},
-        {c: (data) => {
-            const parse = JSON.parse(data);
-            
-            // gen header
-            var col_name = Object.keys(bimage_.data[0]);
-            var tr_node = $("<tr></tr>");
+    if(bimage_.data.length != 0){
+        app.protocol.ajax(
+            'build/bridge.php',
+            { request_type: 'get_col_json', table: 'bimage'},
+            {c: (data) => {
+                const parse = JSON.parse(data);
+                
+                // gen header
+                var col_name = Object.keys(bimage_.data[0]);
+                var tr_node = $("<tr></tr>");
 
-            for(let x in col_name){
+                for(let x in col_name){
 
-                var temp_val = null
-                if(parse.data !== null){
-                    temp_val = parse.data.hasOwnProperty(col_name[x])?parse.data[col_name[x]]:col_name[x]
-                }else{
-                    temp_val = col_name[x];
+                    var temp_val = null
+                    if(parse.data !== null){
+                        temp_val = parse.data.hasOwnProperty(col_name[x])?parse.data[col_name[x]]:col_name[x]
+                    }else{
+                        temp_val = col_name[x];
+                    }
+
+                    var th_node = $("<th scope='col' width='5%'></th>").text(temp_val);
+                    $(tr_node).append(th_node);
                 }
 
-                var th_node = $("<th scope='col' width='5%'></th>").text(temp_val);
-                $(tr_node).append(th_node);
+                $(container).find("thead").append(tr_node);
+
+            }}
+        ); 
+
+        for(let x in bimage_.data){
+            var tr_node = $("<tr></tr>").attr('uid', bimage_.data[x]['UID']);
+            var th_node = $("<th scope='row'></th>").text(bimage_.data[x]['UID']);
+            var bname = $("<td></td>").text(bimage_.data[x]['BuildingName']);
+
+            var b_file = bimage_.data[x]['bimage'].split("/");
+            b_file.shift();
+            b_file = b_file.join("/");
+
+            var bimage = $("<td></td>").append($(`<img src='${b_file}' class='td_image'>`));
+
+            $(tr_node).append(th_node).append(bimage).append(bname);
+            $(container).append(tr_node);
+        }
+    }
+}
+
+function updateSelect(data){
+    const dataset = JSON.parse(data);
+
+    var key_transform = {
+        buildings: 'Site name',
+        regions: 'Region'
+    };
+
+    // fields remapped is not compatible with the initial tables specs
+    var key_remapped_fields = {
+        buildings: 'c.BuildingName', 
+        regions: 'tr.RegionName'
+    };
+
+    for(let x in dataset.data){
+        var container = $(`[data-select='${key_remapped_fields[x]}']`);
+
+        $(container).children().remove();
+        var opt = $(`<option data-display='${key_transform[x]}'>Choose ${key_transform[x]}</option>`).val(-1);
+        $(container).append(opt);
+
+        for(let y in dataset.data[x]){
+            const rel_key = Object.keys(dataset.data[x][y])[0];
+            var opt_text = dataset.data[x][y][rel_key];
+            if(dataset.data[x][y][rel_key] === null){
+                dataset.data[x][y][rel_key] = 0;
+                opt_text = 'Empty';
             }
+            
+            var opt = $("<option></option>").val(opt_text).text(opt_text);
+            $(container).append(opt);
+        }
+    }
 
-            $(container).find("thead").append(tr_node);
+    $(`[data-role='${spa_loaded}'] [data-select]`).each(function(i, el){
+        $(el).niceSelect("update");
+    });
 
-        }}
-    ); 
+}
 
-    for(let x in bimage_.data){
-        var tr_node = $("<tr></tr>").attr('uid', bimage_.data[x]['UID']);
-        var th_node = $("<th scope='row'></th>").text(bimage_.data[x]['UID']);
-        var bname = $("<td></td>").text(bimage_.data[x]['BuildingName']);
+function fill_report_card(data){
+    const dataset = JSON.parse(data);
+    // console.log(dataset);
 
-        var b_file = bimage_.data[x]['bimage'].split("/");
-        b_file.shift();
-        b_file = b_file.join("/");
+    /*------------ REPAIR JOB CARD -------------*/
+    $("[data-field='in_sla_field']").text(dataset.data.repair_jobs.in_sla);
+    $("[data-field='out_sla_field']").text(dataset.data.repair_jobs.out_sla);
 
-        var bimage = $("<td></td>").append($(`<img src='${b_file}' class='td_image'>`));
+    /*------------ MAINTAINANCE JOB CARD -------------*/
+    $("[data-field='in_sla_field_mj']").text(dataset.data.maintenance_jobs.in_sla);
+    $("[data-field='out_sla_field_mj']").text(dataset.data.maintenance_jobs.out_sla);
 
-        $(tr_node).append(th_node).append(bimage).append(bname);
-        $(container).append(tr_node);
+    /*------------ JOB TODAY CARD -------------*/
+    $("[data-field='job_today']").text(dataset.data.jobs_today);
+
+    /*------------ LIVE JOB STATUS CARD -------------*/
+    var container = $("[data-field='live_job_status']");
+    $(container).children().remove();
+    for(let x in dataset.data.live_job_status){
+        var div_node = $("<div></div>").addClass("d-lg-flex justify-content-between");
+        var p_head_node = $("<p></p>").text(dataset.data.live_job_status[x].CurrentStatus);
+        var p_desc_node = $("<p></p>").text(dataset.data.live_job_status[x].number_intervention);
+
+        $(div_node).append(p_head_node).append(p_desc_node);
+        $(container).append(div_node);
+    }
+
+    /*------------ JOB PRIORITY CARD -------------*/
+    var container = $("[data-field='jobs_priority']");
+    $(container).children().remove();
+    for(let x in dataset.data.job_priorities){
+        var div_node = $("<div></div>").addClass("d-lg-flex justify-content-between");
+        var p_head_node = $("<p></p>").text(dataset.data.job_priorities[x].CurrentStatus);
+        var p_desc_node = $("<p></p>").text(dataset.data.job_priorities[x].number_intervention);
+
+        $(div_node).append(p_head_node).append(p_desc_node);
+        $(container).append(div_node);
     }
 }
 

@@ -1,10 +1,46 @@
 :root{
-  --bg-color-opacity: 0.2;
-  --theme-primary-color: rgba(132,146,166, var(--bg-color-opacity));
+  --font-color: 0, 0, 0;
+  --svg-color: 0, 0, 0;
+  --brand-image-en: url('build/assets/res/img/brand_en_black.png');
+  --brand-image-fr: url('build/assets/res/img/brand_fr_black.png');
+  --primary-color: 255, 255, 255;
+  --secondary-color: 0, 0, 0;
+  --heading-color: 0, 0, 0;
+  --sub-heading-color: 0, 0, 0;
+  --line-color: 206,212,218;
+  --constant-white: 255, 255, 255;
+  --constant-black: 0, 0, 0;
+  --csx-color-one: 34, 34, 34;
+  --line-opacity: 1;
 }
 
+[data-theme="dark"] {
+  --font-color: 255, 255, 255;
+  --svg-color: 255, 255, 255;
+  --brand-image-en: url('build/assets/res/img/brand_en_white.png');
+  --brand-image-fr: url('build/assets/res/img/brand_fr_white.png');
+  --primary-color: 34, 34, 34;
+  --secondary-color: 255, 255, 255;
+  --heading-color: 255, 255, 255;
+  --sub-heading-color: 255, 255, 255;
+  --line-color: 206,212,218;
+  --constant-white: 255, 255, 255;
+  --constant-black: 0, 0, 0;
+  --csx-color-one: 34, 34, 34;
+  --line-opacity: 0.1;
+}
+
+@font-face {
+  font-family: 'neo-latina-demo-FFP';
+  src: url('../res/fonts/neo-latina-demo-FFP.ttf');
+}
+
+/**{
+  font-family: 'neo-latina-demo-FFP';
+}*/
+
 .no-display{
-	display: none;
+	display: none !important;
 }
 
 footer{
@@ -64,10 +100,6 @@ footer{
   vertical-align: text-bottom;
 }
 
-.csx-light-theme{
-  background-color: var(--theme-primary-color);
-}
-
 .csx-collapse{
   display: none;
   transition: display 1s;
@@ -79,38 +111,20 @@ footer{
 }
 
 .csx-right-separator{
-  border-right: 1px solid rgba(0, 0, 0, 0.1);
+  border-right: 1px solid rgb(var(--line-color), var(--line-opacity));
+}
+
+.csx-left-separator{
+  border-left: 1px solid rgb(var(--line-color), var(--line-opacity));
 }
 
 .csx-full-vp{
   height: 80vh;
 }
 
-.sidebar-toggle{
-    cursor: pointer;
-    width: 24px;
-    height: 24px;
-    border-radius: 24px;
-    background: #fff;
-    box-shadow: 0 0 0 1px rgb(9 30 66 / 8%), 0 2px 4px 1px rgb(9 30 66 / 8%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 2;
-    transition: all .3s ease;
-    position: absolute;
-    top: 30.5%;
-    left: 16.41vw;
-}
-
 .csx-sidebar-collapse{
   width: 0px;
   transition: width 0.5s;
-}
-
-.mv-el{
-  left: 1.3vw;
-  transition: left 0.5s;
 }
 
 .paginationjs{
@@ -155,14 +169,12 @@ footer{
 
 .col-items{
   width: fit-content;
-  background-color: var(--theme-primary-color);
   height: fit-content;
   padding: 10px;
   word-break: break-all;
 }
 
 .drop-active{
-  background-color: var(--theme-primary-color);
   opacity: 0.5;
 }
 
@@ -177,10 +189,6 @@ footer{
 [role=alert]{
   font-size: 12px;
 }
-/*
-.form-floating{
-  width: 100%;
-}*/
 
 .nice-select.wide{
   margin-bottom: 20px !important;
@@ -196,5 +204,215 @@ footer{
 }
 
 .invisible {
-  display: none;
+  display: none !important;
+}
+
+.loader{
+  margin: 0 0 2em;
+  height: 100px;
+  width: 20%;
+  text-align: center;
+  padding: 1em;
+  margin: 0 auto 1em;
+  display: inline-block;
+  vertical-align: top;
+}
+
+/*
+  Set the color of the icon
+*/
+.chart_preloader svg path,
+svg rect{
+  fill: rgb(var(--secondary-color)) !important;
+}
+
+#filter_site_summary{
+  border-radius: 30px !important;
+  z-index: -1;
+  position: relative;
+  left: 3px;
+  top: 7px;
+  padding: 10px 25px;
+  color: rgb(var(--primary-color));
+  font-weight: bold;
+  text-transform: uppercase;
+  width: 100%;
+}
+
+#filter_site_summary_wrapper{
+  cursor: pointer;
+  border-radius: 30px; height: 42px; width: 80%;
+  margin-left: auto; margin-right: auto;
+}
+
+.move{
+  transform: translateY(-7px) translateX(-3px);
+  transition: transform 250ms ease-in-out;
+}
+
+
+.csx-btn-gradient {
+  background-image: linear-gradient(45deg, #25534F, rgb(var(--primary-color)));
+  border: none !important;
+  color: rgb(var(--constant-white)) !important;
+}
+
+.csx-date{
+    text-align: center;
+    width: 100%;
+    font-size: 16px;
+    border: none;
+    border-bottom: 1px solid rgb(var(--secondary-color));
+    outline: unset;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+#export_to_pdf_dropdown{
+  width: 80%;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border-radius: 30px;
+}
+
+.box-area{
+  height: auto;
+  background-color: aliceblue;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border: 10px solid rgb(var(--primary-color));
+  min-height: 260px;
+}
+
+.csx-box{
+  flex-basis: 50%; height:auto; padding: 5%;
+}
+
+.csx-txt-uppercase{
+  text-transform: uppercase;
+}
+
+.csx-box-list{
+  padding: 0px 5%;
+}
+
+.csx-box-list p{
+  font-weight: bold;
+}
+
+.csx-box-image{
+  flex-basis: 50%; height:inherit; padding: 5%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.csx-box-image svg{
+  height: 40px;
+  width: 40px;
+}
+
+svg{
+  color: rgb(var(--secondary-color)) !important;
+}
+
+.navbar{
+  color: rgb(var(--secondary-color)) !important;  
+  background-color: rgb(var(--primary-color)) !important;
+}
+
+.input[type="text"]{
+  color: rgb(var(--secondary-color)) !important;
+  background-color: rgba(0, 0, 0, 0) !important;
+}
+
+h1, h2, h3, h4, h5, h6, p, a, label, td, th, li{
+  color: rgb(var(--secondary-color)) !important;
+}
+
+button{
+  color: rgb(var(--primary-color)) !important;
+}
+
+body{
+  background-color: rgb(var(--primary-color)) !important;
+}
+
+.nav-item button{
+  color: rgb(var(--secondary-color)) !important;
+}
+
+.nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active{
+  color: rgb(var(--constant-black)) !important;
+}
+
+.form-control, textarea{
+  background-color: rgb(var(--primary-color)) !important;
+  border-color: rgb(var(--secondary-color)) !important;
+}
+
+.nice-select .option{
+  color: rgb(var(--secondary-color)) !important;
+}
+
+.sidebar-toggle{
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    border-radius: 24px;
+    background-color: rgb(var(--secondary-color));
+    box-shadow: 0 0 0 1px rgb(var(--secondary-color), 8%), 0 2px 4px 1px rgb(var(--secondary-color), 8%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    transition: all .3s ease;
+    position: absolute;
+    top: 30.5%;
+    left: 16.41vw;
+}
+
+.sidebar-toggle svg{
+  color: rgb(var(--primary-color)) !important;
+}
+
+.box-area h4{
+  font-size: 14px;
+}
+
+.box-area h1, .box-area h4, .box-area p, .box-area svg{
+  color: rgb(var(--constant-black)) !important;
+}
+
+.nice-select{
+  color: rgb(var(--secondary-color)) !important;
+  background-color: rgba(0, 0, 0, 0) !important;
+}
+
+.nice-select .option{
+  color: rgb(var(--constant-black)) !important;
+  background-color: rgba(0, 0, 0, 0) !important;
+}
+
+input{
+  color: rgb(var(--secondary-color)) !important;
+}
+
+.mv-el{
+  left: 0.1vw;
+  transition: left 0.5s;
+}
+
+[data-building] th button svg{
+  color: rgb(var(--constant-white)) !important;
+}
+
+.dropdown-item.active, .dropdown-item:active{
+  color: rgb(var(--constant-black)) !important;
+}
+
+.mc-calendar h1, .mc-calendar h2, .mc-calendar h3, .mc-calendar h4, 
+.mc-calendar h5, .mc-calendar h6, .mc-calendar p, .mc-calendar a, 
+.mc-calendar label, .mc-calendar td, .mc-calendar th, .mc-calendar li,
+.mc-calendar svg, .mc-calendar button{
+  color: rgb(var(--csx-color-one)) !important;
 }

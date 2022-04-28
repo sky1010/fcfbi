@@ -10,9 +10,9 @@
     // Database connection
     // Client ajax request type
     define('HOST', "localhost");
-    define('USER', "root");
-    define('PASSWORD', "");
-    define('DB_NAME', "fcfbin");
+    define('USER', "dev3");
+    define('PASSWORD', "Forum2022*");
+    define('DB_NAME', "fcfbi01db");
     define('SERVER_PORT', 3307);
     $request = $_REQUEST['request_type'];
 
@@ -26,8 +26,8 @@
             try{
                 //creates a connection, selects the user and send the data as an JSON outstream
                 $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
-                $building = select($connection, "SELECT b.UID, b.BuildingName, b.Longitude, b.Latitude FROM buildings b
-                    WHERE b.Longitude <> 'NULL' AND b.Latitude <> 'NULL'", []);
+                $building = select($connection, "SELECT b.UID, b.BuildingName, b.VixenReactive, b.VixenPPM FROM TabsBuildings b
+                    WHERE b.VixenReactive <> 'NULL' AND b.VixenPPM <> 'NULL'", []);
 
                 echo json_encode(['data' => $building]);
 
@@ -43,7 +43,7 @@
             try{
                 //creates a connection, selects the user and send the data as an JSON outstream
                 $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
-                $building = select($connection, "SELECT * FROM buildings ORDER BY UID", []);
+                $building = select($connection, "SELECT * FROM TabsBuildings ORDER BY UID", []);
 
                 echo json_encode(['data' => $building]);
 
@@ -59,7 +59,7 @@
             try{
                 //creates a connection, selects the user and send the data as an JSON outstream
                 $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
-                $contacts = select($connection, "SELECT * FROM contacts ORDER BY UID", []);
+                $contacts = select($connection, "SELECT * FROM TabsBuildingContacts ORDER BY UID", []);
 
                 echo json_encode(['data' => $contacts]);
 
@@ -75,7 +75,7 @@
             try{
                 //creates a connection, selects the user and send the data as an JSON outstream
                 $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
-                $contracts = select($connection, "SELECT * FROM contracts ORDER BY Building", []);
+                $contracts = select($connection, "SELECT * FROM COContracts ORDER BY UID", []);
 
                 echo json_encode(['data' => $contracts]);
 
@@ -108,7 +108,7 @@
             try{
                 //creates a connection, selects the user and send the data as an JSON outstream
                 $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
-                $assets = select($connection, "SELECT * FROM assets ORDER BY UID LIMIT 100", []);
+                $assets = select($connection, "SELECT AssetCode, LocationCode, Description, Manufacturer, Model, Created, Finish, ast.Condition, Comments, SerialNumber, CreatedBy, InUse, AssetTrackingCost, DateOfPurchase, PurchaseValue, MonthlyDepreciation, Supplier, LifeExpectancyMonths, ReplacementCost, PurchaseOrderNumber, InvoiceDate, Quantity, OldAssetCode, CapitalItemCode, OwnershipType, Contractor, GeneralLocationDetails, WarrantyExpiryDate, DisposedOf, DisposalDate, PathToPictureFile, DisposedByUser, UID, OwnedByClient, Reference, InsuredBy, CostCode, AdditionalGroup, PuwerAssessmentRequired, PicMode, OwnerName, AsbestosPresent, Label, User1, User2, User3, User4, User5, User6, User7, User8, User9, User10, User11, User12, User13, User14, User15, User16, User17, User18, StatusLevelID, SpecialistModule, CriticalAsset, UserID, CostPerCopy, CallOutCharge, AnnualMaintenanceCost, DataEnabled, AirtimeProvider, DeliveryDate, BillingReference, LeaseStartDate, LeaseEndDate, LeaseDuration, LeaseValue, LeaseTerminationDate, LeaseCostPerQuarter, LeaseWithSupplierID, LeaseWithContractorID, PaymentSchedule, LeaseDetails, ParentAssetID, RemoveFromPATTest, LastPatTestDate, AssetImportanceId, CriticalLevelId, UseAsEquipment, LastModified, IntranetCreatedBy, NotSFG20, HasSFG20Job FROM ATAssets ast ORDER BY UID LIMIT 100", []);
 
                 echo json_encode(['data' => $assets]);
 
@@ -116,6 +116,7 @@
                 db_disconnect($connection);
                 http_response_code(200);
             }catch(Exception $e){
+
                 //return bad http request when error is encountered
                 http_response_code(400);
             }                          
@@ -125,7 +126,7 @@
             try{
                 //creates a connection, selects the user and send the data as an JSON outstream
                 $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
-                $work_order = select($connection, "SELECT * FROM jobs ORDER BY Job_UID", []);
+                $work_order = select($connection, "SELECT * FROM PMJobs ORDER BY UID", []);
 
                 echo json_encode(['data' => $work_order]);
 
@@ -143,25 +144,22 @@
                 $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
 
                 $temp = [];
-                $client = select($connection, "SELECT COUNT(id) AS tot_col, (CASE 
-                    WHEN Client IS NULL THEN 'Empty'
-                    ELSE Client
+                $client = select($connection, "SELECT COUNT(UID) AS tot_col, (CASE 
+                    WHEN tc.Client IS NULL THEN 'Empty'
+                    ELSE tc.Client
                     END) AS col_name
-                    FROM buildings GROUP BY Client", []);
+                    FROM TabsBuildings tb INNER JOIN TabsClients tc ON tc.ID = tb.Client GROUP BY tc.Client", []);
                 $temp['Client'] = $client;
 
-                $region = select($connection, "SELECT COUNT(id) AS tot_col, (CASE 
-                    WHEN Region IS NULL THEN 'Empty'
-                    ELSE Region
-                    END) AS col_name
-                    FROM buildings GROUP BY Region", []);
+                $region = select($connection, "SELECT COUNT(tr.UID) AS tot_col, (CASE WHEN tr.RegionName IS NULL THEN 'Empty' ELSE tr.RegionName END) AS col_name 
+                    FROM TabsBuildings tb INNER JOIN TabsRegions tr ON tb.Region = tr.UID GROUP BY tr.RegionName", []);
                 $temp['Region'] = $region;
 
-                $building_name = select($connection, "SELECT COUNT(id) AS tot_col, (CASE 
+                $building_name = select($connection, "SELECT COUNT(UID) AS tot_col, (CASE 
                     WHEN BuildingName IS NULL THEN 'Empty'
                     ELSE BuildingName
                     END) AS col_name
-                    FROM buildings GROUP BY BuildingName", []);
+                    FROM TabsBuildings GROUP BY BuildingName", []);
                 $temp['BuildingName'] = $building_name;
 
                 echo json_encode(['data' => $temp]);
@@ -236,7 +234,7 @@
                     WHEN Name IS NULL THEN 'Empty'
                     ELSE Name
                     END) AS col_name
-                    FROM contacts GROUP BY Name", []);
+                    FROM TabsBuildingContacts GROUP BY Name", []);
                 $temp['Name'] = $Name;
 
                 echo json_encode(['data' => $temp]);
@@ -260,21 +258,21 @@
                     WHEN Client IS NULL THEN 'Empty'
                     ELSE Client
                     END) AS col_name
-                    FROM contracts GROUP BY Client", []);
+                    FROM COContracts GROUP BY Client", []);
                 $temp['Client'] = $client;
 
                 $region = select($connection, "SELECT COUNT(Building) AS tot_col, (CASE 
                     WHEN Region IS NULL THEN 'Empty'
                     ELSE Region
                     END) AS col_name
-                    FROM contracts GROUP BY Region", []);
+                    FROM COContracts GROUP BY Region", []);
                 $temp['Region'] = $region;
 
                 $building_name = select($connection, "SELECT COUNT(Building) AS tot_col, (CASE 
                     WHEN Building IS NULL THEN 'Empty'
                     ELSE Building
                     END) AS col_name
-                    FROM contracts GROUP BY Building", []);
+                    FROM COContracts GROUP BY Building", []);
                 $temp['BuildingName'] = $building_name;
 
                 echo json_encode(['data' => $temp]);
@@ -345,7 +343,7 @@
 
                 //creates a connection, selects the user and send the data as an JSON outstream
                 $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
-                $building = select($connection, sprintf("SELECT * FROM buildings WHERE %s ", $where_clauses), []);
+                $building = select($connection, sprintf("SELECT * FROM TabsBuildings WHERE %s ", $where_clauses), []);
 
                 echo json_encode(['data' => $building]);
 
@@ -384,7 +382,7 @@
 
                 //creates a connection, selects the user and send the data as an JSON outstream
                 $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
-                $building = select($connection, sprintf("SELECT * FROM assets WHERE %s LIMIT 500 ", $where_clauses), []);
+                $building = select($connection, sprintf("SELECT * FROM ATAssets WHERE %s LIMIT 500 ", $where_clauses), []);
 
                 echo json_encode(['data' => $building]);
 
@@ -423,7 +421,7 @@
 
                 //creates a connection, selects the user and send the data as an JSON outstream
                 $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
-                $contacts = select($connection, sprintf("SELECT * FROM contacts WHERE %s ", $where_clauses), []);
+                $contacts = select($connection, sprintf("SELECT * FROM TabsBuildingContacts WHERE %s ", $where_clauses), []);
 
                 echo json_encode(['data' => $contacts]);
 
@@ -553,7 +551,7 @@
                 //creates a connection, selects the user and send the data as an JSON outstream
                 $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
                 $priority = select($connection, "SELECT COUNT(Priority) AS tot_priority, Priority 
-                    FROM jobs
+                    FROM PMJobs
                     GROUP BY Priority", []);
 
                 echo json_encode(['data' => $priority]);
@@ -570,7 +568,7 @@
             try{
                 //creates a connection, selects the user and send the data as an JSON outstream
                 $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
-                $priority = select($connection, "SELECT COUNT(WorkType) AS tot_work_type, WorkType FROM jobs GROUP BY WorkType", []);
+                $priority = select($connection, "SELECT COUNT(JobType) AS tot_job_type, JobType FROM PMJobs GROUP BY JobType", []);
 
                 echo json_encode(['data' => $priority]);
 
@@ -636,7 +634,7 @@
             try{
                 //creates a connection, selects the user and send the data as an JSON outstream
                 $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
-                $building = select($connection, "SELECT * FROM buildings WHERE BuildingNumber = ? LIMIT 1", [$_REQUEST['building_id']]);
+                $building = select($connection, "SELECT * FROM TabsBuildings WHERE BuildingNumber = ? LIMIT 1", [$_REQUEST['building_id']]);
 
                 echo json_encode(['data' => $building]);
 
@@ -652,7 +650,7 @@
             try{
                 //creates a connection, selects the user and send the data as an JSON outstream
                 $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
-                $building = select($connection, "SELECT * FROM buildings WHERE UID = ?", [$_REQUEST['building_id']]);
+                $building = select($connection, "SELECT * FROM TabsBuildings WHERE UID = ?", [$_REQUEST['building_id']]);
 
                 echo json_encode(['data' => $building]);
 
@@ -673,7 +671,14 @@
                 $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
 
                 foreach($cols AS $v){
-                    $temp[$v] = select($connection, sprintf("SELECT %s FROM %s GROUP BY %s", $v, $_REQUEST['table'], $v), []);
+                    $_pos = strpos($v, ".")  + 1;
+
+                    if($_pos !== FALSE){
+                        $v_col = substr($v, $_pos);
+                    }
+
+                    $sql = sprintf("SELECT %s FROM %s c INNER JOIN TabsClients tc ON c.Client = tc.ID INNER JOIN TabsRegions tr ON c.Region = tr.UID GROUP BY %s", $v, $_REQUEST['table'], $v);
+                    $temp[$v_col] = select($connection, $sql, []);
                 }
 
                 echo json_encode(['data' => $temp]);
@@ -693,7 +698,9 @@
                 $date_count = [];
 
                 foreach($cols AS $k => $v){
-                    $temp[] = sprintf(" %s = '%s' ", $k, $v);
+                    $a = ['begin_date', 'end_date'];
+                    if(!in_array($k, $a))
+                        $temp[] = sprintf(" %s = '%s' ", $k, $v);
                 }
 
                 $filters = implode("AND", $temp);
@@ -703,15 +710,23 @@
 
                 $dataset = [];
                 foreach($cols AS $v){
-                    $dataset = select($connection, sprintf("SELECT * FROM %s WHERE %s LIMIT 1", $_REQUEST['table'], $filters), []);
+                    $dataset = select($connection, sprintf("SELECT c.UID, c.BuildingPicture, c.SiteNumber, tc.Client, c.Address, c.PostCode, c.Phone, c.Fax, tr.RegionName, c.SubRegion, tc.Email, c.Landlord, c.InsuranceBroker, c.EstatesManager, c.RegionalOperationsManager, c.VixenReactive, c.VixenPPM, c.LocalAuthority FROM %s  c INNER JOIN TabsClients tc ON c.Client = tc.ID INNER JOIN TabsRegions tr ON c.Region = tr.UID WHERE %s", $_REQUEST['table'], $filters), []);
                 }
 
                 if(!empty($dataset)){
-                    $dataset['interventions'] = select($connection, "SELECT COUNT(Job_UID) AS number_intervention, JobDescription 
-                        AS intervention_desc, ReportedByName AS service_provider, StartDate, CurrentStatus, AssetCode FROM jobs WHERE Building_UID = ? 
-                        GROUP BY Building_UID, JobDescription, ReportedByName, StartDate, CurrentStatus, AssetCode",[$dataset[0]['UID']]);
+                    $con_dates = !empty($_REQUEST['date_begin']) && !empty($_REQUEST['date_end']);
 
-                    $dataset_date = select($connection, "SELECT StartDate FROM jobs WHERE Building_UID = ?", [$dataset[0]['UID']]);
+                    $date_partial_sql = $con_dates?"AND pmj.DateCreated >= DATE(?) AND pmj.DateCreated <= DATE(?)":'';
+                    $val_array = [$dataset[0]['UID']];
+
+                    if($con_dates)
+                        $val_array = array_merge([$dataset[0]['UID']], [$_REQUEST['date_begin'], $_REQUEST['date_end']]);
+
+
+                    $dataset['interventions'] = select($connection, sprintf("SELECT COUNT(pmj.UID) AS number_intervention, tb.BuildingName, pmjd.Description AS intervention_desc, StartDate, pms.Status AS CurrentStatus, ast.AssetCode FROM PMJobs pmj INNER JOIN PMJobDescriptions pmjd ON pmj.UID = pmjd.UID INNER JOIN PMStatusLevels pms ON pmj.CurrentStatus = pms.UID LEFT JOIN ATAssets ast ON ast.AssetCode = pmj.AssetCode INNER JOIN TabsBuildings tb ON tb.UID = pmj.Building WHERE Building = ? %s GROUP BY pmj.Building, pmjd.Description, pmj.StartDate, CurrentStatus, ast.AssetCode", $date_partial_sql),
+                        $val_array);
+
+                    $dataset_date = select($connection, sprintf("SELECT StartDate FROM PMJobs pmj WHERE Building = ? %s", $date_partial_sql), $val_array);
 
                     foreach($dataset_date AS $v){
                         $dt = new DateTime($v['StartDate']);
@@ -725,18 +740,25 @@
                         
                     }
 
-                    $dataset_type = select($connection, "SELECT Count(jobs.JobNumber) AS jobcount, jobs.WorkType FROM jobs WHERE Building_UID = ? GROUP BY jobs.WorkType", [$dataset[0]['UID']]);
-                    $dataset_action = select($connection, "SELECT Count(jobs.JobNumber) AS jobcount, jobs.JobDescription FROM jobs WHERE Building_UID = ? GROUP BY jobs.JobDescription", [$dataset[0]['UID']]);
-                    $dataset_status = select($connection, "SELECT Count(jobs.JobNumber) AS jobcount, jobs.CurrentStatus FROM jobs WHERE Building_UID = ? GROUP BY jobs.CurrentStatus", [$dataset[0]['UID']]);
-                    $dataset_priority = select($connection, "SELECT Count(jobs.JobNumber) AS jobcount, jobs.Priority FROM jobs WHERE Building_UID = ? GROUP BY jobs.Priority", [$dataset[0]['UID']]);
-                    $dataset_service_provider = select($connection, "SELECT Count(jobs.JobNumber) AS jobcount, jobs.WorkerName FROM jobs WHERE Building_UID = ? GROUP BY jobs.WorkerName", [$dataset[0]['UID']]);
+                    $dataset_type = select($connection, sprintf("SELECT Count(pmj.JobNumber) AS jobcount, pj.description FROM PMJobs pmj, PMJobDescriptions pj  WHERE Building = ? and pmj.JobDescription = pj.UID %s GROUP BY pmj.JobDescription", $date_partial_sql), $val_array);
+
+                    $dataset_action = select($connection, sprintf("SELECT Count(pmj.JobNumber) AS jobcount, pj.Name FROM PMJobs pmj, PMWorkTypes pj
+                        WHERE Building = ? and pmj.JobType = pj.UID %s
+                        GROUP BY pj.Name", $date_partial_sql), $val_array);
+
+                    $dataset_status = select($connection, sprintf("SELECT Count(pmj.JobNumber) AS jobcount, pj.Status AS CurrentStatus FROM PMJobs pmj, PMStatusLevels pj WHERE Building = ? and 
+                        pmj.CurrentStatus = pj.UID %s GROUP BY pj.Status", $date_partial_sql), $val_array);
+
+                    $dataset_priority = select($connection, sprintf("SELECT Count(pmj.JobNumber) AS jobcount, Priority FROM PMJobs pmj WHERE Building = ? %s GROUP BY 2", $date_partial_sql), $val_array);
+
+                    // $dataset_service_provider = select($connection, "SELECT Count(pmj.JobNumber) AS jobcount, tup.WorkerName FROM PMJobs pmj INNER JOIN TabsUserProfiles tup ON pmj.Worker = tup.UID WHERE Building = 5 GROUP BY pmj.WorkerName", [$dataset[0]['UID']]);
 
                     $dataset['chart']['intervention_date'] = $date_count;
                     $dataset['chart']['intervention_type'] = $dataset_type;
                     $dataset['chart']['intervention_action'] = $dataset_action;
                     $dataset['chart']['intervention_status'] = $dataset_status;
                     $dataset['chart']['intervention_priority'] = $dataset_priority;
-                    $dataset['chart']['intervention_service_provider'] = $dataset_service_provider;
+                    // $dataset['chart']['intervention_service_provider'] = $dataset_service_provider;
                 }
 
                 echo json_encode(['data' =>  $dataset]);
@@ -745,6 +767,7 @@
                 db_disconnect($connection);
                 http_response_code(200);
             }catch(Exception $e){
+                echo $e->getMessage();
                 //return bad http request when error is encountered
                 http_response_code(400);
             }            
@@ -774,7 +797,7 @@
             try{
                 //creates a connection, selects the user and send the data as an JSON outstream
                 $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
-                $dataset = select($connection, "SELECT Count(jobs.JobNumber) AS jobcount, jobs.WorkType FROM jobs WHERE Building_UID = ? GROUP BY jobs.WorkType LIMIT 10", [6]);
+                $dataset = select($connection, "SELECT Count(pmj.JobNumber) AS jobcount, pmjd.Description AS WorkType FROM PMJobs pmj INNER JOIN PMJobDescriptions pmjd ON pmj.UID = pmjd.UID GROUP BY pmjd.Description", []);
 
                 echo json_encode(['data' => $dataset]);
 
@@ -790,7 +813,8 @@
             try{
                 //creates a connection, selects the user and send the data as an JSON outstream
                 $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
-                $dataset = select($connection, "SELECT Count(jobs.JobNumber) AS jobcount, jobs.CurrentStatus FROM jobs WHERE Building_UID = ? GROUP BY jobs.CurrentStatus LIMIT 10", [6]);
+                $dataset = select($connection, "SELECT Count(pmj.JobNumber) AS jobcount, pms.Status AS CurrentStatus FROM PMJobs pmj INNER JOIN PMStatusLevels pms ON pmj.CurrentStatus = pms.UID
+                    GROUP BY pms.Status", []);
 
                 echo json_encode(['data' => $dataset]);
 
@@ -806,7 +830,7 @@
             try{
                 //creates a connection, selects the user and send the data as an JSON outstream
                 $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
-                $dataset = select($connection, "SELECT Count(jobs.JobNumber) AS jobcount, jobs.JobDescription FROM jobs WHERE Building_UID = ? GROUP BY jobs.JobDescription LIMIT 10", [6]);
+                $dataset = select($connection, "SELECT Count(pmj.JobNumber) AS jobcount, pmjd.Description FROM PMJobs pmj INNER JOIN PMJobDescriptions pmjd ON pmj.UID = pmjd.UID GROUP BY pmjd.Description", []);
 
                 echo json_encode(['data' => $dataset]);
 
@@ -877,7 +901,7 @@
             try{
                 //creates a connection, selects the user and send the data as an JSON outstream
                 $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
-                $dataset = select($connection, "SELECT UID, BuildingName FROM buildings ORDER BY UID", []);
+                $dataset = select($connection, "SELECT UID, BuildingName FROM TabsBuildings ORDER BY UID", []);
 
                 echo json_encode(['data' => $dataset]);
 
@@ -895,7 +919,8 @@
                 $target_file = $target_dir.basename($_FILES["file"]["name"][0]);
                 $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
 
-                if(move_uploaded_file($_FILES["file"]["tmp_name"][0], $target_file)){
+                $mv = move_uploaded_file($_FILES["file"]["tmp_name"][0], $target_file);
+                if($mv){
                     exec_sql(
                         $connection,
                         'INSERT INTO bimage ( UID, bimage ) VALUES (?, ?)',
@@ -903,7 +928,7 @@
                     );
                 }
 
-                echo json_encode(['status' => 200]);
+                echo json_encode(['status' => ($mv)?'true':'false']);
                 db_disconnect($connection);
                 http_response_code(200);
             }catch(Exception $e){
@@ -915,7 +940,7 @@
             try{
                 //creates a connection, selects the user and send the data as an JSON outstream
                 $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
-                $dataset = select($connection, "SELECT b.UID, b.bimage, bd.BuildingName FROM bimage b INNER JOIN buildings bd ON b.UID = bd.UID ORDER BY b.UID", []);
+                $dataset = select($connection, "SELECT b.UID, b.bimage, tb.BuildingName FROM bimage b INNER JOIN TabsBuildings tb ON b.UID = tb.UID ORDER BY b.UID", []);
 
                 echo json_encode(['data' => $dataset]);
 
@@ -931,7 +956,7 @@
             try{
                 //creates a connection, selects the user and send the data as an JSON outstream
                 $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
-                $dataset = select($connection, "SELECT COUNT(Client) AS tot_client, Client FROM jobs GROUP BY Client", []);
+                $dataset = select($connection, "SELECT COUNT(Client) AS tot_client, Client FROM PMJobs GROUP BY Client", []);
 
                 echo json_encode(['data' => $dataset]);
 
@@ -943,8 +968,194 @@
                 http_response_code(400);
             }
             break;
-        default:
+        case 'update_selection_fields':
+            try{
 
+                $dataset = [];
+                //creates a connection, selects the user and send the data as an JSON outstream
+                $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
+
+                if($_REQUEST['selection_type'] == 'client_selection'){
+
+                    $buildings = select($connection, "SELECT tb.BuildingName, tb.Region FROM TabsBuildings tb INNER JOIN TabsClients tc ON tb.Client = tc.ID WHERE tc.Client = ?", [$_REQUEST['select_val']]);
+
+                    $regions = [];
+                    foreach($buildings AS $k => $v){
+                        $temp = select($connection, 'SELECT tr.RegionName FROM TabsBuildings tb INNER JOIN TabsRegions tr ON tb.Region = tr.UID WHERE tr.UID = ?', [$v['Region']]);
+
+                        if(!empty($temp)){
+                            if(empty($regions)){
+                                $regions[] = $temp[0];
+                            }else{
+                                foreach($regions AS $x => $y){
+                                    if($y['RegionName'] != $temp[0]['RegionName']){
+                                        $regions[] = $temp[0];
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    $dataset['regions'] = $regions;
+                    $dataset['buildings'] = $buildings;
+
+                }else if($_REQUEST['selection_type'] == 'region_selection'){
+
+                    $buildings = select($connection, 'SELECT tb.BuildingName FROM TabsBuildings tb INNER JOIN TabsRegions tr ON tb.Region = tr.UID WHERE tr.RegionName = ?', [$_REQUEST['select_val']]);
+                    $dataset['buildings'] = $buildings;
+
+                }
+
+                echo json_encode(['data' => $dataset]);
+
+                //destroy database connection
+                db_disconnect($connection);
+                http_response_code(200);
+            }catch(Exception $e){
+                //return bad http request when error is encountered
+                http_response_code(400);
+            }
+            break;
+        case 'get_page_setting':
+            try{
+                //creates a connection, selects the user and send the data as an JSON outstream
+                $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
+                $dataset = select($connection, "SELECT * FROM tbl_setting LIMIT 1", []);
+
+                echo json_encode(['data' => $dataset]);
+
+                //destroy database connection
+                db_disconnect($connection);
+                http_response_code(200);
+            }catch(Exception $e){
+                //return bad http request when error is encountered
+                http_response_code(400);
+            }
+            break;
+        case 'insert_date':
+            try{
+                //creates a connection, selects the user and send the data as an JSON outstream
+                $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
+
+                exec_sql($connection,'TRUNCATE tbl_setting',[]);
+
+                exec_sql(
+                    $connection,
+                    'INSERT INTO tbl_setting (date_format, date_locale) VALUES(?, ?)',
+                    [$_REQUEST['date_format'], $_REQUEST['date_locale']]
+                );
+
+                echo json_encode(['status' => 200, 'message' => 'OK']);
+
+                //destroy database connection
+                db_disconnect($connection);
+                http_response_code(200);
+            }catch(Exception $e){
+                //return bad http request when error is encountered 
+                http_response_code(400);
+            } 
+            break;
+        case 'report_card':
+            try{
+                //creates a connection, selects the user and send the data as an JSON outstream
+                $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
+
+                $cols = json_decode($_REQUEST['filters'], true);
+                $temp = [];
+                $date_count = [];
+
+                foreach($cols AS $k => $v){
+                    $a = ['begin_date', 'end_date'];
+                    if(!in_array($k, $a))
+                        $temp[] = sprintf(" %s = '%s' ", $k, $v);
+                }
+
+                $filters = implode("AND", $temp);
+
+                $dataset = [];
+                foreach($cols AS $v){
+                    $dataset = select($connection, sprintf("SELECT c.UID, c.BuildingPicture, c.SiteNumber, tc.Client, c.Address, c.PostCode, c.Phone, c.Fax, tr.RegionName, c.SubRegion, tc.Email, c.Landlord, c.InsuranceBroker, c.EstatesManager, c.RegionalOperationsManager, c.VixenReactive, c.VixenPPM, c.LocalAuthority FROM %s  c INNER JOIN TabsClients tc ON c.Client = tc.ID INNER JOIN TabsRegions tr ON c.Region = tr.UID WHERE %s", $_REQUEST['table'], $filters), []);
+                }
+
+                $repair_jobs = [];
+                $live_job_status = [];
+                $maintenance_jobs = [];
+
+                $date_partial_sql = "";
+                if(!empty($dataset)){
+                    $con_dates = !empty($_REQUEST['date_begin']) && !empty($_REQUEST['date_end']);
+
+                    $date_partial_sql = $con_dates?"AND pmj.DateCreated >= DATE(?) AND pmj.DateCreated <= DATE(?)":'';
+                    $val_array = [$dataset[0]['UID']];
+
+                    if($con_dates)
+                        $val_array = array_merge([$dataset[0]['UID']], [$_REQUEST['date_begin'], $_REQUEST['date_end']]);
+
+                    $repair_jobs = select($connection, sprintf("SELECT pmj.JobNumber, pmj.DateCreated, pmj.DateCompleted, 
+                        IF(DATEDIFF(DATE(pmj.EstimatedCompletionDateTime), DATE(pmj.DateCreated))<0, 0, DATEDIFF(DATE(pmj.EstimatedCompletionDateTime), DATE(pmj.DateCreated))) AS completion_timescale, DATE_ADD(pmj.DateCreated, INTERVAL IF(DATEDIFF(DATE(pmj.EstimatedCompletionDateTime), DATE(pmj.DateCreated))<0, 0, DATEDIFF(DATE(pmj.EstimatedCompletionDateTime), DATE(pmj.DateCreated))) DAY) AS completion_date,
+                        CASE
+                            WHEN DATE(NOW()) <= DATE_ADD(pmj.DateCreated, INTERVAL IF(DATEDIFF(DATE(pmj.EstimatedCompletionDateTime), DATE(pmj.DateCreated))<0, 0, DATEDIFF(DATE(pmj.EstimatedCompletionDateTime), DATE(pmj.DateCreated))) DAY) THEN 'in_sla'
+                            WHEN DATE(NOW()) > DATE_ADD(pmj.DateCreated, INTERVAL IF(DATEDIFF(DATE(pmj.EstimatedCompletionDateTime), DATE(pmj.DateCreated))<0, 0, DATEDIFF(DATE(pmj.EstimatedCompletionDateTime), DATE(pmj.DateCreated))) DAY) THEN 'out_sla'
+                            ELSE 'out_sla'
+                        END AS job_completion_status
+                        FROM PMJobs pmj WHERE pmj.PPMGroup = 0 AND pmj.DateCompleted IS NULL AND Building = ? %s", $date_partial_sql), $val_array);
+
+                    $maintenance_jobs = select($connection, sprintf("SELECT pmj.JobNumber, pmj.DateCreated, pmj.DateCompleted, 
+                        IF(DATEDIFF(DATE(pmj.EstimatedCompletionDateTime), DATE(pmj.DateCreated))<0, 0, DATEDIFF(DATE(pmj.EstimatedCompletionDateTime), DATE(pmj.DateCreated))) AS completion_timescale, DATE_ADD(pmj.DateCreated, INTERVAL IF(DATEDIFF(DATE(pmj.EstimatedCompletionDateTime), DATE(pmj.DateCreated))<0, 0, DATEDIFF(DATE(pmj.EstimatedCompletionDateTime), DATE(pmj.DateCreated))) DAY) AS completion_date,
+                        CASE
+                            WHEN DATE(NOW()) <= DATE_ADD(pmj.DateCreated, INTERVAL IF(DATEDIFF(DATE(pmj.EstimatedCompletionDateTime), DATE(pmj.DateCreated))<0, 0, DATEDIFF(DATE(pmj.EstimatedCompletionDateTime), DATE(pmj.DateCreated))) DAY) THEN 'in_sla'
+                            WHEN DATE(NOW()) > DATE_ADD(pmj.DateCreated, INTERVAL IF(DATEDIFF(DATE(pmj.EstimatedCompletionDateTime), DATE(pmj.DateCreated))<0, 0, DATEDIFF(DATE(pmj.EstimatedCompletionDateTime), DATE(pmj.DateCreated))) DAY) THEN 'out_sla'
+                            ELSE 'out_sla'
+                        END AS job_completion_status
+                        FROM PMJobs pmj WHERE pmj.PPMGroup <> 0 AND pmj.DateCompleted IS NULL AND Building = ? %s", $date_partial_sql), $val_array);
+
+                    $maintenance_jobs = select($connection, sprintf("SELECT pmj.JobNumber, pmj.DateCreated, pmj.DateCompleted, 
+                        IF(DATEDIFF(DATE(pmj.EstimatedCompletionDateTime), DATE(pmj.DateCreated))<0, 0, DATEDIFF(DATE(pmj.EstimatedCompletionDateTime), DATE(pmj.DateCreated))) AS completion_timescale, DATE_ADD(pmj.DateCreated, INTERVAL IF(DATEDIFF(DATE(pmj.EstimatedCompletionDateTime), DATE(pmj.DateCreated))<0, 0, DATEDIFF(DATE(pmj.EstimatedCompletionDateTime), DATE(pmj.DateCreated))) DAY) AS completion_date,
+                        CASE
+                            WHEN DATE(NOW()) <= DATE_ADD(pmj.DateCreated, INTERVAL IF(DATEDIFF(DATE(pmj.EstimatedCompletionDateTime), DATE(pmj.DateCreated))<0, 0, DATEDIFF(DATE(pmj.EstimatedCompletionDateTime), DATE(pmj.DateCreated))) DAY) THEN 'in_sla'
+                            WHEN DATE(NOW()) > DATE_ADD(pmj.DateCreated, INTERVAL IF(DATEDIFF(DATE(pmj.EstimatedCompletionDateTime), DATE(pmj.DateCreated))<0, 0, DATEDIFF(DATE(pmj.EstimatedCompletionDateTime), DATE(pmj.DateCreated))) DAY) THEN 'out_sla'
+                            ELSE 'out_sla'
+                        END AS job_completion_status
+                        FROM PMJobs pmj WHERE pmj.PPMGroup <> 0 AND pmj.DateCompleted IS NULL AND Building = ? %s", $date_partial_sql), $val_array);
+
+                    $live_job_status = select($connection, sprintf("SELECT COUNT(pmj.UID) AS number_intervention, pms.Status AS CurrentStatus FROM PMJobs pmj INNER JOIN PMStatusLevels pms ON pmj.CurrentStatus = pms.UID
+                        WHERE pmj.DateCompleted IS NULL AND Building = ? %s GROUP BY pms.Status", $date_partial_sql), $val_array);
+
+                    $job_priorities = select($connection, sprintf("SELECT COUNT(pmp.UID) AS number_intervention, pmp.Priority AS CurrentStatus FROM PMPriorities pmp INNER JOIN PMJobs pmj ON pmj.Priority = pmp.UID
+                        WHERE pmj.DateCompleted IS NULL AND Building = ? %s GROUP BY pmp.Priority", $date_partial_sql), $val_array);
+                }
+
+                
+
+                $repair_jobs_stats = ["in_sla" => 0, "out_sla" => 0, "unkown"];
+                foreach($repair_jobs AS $k => $v){
+                    $repair_jobs_stats[$v["job_completion_status"]]++;
+                }
+
+                $maintenance_jobs_stats = ["in_sla" => 0, "out_sla" => 0];
+                foreach($maintenance_jobs AS $k => $v){
+                    $maintenance_jobs_stats[$v["job_completion_status"]]++;
+                }
+
+                $temp_ = [
+                    'repair_jobs' => $repair_jobs_stats,
+                    'live_job_status' => $live_job_status,
+                    'maintenance_jobs' => $maintenance_jobs_stats,
+                    'jobs_today' => count($repair_jobs) + count($maintenance_jobs),
+                    'job_priorities' => $job_priorities
+                ];
+
+                echo json_encode(['data' => $temp_]);
+
+                //destroy database connection
+                db_disconnect($connection);
+                http_response_code(200);
+            }catch(Exception $e){
+                //return bad http request when error is encountered 
+                http_response_code(400);
+            } 
+            break;
+        default:
             // HTTTP CODE BAD REQUEST
             http_response_code(400);
             break;

@@ -4,9 +4,9 @@
  *  Authors: -
 ***********************************************************/
 
-const app_name = 'FCFBI';   // holds the application name
+const app_name = 'Le HUB reports';   // holds the application name
 const event = new Event('spa_loaded'); // spa loaded event
-const mapbox_token = 'pk.eyJ1IjoicmFqZXNzZW4iLCJhIjoiY2t5dWwya2l1MWlkODJ1dGdjd2xsOTdrZSJ9.qyn4CgQZmD-YTzrVcqUzgg';
+const mapbox_token = 'pk.eyJ1IjoicmFqZXNzZW4iLCJhIjoiY2wxem0xMjdwMG13MjNibXRiYm9iMmsyayJ9.Is72kssHSZMyoNgxXOVDpw';
 var spa_loaded = null;
 
 var map = null;
@@ -77,6 +77,8 @@ var app = {
                 target.setAttribute('data-y', y)
             }}
         })
+
+        session.setItem("page_theme", "dark_mode");
     },
 
     renderer: {
@@ -160,7 +162,10 @@ var app = {
             const colors = [
                 "f94144", "f3722c", "f8961e", "f9844a", "f9c74f", "90be6d", "43aa8b", "4d908e", "577590", "277da1", "cb997e", "ddbea9", "ffe8d6", "b7b7a4", 
                 "a5a58d", "6b705c", "0a9396", "94d2bd", "e9d8a6", "ee9b00", "ca6702", "bb3e03", "ae2012", "9b2226", "2a9d8f", "e9c46a", "f4a261", "e76f51", 
-                "e63946", "f1faee", "a8dadc", "457b9d", "1d3557"
+                "e63946", "f1faee", "a8dadc", "457b9d", "1d3557", "00b4d8", "99d98c", "ccd5ae", "f9844a", "e63946","f1faee","a8dadc","457b9d","1d3557","001219",
+                "005f73","0a9396","94d2bd","e9d8a6","ee9b00","ca6702","bb3e03","ae2012","9b2226","03071e","370617","6a040f","9d0208","d00000","dc2f02","e85d04",
+                "f48c06","faa307","ffba08","d9ed92","b5e48c","99d98c","76c893","52b69a","34a0a4","168aad","1a759f","1e6091","184e77","f94144","f3722c","f8961e",
+                "f9844a","f9c74f","90be6d","43aa8b","4d908e","577590","277da1"
             ];
 
             var palette = [];
@@ -185,6 +190,148 @@ var app = {
 
                 window.URL.revokeObjectURL(url);
                 $(a).remove();
+            });
+        },
+
+        renderVoidChart: function(chart_id, hide_root = false){
+
+            var cloned_dom = $("[data-shadow-el='empty-chart']").clone();
+            $(`#${chart_id}`).parent().parent().find('[data-shadow-el]').each(function(i, e){
+                $(e).remove();
+            });
+
+            if(hide_root){
+
+                var chart_title = {
+                    number_intervention: 'Intervention by date',
+                    number_intervention_by_nature: 'Intervention by nature',
+                    number_intervention_by_category: 'Intervention by category',
+                    number_intervention_by_state: 'Intervention by status',
+                    number_intervention_by_priority: 'Intervention by priority',
+                    number_intervention_by_service_provider: 'Intervention by service provider',
+                    asset_chart: 'Asset summary chart',
+                    work_priority: 'Live work orders',
+                    work_type: 'Overdue work orders',
+                    finance_chart: 'Finance summary chart',
+                    contractor_chart: 'Contractor summary chart'
+                };
+
+                $(`#${chart_id}`).parent().addClass('no-display');
+                $(cloned_dom).removeClass('no-display');
+                $(cloned_dom).attr("data-shadow-el", chart_id);
+
+                $(cloned_dom).find("[data-header='empty_header']").text(`${chart_title[chart_id]} ( empty chart )`);
+                $(`#${chart_id}`).parent().parent().append(cloned_dom);
+
+            }else{
+
+                $(`[data-shadow-el='${chart_id}']`).remove();
+                $(`#${chart_id}`).parent().removeClass('no-display');
+
+            }
+
+        },
+
+        renderChartPreloader: function(chart_id){
+
+            var chart_title = {
+                number_intervention: 'Intervention by date',
+                number_intervention_by_nature: 'Intervention by nature',
+                number_intervention_by_category: 'Intervention by category',
+                number_intervention_by_state: 'Intervention by status',
+                number_intervention_by_priority: 'Intervention by priority',
+                number_intervention_by_service_provider: 'Intervention by service provider',
+                asset_chart: 'Asset summary chart',
+                work_priority: 'Live work orders',
+                work_type: 'Overdue work orders',
+                finance_chart: 'Finance summary chart',
+                contractor_chart: 'Contractor summary chart'
+            };
+
+            //unload all instance of a data-shadow-el
+            $(`#${chart_id}`).parent().parent().find('[data-shadow-el]').each(function(i, e){
+                $(e).remove();
+            });
+
+            var cloned_dom = $("[data-shadow-el='chart-preloader']").clone();
+
+            $(`#${chart_id}`).parent().addClass('no-display');
+            $(cloned_dom).removeClass('no-display');
+            $(cloned_dom).attr("data-shadow-el", chart_id);
+
+            $(cloned_dom).find("[data-header]").text(`${chart_title[chart_id]}`);
+            $(`#${chart_id}`).parent().parent().append(cloned_dom);
+        },
+
+        unloadChartPreloader: function(chart_id){
+            //unload all instance of a data-shadow-el
+            $(`#${chart_id}`).parent().parent().find('[data-shadow-el]').each(function(i, e){
+                $(e).remove();
+            });
+
+            $(`#${chart_id}`).parent().removeClass('no-display');
+        },
+
+        render_datemask_field: function(cb){
+            const date_format = [
+                {name: null, mask: "iso_date"}, 
+                {name: null, mask: "short_date"}, 
+                {name: null, mask: "long_date"}, 
+                {name: null, mask: 'dd-mm-yyyy'}, 
+                {name: null, mask: 'dd/mm/yyyy'}
+            ];
+
+            for(let x in date_format){
+                switch (date_format[x].mask){
+                    case 'iso_date':
+                        app.page.format_date(null, (data) => {
+                            date_format[x].name = `${data.year}-${data.month}-${data.date}`
+                        });
+                        break;
+                    case 'short_date':
+                        app.page.format_date(null, (data) => {
+                            date_format[x].name = `${data.month}-${data.date}-${data.year}`
+                        });
+                        break;
+                    case 'long_date':
+                        app.page.format_date(null, (data) => {
+                            date_format[x].name = `${data.month_full} ${data.date} ${data.year}`
+                        });
+                        break;
+                    case 'dd-mm-yyyy':
+                        app.page.format_date(null, (data) => {
+                            date_format[x].name = `${data.date}-${data.month}-${data.year}`
+                        });
+                        break;
+                    case 'dd/mm/yyyy':
+                        app.page.format_date(null, (data) => {
+                            date_format[x].name = `${data.date}/${data.month}/${data.year}`
+                        });
+                        break;
+                    default:
+                        throw new Error('Undefined date format');
+                }
+            }
+
+            return cb(date_format);
+        },
+
+        format_date: function (d, callback) {
+            var date = new Date();
+
+            if(d !== null)
+                date.setTime(typeof d != 'int'?d:Date.parse(d));
+            
+            const month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            callback ({
+                min: (date.getMinutes() >= 10)?date.getMinutes():("0" + date.getMinutes()),
+                hours: (date.getHours() >= 10)?date.getHours():("0" +date.getHours()),
+                second: (date.getSeconds() >= 10)?date.getSeconds():("0" +date.getSeconds()),
+                meridian: (date.getHours() >= 12)?"PM":"AM",
+                month: ((date.getMonth() + 1) > 10)?(date.getMonth() + 1):("0"+(date.getMonth() + 1)),
+                month_full: month[date.getMonth()],
+                date: (date.getDate() > 10)?date.getDate():("0" + date.getDate()),
+                year: date.getFullYear()
             });
         }
     },

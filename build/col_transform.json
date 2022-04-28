@@ -1,23 +1,17 @@
 {
-    "contacts": {
-        "UID": "Ident"
+    "TabsBuildings": {
+        "BuildingName": "Building name",
+        "UID": "Identification"
     },
-    "buildings": {
-        "BuildingNumber": "Building number"
+    "TabsBuildingContacts": {
+        "UID": "Identification",
+        "BuildingID": "Building id"
     },
-    "zcontrats": {
-        "WorkType": "Work type"
-    },
-    "fplans": {
-        "fplan": "Floor plan"
-    },
-    "assets": {
-        "AssetCode": "Asset code"
-    },
-    "jobs": {
-        "Job_UID": "Job uid"
-    },
-    "bimage": {
-        "bimage": "Images"
+    "ATAssets": [],
+    "PMJobs": [],
+    "fplans": [],
+    "-1": [],
+    "report_card": {
+        "undefined": "Liverpool"
     }
 }
