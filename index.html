@@ -20,9 +20,9 @@
 	</head>
 	<body>
 
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-5">
       <div class="container-fluid">
-        <a class="navbar-brand mt-3" href="#"><img src="build/assets/res/svg/brand_logo.png" width="150" height="auto" alt="" style="margin-left: 15px;"></span></a>
+        <a class="navbar-brand mt-3" href="#"><img src="build/assets/res/svg/brand_logo.png" width="180" height="auto" alt="" style="margin-left: 15px;"></span></a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main_navbar" aria-controls="main_navbar" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -50,29 +50,28 @@
       </div>
     </nav>
 
-    <div class="container-fluid mt-5">
+    <div class="container-fluid">
       <main>
 
         <div data-tab-target="site_summary">
-          <div id="element-to-print">
             <div data-role="spa-content-site">
-              <div class="container-fluid" >
+              <div class="container-fluid" data-elem-print="site_summary_content" data-export-name="site_summary_export">
                 <div class="sidebar-toggle" data-sidebar-collapse-target="left-filters-summary">
                   <span data-feather="chevron-left"></span>
                 </div>
                 <div class="row">
-                    <div class="col-lg-2" data-sidebar-collapse="left-filters-summary" style="padding-right: 25px;">
+                    <div class="col-lg-2" data-sidebar-collapse="left-filters-summary" style="padding-right: 25px; margin-top: -1vh;">
                       <div class="d-flex justify-content-between flex-column align" style="width: 100%;">
                         <select data-select="tc.Client" class="mt-3"></select>
                         <select data-select="tr.RegionName" class="mt-3"></select>
                         <select data-select="c.BuildingName" class="mt-3"></select>
 
                         <div class="d-flex flex-column text-center mt-5" style="width: 50%; margin-left: auto; margin-right: auto;">
-                          <input type="text" name="begin_date" id="begin_date" placeholder="YYYY / MM / DD" class="csx-date">
+                          <input type="text" name="begin_date" id="begin_date" data-field="begin_date" placeholder="YYYY / MM / DD" class="csx-date" autocomplete="off">
                           <p style="font-size: 12px;">Start date</p> 
                         </div>
                         <div class="d-flex flex-column text-center mt-3" style="width: 50%; margin-left: auto; margin-right: auto;">
-                          <input type="text" name="end_date" id="end_date" placeholder="YYYY / MM / DD" class="csx-date">
+                          <input type="text" name="end_date" id="end_date" data-field="end_date" placeholder="YYYY / MM / DD" class="csx-date" autocomplete="off">
                           <p style="font-size: 12px;">End date</p> 
                         </div>
 
@@ -83,26 +82,11 @@
                         <select data-select-pdf="export_to_pdf_dropdown" class="mt-5">
                           <optgroup>
                             <option data-display="Export file"></option>
-                            <option value="pdf" id="export_to_pdf">PDF</option>
+                            <option value="pdf">PDF</option>
                             <option value="word">Word</option>
                             <option value="ppt">PPT</option>
-                            <option value="excel">Excel</option>
-                            <option value="csv">CSV</option>
                           </optgroup>
                         </select>  
-
-  <!--                       <button class="btn btn-sm csx-btn-gradient" id="export_to_pdf"><span data-feather="file-text"></span> Export to pdf </button> -->
-<!--                         <div class="dropdown mt-5 d-flex justify-content-center">
-                            <button class="btn btn-sm csx-btn-gradient dropdown-toggle" type="button" id="export_to_pdf_dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                 Export page
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="export_to_pdf_dropdown">
-                              <a class="dropdown-item" href="#" "></a>
-                              <a class="dropdown-item" href="#"></a>
-                              <a class="dropdown-item" href="#"></a>
-                              <a class="dropdown-item" href="#"></a>
-                            </div>
-                        </div> -->
                       </div>
                     </div>
                     <div class="col-lg-10 csx-left-separator" data-main-collapse="left-filters-summary">
@@ -209,11 +193,11 @@
                                 <div class="d-lg-flex">
                                   <div style="flex-basis: 50%; height: 100px;">
                                     <div class="csx-box-image"><i class="fa-regular fa-face-smile" style="color: #40916c !important;"></i></div>
-                                    <p style="font-weight: bold;">52%</p>
+                                    <p style="font-weight: bold;" data-field="survey_happy">52%</p>
                                   </div>
                                   <div style="flex-basis: 50%; height: 100px;">
                                     <div class="csx-box-image"><i class="fa-regular fa-face-frown" style="color: #e63946 !important;"></i></div>
-                                    <p style="font-weight: bold;">48%</p>
+                                    <p style="font-weight: bold;" data-field="survey_unhappy">48%</p>
                                   </div>
                                 </div>
                               </div>
@@ -223,7 +207,7 @@
                                   <div data-toggle="tooltip" data-placement="top" title="Number of assets tagged and registered in the database"><i class="fa-solid fa-circle-info"></i></div>
                                 </div>
                                 <div class="d-lg-flex justify-content-center align-items-center mt-5">
-                                  <h1>121</h1>
+                                  <h1 data-field="assets">121</h1>
                                 </div>
                               </div>
                             </div>
@@ -258,16 +242,16 @@
                                   <div data-toggle="tooltip" data-placement="top" title="Average order value is the  estimated total cost of all interventions completed in the selected period"><i class="fa-solid fa-circle-info"></i></div>
                                 </div>
                                 <div class="d-lg-flex justify-content-center align-items-center mt-5">
-                                  <h1>Rs 100,000</h1>
+                                  <h1 data-field="tao">Rs 100,000</h1>
                                 </div>
                               </div>
                               <div class="col-lg-4 box-area text-center" style="background-color: #e63946;" data-report-card>
                                 <div class="d-lg-flex justify-content-center align-items-center">
                                   <h4 class="mt-3 mb-3 me-3 csx-txt-uppercase" data-report-headers="certificate_expired">Certificates expired</h4>
-                                  <div data-toggle="tooltip" data-placement="top" title="Contractor certificates that have expired and not been renewed"><i class="fa-solid fa-circle-info"></i></div>
+                                  <div data-toggle="tooltip" data-placement="top" title="Certificates that have expired and not been renewed (e.g Fire, Lift or vehicles certificate)"><i class="fa-solid fa-circle-info"></i></div>
                                 </div>
                                 <div class="d-lg-flex justify-content-center align-items-center mt-5">
-                                  <h1>12</h1>
+                                  <h1 data-field="certificates">12</h1>
                                 </div>
                               </div>
                             </div>
@@ -381,7 +365,6 @@
                 </div>
               </div>
             </div>
-            </div>
         </div>
 
         <div data-tab-target="building">
@@ -389,26 +372,170 @@
             <li class="nav-item" role="presentation">
               <button class="nav-link active" id="csx-map-tab" data-bs-toggle="tab" data-bs-target="#spa-content-map" data-spa-page="spa-content-map" type="button" role="tab" aria-controls="Map" aria-selected="true">Map</button>
             </li>
-            <li class="nav-item" role="presentation">
+            <li class="nav-item no-display" role="presentation">
+              <button class="nav-link" id="csx-summary-tab" data-bs-toggle="tab" data-bs-target="#spa-content-summary-building" data-spa-page="spa-content-summary-building" type="button" role="tab" aria-controls="Building details" aria-selected="true">Building details</button>
+            </li>
+            <li class="nav-item no-display" role="presentation">
               <button class="nav-link" id="csx-contacts-tab" data-bs-toggle="tab" data-bs-target="#spa-content-contacts" data-spa-page="spa-content-contacts" type="button" role="tab" aria-controls="Contacts" aria-selected="true">Contacts</button>
             </li>
-            <li class="nav-item" role="presentation">
+            <li class="nav-item no-display" role="presentation">
               <button class="nav-link" id="csx-building_list-tab" data-bs-toggle="tab" data-bs-target="#spa-content-building_list" data-spa-page="spa-content-building_list" type="button" role="tab" aria-controls="Building List" aria-selected="true">Building List</button>
             </li>
-            <li class="nav-item" role="presentation">
+            <li class="nav-item no-display" role="presentation">
               <button class="nav-link" id="csx-contracts-tab" data-bs-toggle="tab" data-bs-target="#spa-content-contracts"  data-spa-page="spa-content-contracts" type="button" role="tab" aria-controls="Contracts" aria-selected="true">Contracts</button>
             </li>
-            <li class="nav-item" role="presentation">
+            <li class="nav-item no-display" role="presentation">
               <button class="nav-link" id="csx-floor_plans-tab" data-bs-toggle="tab" data-bs-target="#spa-content-floor_plans" data-spa-page="spa-content-floor_plans" type="button" role="tab" aria-controls="Floor Plans" aria-selected="true">Floor Plans</button>
             </li>
-            <li class="nav-item" role="presentation">
+            <li class="nav-item no-display" role="presentation">
               <button class="nav-link" id="csx-images-tab" data-bs-toggle="tab" data-bs-target="#spa-content-images" data-spa-page="spa-content-images" type="button" role="tab" aria-controls="Images" aria-selected="true">Images</button>
             </li>
           </ul>
 
           <div class="tab-content" id="csx-tab-content">
             <div class="tab-pane fade show active" id="spa-content-map" data-role="spa-content-map" role="tabpanel" aria-labelledby="csx-map-tab">
-              <div class="mt-5" id='map'></div>
+              <div class="sidebar-toggle" data-sidebar-collapse-target="left-filters-map">
+                <span data-feather="chevron-left"></span>
+              </div>
+              <div class="container-fluid" data-elem-print="map_summary_content" data-export-name="map_export"> 
+                <div class="row">
+                  <div class="col-lg-2" style="padding-right: 2vw;margin-top: 3vh;">
+                    <div class="d-flex justify-content-between flex-column align" style="width: 100%;">
+                        <select data-select="tc.Client" class="mt-3"></select>
+                        <select data-select="tr.RegionName" class="mt-3"></select>
+                        <select data-select="c.BuildingName" class="mt-3"></select>
+
+                        <div class="d-flex flex-column text-center mt-5 no-display" style="width: 50%; margin-left: auto; margin-right: auto;">
+                          <input type="text" name="begin_date" id="begin_date_map" data-field="begin_date" placeholder="YYYY / MM / DD" class="csx-date" autocomplete="off">
+                          <p style="font-size: 12px;">Start date</p> 
+                        </div>
+                        <div class="d-flex flex-column text-center mt-3 no-display" style="width: 50%; margin-left: auto; margin-right: auto;">
+                          <input type="text" name="end_date" id="end_date_map" data-field="end_date" placeholder="YYYY / MM / DD" class="csx-date" autocomplete="off">
+                          <p style="font-size: 12px;">End date</p> 
+                        </div>
+
+                        <div id="filter_site_map_wrapper" class="mt-3">
+                          <button class="btn btn-sm csx-btn-gradient" id="filter_site_summary_map">Apply</button>
+                        </div>
+
+                        <select data-select-pdf="export_to_pdf_dropdown" class="mt-5">
+                          <optgroup>
+                            <option data-display="Export file"></option>
+                            <option value="pdf">PDF</option>
+                            <option value="word">Word</option>
+                            <option value="ppt">PPT</option>
+                          </optgroup>
+                        </select>  
+                      </div>
+                    </div>
+                  <div class="col-lg-10 csx-left-separator" data-main-collapse="left-filters-map" style="padding-left: 30px;">
+                    <div class="mt-5" id='map' style="height: 65vh;"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="tab-pane fade show active" id="spa-content-summary-building" data-role="spa-content-summary-building" role="tabpanel" aria-labelledby="csx-summary-tab" style="height: unset !important;">
+              <button class="btn btn-sm csx-btn-gradient" style="position: relative; right: -88vw; top: 8vh;" id="back_to_map">Back to map</button>
+              <div class="container mt-5 mb-5">
+                <div class="row">
+                  <div class="col-4 csx-container-img" data-field="sb_building_image"></div>
+                  <div class="col-4">
+                    <div class="d-lg-flex justify-content-center align-items-center flex-column" style="height: 100%;">
+                      <h4 data-field="sb_building_name">Building name</h4>
+                      <h5 data-field="sb_client_name">John doe's office</h5>
+                    </div>
+                  </div>
+                  <div class="col-4">
+                    <div style="height: 100%;" id='map_sm'></div>
+                  </div>
+                </div>
+                <div class="row mt-5 pb-3 csx-bottom-separator">
+                  <div class="col-lg-12">
+                    <h6 data-field="sb_address">Address : 4437 Rogers Street</h6>
+                    <h6 data-field="sb_region">Region : Ohio</h6>
+                    <h6 data-field="sb_post_code">Post code: 46244</h6>
+                    <h6 data-field="sb_telephone">Telephone : 613-474-9634</h6>
+                    <h6 data-field="sb_email">Email : johndoe@yopmail.com</h6>
+                  </div>
+                </div>
+                <div class="row mt-3 pb-3 csx-bottom-separator">
+                  <div class="col-lg-12">
+                    <h4 class="mt-3 mb-3">Contacts</h4>
+                    <div class="table-responsive" data-table-fill="summary_building_contact">
+                      <table class="table table-striped">
+                        <thead class="csx-light-theme">
+                          <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Telephone</th>
+                            <th>Mobile</th>
+                          </tr>
+                        </thead>
+                        <tbody class="sm-font">
+                          <tr>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>  
+                  </div>
+                </div>
+                <div class="row mt-3 pb-3 csx-bottom-separator">
+                  <div class="col-lg-12">
+                    <h4 class="mt-3 mb-3">Floor plans</h4>
+                    <div class="table-responsive" data-table-fill="summary_building_fplan">
+                      <table class="table table-striped">
+                        <thead class="csx-light-theme">
+                          <tr>
+                            <th>File name</th>
+                            <th>Size</th>
+                            <th>Description</th>
+                          </tr>
+                        </thead>
+                        <tbody class="sm-font">
+                          <tr>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>  
+                  </div>
+                </div>
+                <div class="row mt-3 pb-3 csx-bottom-separator">
+                  <div class="col-lg-12">
+                    <h4 class="mt-3 mb-3">Contracts</h4>
+                    <div class="table-responsive" data-table-fill="summary_building_contracts">
+                      <table class="table table-striped">
+                        <thead class="csx-light-theme">
+                          <tr>
+                            <th>Contract title</th>
+                            <th>Contract number</th>
+                            <th>Start date</th>
+                            <th>End date</th>
+                            <th>Value</th>
+                            <th>Description</th>
+                          </tr>
+                        </thead>
+                        <tbody class="sm-font">
+                          <tr>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td width="50%">-</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>  
+                  </div>
+                </div>
+              </div>
             </div>
             <div class="tab-pane fade" id="spa-content-contacts" data-role="spa-content-contacts" role="tabpanel" aria-labelledby="csx-contacts-tab">
             <!--contacts-->
@@ -1268,12 +1395,35 @@
       </div>
     </div>
 
+    <div class="preloader d-flex justify-content-center align-items-center flex-column no-display" data-role="pdf_loader">
+        <div class="d-flex justify-content-center align-items-center flex-column" style="height: 100%; width: 100%;">
+        <div class="loader loader--style1" title="0">
+          <svg version="1.1" id="loader-1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+           width="40px" height="40px" viewBox="0 0 40 40" enable-background="new 0 0 40 40" xml:space="preserve">
+          <path opacity="0.2" fill="#000" d="M20.201,5.169c-8.254,0-14.946,6.692-14.946,14.946c0,8.255,6.692,14.946,14.946,14.946
+            s14.946-6.691,14.946-14.946C35.146,11.861,28.455,5.169,20.201,5.169z M20.201,31.749c-6.425,0-11.634-5.208-11.634-11.634
+            c0-6.425,5.209-11.634,11.634-11.634c6.425,0,11.633,5.209,11.633,11.634C31.834,26.541,26.626,31.749,20.201,31.749z"/>
+          <path fill="#000" d="M26.013,10.047l1.654-2.866c-2.198-1.272-4.743-2.012-7.466-2.012h0v3.312h0
+            C22.32,8.481,24.301,9.057,26.013,10.047z">
+            <animateTransform attributeType="xml"
+              attributeName="transform"
+              type="rotate"
+              from="0 20 20"
+              to="360 20 20"
+              dur="0.5s"
+              repeatCount="indefinite"/>
+            </path>
+          </svg>
+        </div>
+        <h5>Preparing summary pdf</h5>
+      </div>
+    </div>
 
     <footer class="text-center d-flex justify-content-center align-items-center" style="display: none !important;"></footer>
     <div class="alert alert-danger alert-pos hide-alert" role="alert"></div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/js/all.min.js" integrity="sha512-6PM0qYu5KExuNcKt5bURAoT6KCThUmHRewN3zUFNaoI6Di7XJPTMoT6K0nsagZKk2OB4L7E3q1uQKHNHd4stIQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/js/all.min.js" integrity="sha512-6PM0qYu5KExuNcKt5bURAoT6KCThUmHRewN3zUFNaoI6Di7XJPTMoT6K0nsagZKk2OB4L7E3q1uQKHNHd4stIQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 		<script type="text/javascript" src="build/assets/js/plugins/jquery-3.6.0.min.js"></script>
 		<script type="text/javascript" src="build/assets/js/plugins/bootstrap.bundle.min.js"></script>

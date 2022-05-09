@@ -87,6 +87,7 @@ function show_contacts(data){
             var col_name = Object.keys(contacts.data[0]);
             var tr_node = $("<tr></tr>");
             $(tr_node).append($("<th></th>"));
+            $(container).find("thead").children().remove();
 
             for(let x in col_name){
 
@@ -903,7 +904,7 @@ function fill_form_building(data) {
 
         $(div_node).append(input_node).append(label_node);
 
-        if(['Latitude', 'Longitude'].includes(x)){
+        if(['VixenPPM', 'VixenReactive'].includes(x)){
             $(map_container).append(div_node);
         }else{
             $(building_container).append(div_node);
@@ -968,6 +969,8 @@ function fillSelect(data){
 
 
 function fill_form_fields(data , table) {
+    console.log(data);
+    console.log(table);
 
     const parse = JSON.parse(data);
     const container = $("#fill_fields");
@@ -1109,7 +1112,6 @@ function updateSelect(data){
 
 function fill_report_card(data){
     const dataset = JSON.parse(data);
-    // console.log(dataset);
 
     /*------------ REPAIR JOB CARD -------------*/
     $("[data-field='in_sla_field']").text(dataset.data.repair_jobs.in_sla);
@@ -1119,8 +1121,21 @@ function fill_report_card(data){
     $("[data-field='in_sla_field_mj']").text(dataset.data.maintenance_jobs.in_sla);
     $("[data-field='out_sla_field_mj']").text(dataset.data.maintenance_jobs.out_sla);
 
+    /*------------ SATISFACTION SURVEY CARD -------------*/
+    $("[data-field='survey_happy']").text(`${Math.round(dataset.data.satisfaction.happy)}%`);
+    $("[data-field='survey_unhappy']").text(`${Math.round(dataset.data.satisfaction.unhappy)}%`);
+
     /*------------ JOB TODAY CARD -------------*/
     $("[data-field='job_today']").text(dataset.data.jobs_today);
+
+    /*------------ ASSETS CARD -------------*/
+    $("[data-field='assets']").text(dataset.data.asset[0].tot_assets);
+
+        /*------------ CERTIFICATES CARD -------------*/
+    $("[data-field='certificates']").text(dataset.data.certificates[0].tot_certificates);
+
+    /*------------ TOTAL AVERAGE ORDER CARD -------------*/
+    $("[data-field='tao']").text(`Rs ${app.page.pretty_print_digit(Number.parseFloat(dataset.data.total_average_order[0].tao).toFixed(2))}`);
 
     /*------------ LIVE JOB STATUS CARD -------------*/
     var container = $("[data-field='live_job_status']");
@@ -1144,6 +1159,139 @@ function fill_report_card(data){
 
         $(div_node).append(p_head_node).append(p_desc_node);
         $(container).append(div_node);
+    }
+}
+
+function fill_building_summary(argument) {
+    const dataset = JSON.parse(argument);
+
+    /*------------- GENERAL INFO BUILDING SUMMARY -----------------*/
+    $("[data-field='sb_address']").text(`Address : ${dataset.data.general_info[0].Address}`);
+    $("[data-field='sb_region']").text(`Region : ${dataset.data.general_info[0].RegionName}`);
+    $("[data-field='sb_post_code']").text(`Post code: ${dataset.data.general_info[0].PostCode}`);
+    $("[data-field='sb_telephone']").text(`Telephone : ${dataset.data.general_info[0].Phone}`);
+    $("[data-field='sb_email']").text(`Email : ${dataset.data.general_info[0].Email}`);
+    $("[data-field='sb_building_name']").text(`${dataset.data.general_info[0].BuildingName}`);
+    $("[data-field='sb_client_name']").text(`${dataset.data.general_info[0].Client}'s office`);
+    $("[data-field='sb_building_image']").css("background-image", `url('${dataset.data.general_info[0].building_image}')`);
+
+    /*------------- BUILDING CONTACT SUMMARY -----------------*/
+    let container_contact = $("[data-table-fill='summary_building_contact'] tbody");
+    if(dataset.data.contact_section.length != 0){
+        $(container_contact).children().remove();
+    }
+
+    for(let x in dataset.data.contact_section){
+        var tr_node = $("<tr></tr>").attr("data-contacts-row-id", dataset.data.contact_section[x].contact_id);
+        var td_name = $("<td></td>").text(dataset.data.contact_section[x].Name);
+        var td_email = $("<td></td>").text(dataset.data.contact_section[x].Email);
+        var td_phone = $("<td></td>").text(dataset.data.contact_section[x].Phone);
+        var td_mobile = $("<td></td>").text(dataset.data.contact_section[x].Mobile);
+
+        $(tr_node).append(td_name).append(td_email).append(td_phone).append(td_mobile);
+        $(container_contact).append(tr_node);
+    }
+
+    /*------------- FLOOR PLAN SUMMARY -----------------*/
+    let container_fplan = $("[data-table-fill='summary_building_fplan'] tbody");
+    if(dataset.data.floor_plans_section.length != 0){
+        $(container_fplan).children().remove();
+    }
+
+    for(let x in dataset.data.floor_plans_section){
+        var tr_node = $("<tr></tr>").attr("data-fplan-row-id", dataset.data.floor_plans_section[x].id);
+        var td_file_name = $("<td></td>").text(dataset.data.floor_plans_section[x].fplan);
+        var td_size = $("<td></td>").text(`N/A`);
+        var td_description = $("<td></td>").text(dataset.data.floor_plans_section[x].description);
+
+        $(tr_node).append(td_file_name).append(td_size).append(td_description);
+        $(container_fplan).append(tr_node);
+    }
+
+    /*------------- CONTRACTS SUMMARY -----------------*/
+    let container_contracts = $("[data-table-fill='summary_building_contracts'] tbody");
+
+    if(dataset.data.contracts_section.length != 0){
+        $(container_contracts).children().remove();
+    }
+
+    for(let x in dataset.data.contracts_section){
+        var tr_node = $("<tr></tr>").attr("data-fplan-row-id", dataset.data.contracts_section[x].id);
+        var td_title = $("<td></td>").text(dataset.data.contracts_section[x].fplan);
+        var td_contract_number = $("<td></td>").text(dataset.data.contracts_section[x].fplan);
+        var td_start_date = $("<td></td>").text(dataset.data.contracts_section[x].fplan);
+        var td_end_date = $("<td></td>").text(dataset.data.contracts_section[x].fplan);
+        var td_value = $("<td></td>").text(dataset.data.contracts_section[x].fplan);
+        var td_desc = $("<td></td>").text(dataset.data.contracts_section[x].fplan);
+
+        $(tr_node).append(td_title).append(td_contract_number).append(td_start_date).append(td_end_date).append(td_value).append(td_desc);
+        $(container_contracts).append(tr_node);
+    }
+
+}
+
+function regen_map(map_instance, data){
+    const dataset = JSON.parse(data);
+
+    if(dataset.data.metadata.length > 0){
+        let points_ = [];
+
+        for(let y in dataset.data.metadata){
+            points_.push({
+                BuildingName: dataset.data.metadata[y].BuildingName,
+                Client: dataset.data.metadata[y].Client,
+                UID: dataset.data.metadata[y].UID,
+                VixenPPM: dataset.data.metadata[y].VixenPPM,
+                VixenReactive: dataset.data.metadata[y].VixenReactive
+            });
+        }
+
+        var buildings = {};
+        buildings.data = points_;
+
+        app.page.gen_map('map', (map) => {
+            if(buildings.data.length != 0){
+                var coords = [];
+                var popup_dom = $("[data-shadow-el='building_marker']").clone().removeClass("no-display");
+
+                for(let x in buildings.data){
+
+                    var marker = L.marker(
+                        [buildings.data[x].VixenPPM, buildings.data[x].VixenReactive], 
+                        {icon: buildingIcon}
+                    ).addTo(map);
+
+                    $(popup_dom).find("[data-role='popup_header']").html(`${buildings.data[x].BuildingName} <br> ${buildings.data[x].Client}`);
+                    $(popup_dom).find("[data-role='popup_link']").attr("data-building", buildings.data[x].UID);
+
+                    marker.bindPopup($(popup_dom)[0].outerHTML);
+
+                    if(buildings.data[x].VixenReactive != '' && buildings.data[x].VixenPPM !== ''){
+                        coords.push([buildings.data[x].VixenPPM, buildings.data[x].VixenReactive]); 
+                    }else{
+                        app.page.toast("ERR", "Building points withing those parameters are erroneous");
+                    }
+
+                }
+
+                if(coords.length > 0){
+                    map.fitBounds(coords, {maxZoom: 10});
+
+                    map.on('popupopen', function() {  
+                        $("[data-role='popup_link']").click(function(e){
+                            session.setItem("building_in_view", $(this).attr("data-building"));
+                            $("[data-spa-page='spa-content-summary-building']").click();
+                            $("[data-spa-page='spa-content-summary-building']").parent().removeClass("no-display");
+                        });
+                    });
+                }
+            }else{
+                app.page.toast("WARNING", "There is currently no known buildings, within those parameters");
+            }
+        });
+    }else{
+        app.page.gen_map('map', (map) => {});
+        app.page.toast("WARNING", "There is currently no known building, within those parameters");
     }
 }
 

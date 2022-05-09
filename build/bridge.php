@@ -26,8 +26,8 @@
             try{
                 //creates a connection, selects the user and send the data as an JSON outstream
                 $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
-                $building = select($connection, "SELECT b.UID, b.BuildingName, b.VixenReactive, b.VixenPPM FROM TabsBuildings b
-                    WHERE b.VixenReactive <> 'NULL' AND b.VixenPPM <> 'NULL'", []);
+                $building = select($connection, "SELECT b.UID, b.BuildingName, b.VixenReactive, b.VixenPPM, tc.Client FROM TabsBuildings b
+                    INNER JOIN TabsClients tc ON b.Client = tc.ID WHERE b.VixenReactive <> 'NULL' AND b.VixenPPM <> 'NULL'", []);
 
                 echo json_encode(['data' => $building]);
 
@@ -709,18 +709,21 @@
                 $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
 
                 $dataset = [];
+                $dataset_temp = null;
                 foreach($cols AS $v){
-                    $dataset = select($connection, sprintf("SELECT c.UID, c.BuildingPicture, c.SiteNumber, tc.Client, c.Address, c.PostCode, c.Phone, c.Fax, tr.RegionName, c.SubRegion, tc.Email, c.Landlord, c.InsuranceBroker, c.EstatesManager, c.RegionalOperationsManager, c.VixenReactive, c.VixenPPM, c.LocalAuthority FROM %s  c INNER JOIN TabsClients tc ON c.Client = tc.ID INNER JOIN TabsRegions tr ON c.Region = tr.UID WHERE %s", $_REQUEST['table'], $filters), []);
+                    $dataset_temp = select($connection, sprintf("SELECT c.UID, c.BuildingName, c.BuildingPicture, c.SiteNumber, tc.Client, c.Address, c.PostCode, c.Phone, c.Fax, tr.RegionName, c.SubRegion, tc.Email, c.Landlord, c.InsuranceBroker, c.EstatesManager, c.RegionalOperationsManager, c.VixenReactive, c.VixenPPM, c.LocalAuthority FROM %s  c INNER JOIN TabsClients tc ON c.Client = tc.ID INNER JOIN TabsRegions tr ON c.Region = tr.UID WHERE %s", $_REQUEST['table'], $filters), []);
+
+                    $dataset['metadata'] = $dataset_temp;
                 }
 
-                if(!empty($dataset)){
+                if(!empty($dataset_temp)){
                     $con_dates = !empty($_REQUEST['date_begin']) && !empty($_REQUEST['date_end']);
 
                     $date_partial_sql = $con_dates?"AND pmj.DateCreated >= DATE(?) AND pmj.DateCreated <= DATE(?)":'';
-                    $val_array = [$dataset[0]['UID']];
+                    $val_array = [$dataset_temp[0]['UID']];
 
                     if($con_dates)
-                        $val_array = array_merge([$dataset[0]['UID']], [$_REQUEST['date_begin'], $_REQUEST['date_end']]);
+                        $val_array = array_merge([$dataset_temp[0]['UID']], [$_REQUEST['date_begin'], $_REQUEST['date_end']]);
 
 
                     $dataset['interventions'] = select($connection, sprintf("SELECT COUNT(pmj.UID) AS number_intervention, tb.BuildingName, pmjd.Description AS intervention_desc, StartDate, pms.Status AS CurrentStatus, ast.AssetCode FROM PMJobs pmj INNER JOIN PMJobDescriptions pmjd ON pmj.UID = pmjd.UID INNER JOIN PMStatusLevels pms ON pmj.CurrentStatus = pms.UID LEFT JOIN ATAssets ast ON ast.AssetCode = pmj.AssetCode INNER JOIN TabsBuildings tb ON tb.UID = pmj.Building WHERE Building = ? %s GROUP BY pmj.Building, pmjd.Description, pmj.StartDate, CurrentStatus, ast.AssetCode", $date_partial_sql),
@@ -779,8 +782,8 @@
 
                 exec_sql(
                     $connection,
-                    'UPDATE buildings SET Longitude = ?, Latitude = ? WHERE UID = ?',
-                    [doubleval($_REQUEST['Longitude']), doubleval($_REQUEST['Latitude']), $_REQUEST['UID']]
+                    'UPDATE TabsBuildings SET VixenReactive = ?, VixenPPM = ? WHERE UID = ?',
+                    [doubleval($_REQUEST['VixenReactive']), doubleval($_REQUEST['VixenPPM']), $_REQUEST['UID']]
                 );
 
                 echo json_encode(['status' => 200, 'message' => 'OK']);
@@ -1080,8 +1083,16 @@
                 $repair_jobs = [];
                 $live_job_status = [];
                 $maintenance_jobs = [];
+                $satisfaction_survey_happy = 0;
+                $satisfaction_survey_unhappy = 0;
+                $satisfaction_survey_tot = 0;
+                $certificates = 0;
 
                 $date_partial_sql = "";
+                $job_priorities = 0;
+                $asset = 0;
+                $tao = 0;
+
                 if(!empty($dataset)){
                     $con_dates = !empty($_REQUEST['date_begin']) && !empty($_REQUEST['date_end']);
 
@@ -1119,10 +1130,25 @@
                         FROM PMJobs pmj WHERE pmj.PPMGroup <> 0 AND pmj.DateCompleted IS NULL AND Building = ? %s", $date_partial_sql), $val_array);
 
                     $live_job_status = select($connection, sprintf("SELECT COUNT(pmj.UID) AS number_intervention, pms.Status AS CurrentStatus FROM PMJobs pmj INNER JOIN PMStatusLevels pms ON pmj.CurrentStatus = pms.UID
-                        WHERE pmj.DateCompleted IS NULL AND Building = ? %s GROUP BY pms.Status", $date_partial_sql), $val_array);
+                        WHERE pmj.DateCompleted IS NULL AND Building = ? %s GROUP BY pms.Status ORDER BY pms.UID ASC", $date_partial_sql), $val_array);
 
                     $job_priorities = select($connection, sprintf("SELECT COUNT(pmp.UID) AS number_intervention, pmp.Priority AS CurrentStatus FROM PMPriorities pmp INNER JOIN PMJobs pmj ON pmj.Priority = pmp.UID
-                        WHERE pmj.DateCompleted IS NULL AND Building = ? %s GROUP BY pmp.Priority", $date_partial_sql), $val_array);
+                        WHERE pmj.DateCompleted IS NULL AND Building = ? %s GROUP BY pmp.Priority ORDER BY pmp.UID ASC", $date_partial_sql), $val_array);
+
+                    $satisfaction_survey_tot = select($connection, sprintf('SELECT COUNT(pmjs.Happy) AS tot_review FROM PMJobSatisfactionSurveys pmjs INNER JOIN PMJobs pmj ON pmjs.JobID = pmj.UID WHERE 
+                        pmj.Building = ? %s', $date_partial_sql), $val_array);
+
+                    $satisfaction_survey_happy = select($connection, sprintf('SELECT COUNT(pmjs.Happy) AS tot_happy FROM PMJobSatisfactionSurveys pmjs INNER JOIN PMJobs pmj ON pmjs.JobID = pmj.UID WHERE 
+                        pmjs.Happy = 1 AND pmj.Building = ? %s', $date_partial_sql), $val_array);
+
+                    $satisfaction_survey_unhappy = select($connection, sprintf('SELECT COUNT(pmjs.Happy) AS tot_unhappy FROM PMJobSatisfactionSurveys pmjs INNER JOIN PMJobs pmj ON pmjs.JobID = pmj.UID WHERE 
+                        pmjs.Happy = 0 AND pmj.Building = ? %s', $date_partial_sql), $val_array);
+
+                    $asset = select($connection, sprintf('SELECT COUNT(*) AS tot_assets FROM ATAssets ats INNER JOIN PMJobs pmj ON ats.LocationCode = pmj.LocationCode WHERE pmj.Building = ? %s', $date_partial_sql), $val_array);
+
+                    $tao = select($connection, sprintf('SELECT SUM(pmj.EstimatedCost) AS tao FROM PMJobs pmj WHERE pmj.PaymentDate IS NULL AND pmj.Building = ? %s', $date_partial_sql), $val_array);
+
+                    $certificates = select($connection, sprintf("SELECT COUNT(pmjd.UID) AS tot_certificates FROM PMJobs pmj INNER JOIN PMJobDescriptions pmjd ON pmj.JobDescription = pmjd.UID INNER JOIN PMWorkTypes pmw ON pmjd.WorkType = pmw.UID WHERE (DATE(NOW()) > DATE_ADD(pmj.DateCreated, INTERVAL IF(DATEDIFF(DATE(pmj.EstimatedCompletionDateTime), DATE(pmj.DateCreated))<0, 0, DATEDIFF(DATE(pmj.EstimatedCompletionDateTime), DATE(pmj.DateCreated))) DAY) OR pmj.DateCompleted IS NULL) AND pmw.Name = 'CERTIFICATES' AND pmj.Building = ? %s", $date_partial_sql), $val_array);
                 }
 
                 
@@ -1137,12 +1163,28 @@
                     $maintenance_jobs_stats[$v["job_completion_status"]]++;
                 }
 
+                // HOTFIX
+                if(!empty($job_priorities)){
+                    if($job_priorities[0]['CurrentStatus'] == "Unspecified"){
+                        $shifted_el = array_shift($job_priorities);
+                        $job_priorities[] = $shifted_el;
+                    }
+                }
+
+
                 $temp_ = [
                     'repair_jobs' => $repair_jobs_stats,
                     'live_job_status' => $live_job_status,
                     'maintenance_jobs' => $maintenance_jobs_stats,
                     'jobs_today' => count($repair_jobs) + count($maintenance_jobs),
-                    'job_priorities' => $job_priorities
+                    'job_priorities' => $job_priorities,
+                    'satisfaction' => [
+                        'happy' => ($satisfaction_survey_tot[0]['tot_review'] == 0)?0:(($satisfaction_survey_happy[0]['tot_happy'] / $satisfaction_survey_tot[0]['tot_review'])) * 100,
+                        'unhappy' => ($satisfaction_survey_tot[0]['tot_review'] == 0)?0:(($satisfaction_survey_unhappy[0]['tot_unhappy'] / $satisfaction_survey_tot[0]['tot_review'])) * 100
+                    ],
+                    'asset' => $asset,
+                    'total_average_order' => $tao,
+                    'certificates' => $certificates
                 ];
 
                 echo json_encode(['data' => $temp_]);
@@ -1151,9 +1193,44 @@
                 db_disconnect($connection);
                 http_response_code(200);
             }catch(Exception $e){
+                echo $e->getMessage();
                 //return bad http request when error is encountered 
                 http_response_code(400);
             } 
+            break;
+        case 'building_summary':
+            try{
+                //creates a connection, selects the user and send the data as an JSON outstream
+                $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
+
+                $general_info = select($connection, "SELECT tb.BuildingName, tc.Client, tb.Address, tr.RegionName, IF(tb.PostCode = '', 'N/A', tb.PostCode) AS PostCode, IF(tc.Phone = '', 'N/A', tc.Phone) AS Phone,  IF(tc.Email = '', 'N/A', tc.Email) AS Email, COALESCE(b.bimage, 'build/assets/res/img/failed_img_loader.png') AS building_image FROM TabsBuildings tb INNER JOIN TabsRegions tr ON tb.Region = tr.UID INNER JOIN TabsClients tc ON tb.Client = tc.ID LEFT JOIN bimage b ON tb.UID = b.UID WHERE tb.UID = ?", [$_REQUEST['building_id']]);
+
+                $contact_section = select($connection, "SELECT tb.BuildingName, tc.Name, IF(tc.Email = '', 'N/A', tc.Email) AS Email, IF(tc.Phone = '', 'N/A', tc.Phone) AS Phone, IF(tc.Mobile = '', 'N/A', tc.Mobile) AS Mobile, tc.UID AS contact_id FROM TabsBuildings tb INNER JOIN TabsBuildingContacts tc ON tb.UID = tc.BuildingID
+                    WHERE tb.UID = ?", [$_REQUEST['building_id']]);
+
+                $floor_plans_section = select($connection, "SELECT fp.id, fp.UID, fp.fplan, COALESCE(fp.description, 'N/A') FROM fplans fp INNER JOIN TabsBuildings tb ON fp.UID = tb.UID WHERE tb.UID = ?", 
+                    [$_REQUEST['building_id']]);
+
+                $contracts_section = select($connection, "SELECT cc.ContractTitle, cc.ContractNumber, cc.ContractStartDate, cc.ContractEndDate, cc.ContractValue, cc.ContractDescription FROM COContracts cc INNER JOIN TabsBuildings tb ON tb.UID = cc.Building WHERE cc.Building = ?", 
+                    [$_REQUEST['building_id']]);
+
+
+                $temp = [
+                    'general_info' => $general_info,
+                    'contact_section' => $contact_section,
+                    'floor_plans_section' => $floor_plans_section,
+                    'contracts_section' => $contracts_section
+                ];
+
+                echo json_encode(['data' => $temp]);
+
+                //destroy database connection
+                db_disconnect($connection);
+                http_response_code(200);
+            }catch(Exception $e){
+                //return bad http request when error is encountered
+                http_response_code(400);
+            }
             break;
         default:
             // HTTTP CODE BAD REQUEST

@@ -10,13 +10,14 @@ const mapbox_token = 'pk.eyJ1IjoicmFqZXNzZW4iLCJhIjoiY2wxem0xMjdwMG13MjNibXRiYm9
 var spa_loaded = null;
 
 var map = null;
+var map_building = null;
 var session = window.sessionStorage;
 
 var buildingIcon = L.icon({
     iconUrl: 'build/assets/res/svg/building_map.png',
-    iconSize:     [60, 60],
-    iconAnchor:   [22, 60],
-    popupAnchor:  [-3, -60] 
+    iconSize:     [40, 40],
+    iconAnchor:   [2, 40],
+    popupAnchor:  [18, -20] 
 });
 
 
@@ -333,6 +334,36 @@ var app = {
                 date: (date.getDate() > 10)?date.getDate():("0" + date.getDate()),
                 year: date.getFullYear()
             });
+        },
+
+        pretty_print_digit: function(nStr){
+            nStr += '';
+            x = nStr.split('.');
+            x1 = x[0];
+            x2 = x.length > 1 ? '.' + x[1] : '';
+            var rgx = /(\d+)(\d{3})/;
+            while (rgx.test(x1)) {
+                    x1 = x1.replace(rgx, '$1' + ',' + '$2');
+            }
+            return x1 + x2;
+        },
+
+        gen_map: function(map_el, cb){
+            L.mapbox.accessToken = mapbox_token;
+            
+            if(map !== null) map.remove();
+
+            var mapboxTiles = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/{z}/{x}/{y}?access_token=' + L.mapbox.accessToken, {
+                   attribution: '© <a href="https://www.mapbox.com/feedback/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+                   tileSize: 512,
+                   zoomOffset: -1
+            });
+            
+            map = L.map(map_el)
+                .addLayer(mapboxTiles)
+                .setView([46.2276, 2.2137], 6);
+
+            cb(map);    
         }
     },
 

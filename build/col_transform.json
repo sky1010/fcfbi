@@ -1,17 +1,18 @@
 {
     "TabsBuildings": {
         "BuildingName": "Building name",
+        "SiteNumber": "Site Number",
         "UID": "Identification"
     },
     "TabsBuildingContacts": {
         "UID": "Identification",
         "BuildingID": "Building id"
     },
-    "ATAssets": [],
+    "ATAssets": {},
     "PMJobs": [],
     "fplans": [],
-    "-1": [],
     "report_card": {
-        "undefined": "Liverpool"
-    }
+        "repair_job": "Repair job"
+    },
+    "-1": []
 }

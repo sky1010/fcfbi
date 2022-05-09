@@ -74,63 +74,68 @@
     });
 
     $("[data-role='spa-content-map']").on("spaloaded", function(){
-        L.mapbox.accessToken = mapbox_token;
-        
-        if(map !== null) map.remove();
+        app.page.gen_map('map', (map) => {
+            app.protocol.ajax(
+                'build/bridge.php',
+                { request_type: 'get_building_points'},
+                {c: (data) => {
+                    const buildings = JSON.parse(data);
 
-        var mapboxTiles = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/{z}/{x}/{y}?access_token=' + L.mapbox.accessToken, {
-               attribution: '© <a href="https://www.mapbox.com/feedback/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-               tileSize: 512,
-               zoomOffset: -1
-        });
-        
-        map = L.map('map')
-            .addLayer(mapboxTiles)
-            .setView([46.2276, 2.2137], 6);
+                    if(buildings.data.length != 0){
+                        var coords = [];
+                        var popup_dom = $("[data-shadow-el='building_marker']").clone().removeClass("no-display");
 
-        app.protocol.ajax(
-            'build/bridge.php',
-            { request_type: 'get_building_points'},
-            {c: (data) => {
-                const buildings = JSON.parse(data);
+                        for(let x in buildings.data){
 
-                if(buildings.data.length != 0){
-                    var coords = [];
-                    var popup_dom = $("[data-shadow-el='building_marker']").clone().removeClass("no-display");
+                            var marker = L.marker(
+                                [buildings.data[x].VixenPPM, buildings.data[x].VixenReactive], 
+                                {icon: buildingIcon}
+                            ).addTo(map);
 
-                    for(let x in buildings.data){
+                            $(popup_dom).find("[data-role='popup_header']").html(`${buildings.data[x].BuildingName} <br> ${buildings.data[x].Client}`);
+                            $(popup_dom).find("[data-role='popup_link']").attr("data-building", buildings.data[x].UID);
 
-                        var marker = L.marker(
-                            [buildings.data[x].VixenReactive, buildings.data[x].VixenPPM], 
-                            {icon: buildingIcon}
-                        ).addTo(map);
+                            marker.bindPopup($(popup_dom)[0].outerHTML);
 
-                        $(popup_dom).find("[data-role='popup_header']").html(`${buildings.data[x].BuildingName} 
-                            <br> <p>VixenReactive: ${buildings.data[x].VixenPPM}</p><p>VixenPPM: ${buildings.data[x].VixenReactive}</p>`);
-                        $(popup_dom).find("[data-role='popup_link']").attr("data-building", buildings.data[x].UID);
+                            if(buildings.data[x].VixenReactive != '' && buildings.data[x].VixenPPM !== '')
+                                coords.push([buildings.data[x].VixenPPM, buildings.data[x].VixenReactive]); 
 
-                        marker.bindPopup($(popup_dom)[0].outerHTML);
+                        }
 
-                        if(buildings.data[x].VixenReactive != '' && buildings.data[x].VixenPPM !== '')
-                            coords.push([buildings.data[x].VixenReactive, buildings.data[x].VixenPPM]); 
+                        map.fitBounds(coords, {maxZoom: 10});
 
-                    }
-
-                    map.fitBounds(coords, {maxZoom: 10});
-
-                    map.on('popupopen', function() {  
-                        $("[data-role='popup_link']").click(function(e){
-                            session.setItem("building_in_view", $(this).attr("data-building"));
-                            $("[data-spa-page='spa-content-building_list']").click();
+                        map.on('popupopen', function() {  
+                            $("[data-role='popup_link']").click(function(e){
+                                session.setItem("building_in_view", $(this).attr("data-building"));
+                                $("[data-spa-page='spa-content-summary-building']").click();
+                                $("[data-spa-page='spa-content-summary-building']").parent().removeClass("no-display");
+                            });
                         });
-                    });
 
-                }else{
-                    app.page.toast("WARNING", "There is currently no known building, having a location.");
-                }
-            }}
-        );  
+                    }else{
+                        app.page.toast("WARNING", "There is currently no known building, having a location.");
+                    }
+                }}
+            );
 
+            app.page.onrendered().then(() => {
+                var selects_col = [];
+
+                $(`[data-role='${spa_loaded}'] [data-select]`).each(function(i, el){
+                    selects_col.push($(el).attr("data-select"));
+                });
+                
+                app.protocol.ajax(
+                    'build/bridge.php',
+                    { request_type: 'get_col_grp', fields: JSON.stringify(selects_col), table: 'TabsBuildings'},
+                    {c: (data) => {
+                        fillSelect(data);
+                        $("#filter_site_summary_map").click();
+                    }}
+                )  
+            });  
+
+        });
     });
 
     $("[data-role='spa-content-contacts']").on("spaloaded", function(){
@@ -192,13 +197,30 @@
             { request_type: 'get_contracts'},
             {c: show_contracts }
         );  
+    });
 
-        // generate the left filters
-        // app.protocol.ajax(
-        //     'build/bridge.php',
-        //     { request_type: 'get_contracts_sidebar_dataset'},
-        //     {c: show_contracts_sidebar_dataset}
-        // )
+    $("[data-role='spa-content-summary-building']").on("spaloaded", function(){
+        if(map_building !== null) map_building.remove();
+
+        var mapboxTiles = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/{z}/{x}/{y}?access_token=' + L.mapbox.accessToken, {
+               attribution: '© <a href="https://www.mapbox.com/feedback/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+               tileSize: 512,
+               zoomOffset: -1
+        });
+
+        map_building = L.map('map_sm')
+            .addLayer(mapboxTiles)
+            .setView([46.2276, 2.2137], 6);
+
+        const building_id = session.getItem('building_in_view');    
+
+        if(building_id != null || building_id != undefined){
+            app.protocol.ajax(
+                'build/bridge.php',
+                { request_type: 'building_summary', building_id: building_id},
+                {c: fill_building_summary }
+            );    
+        }
     });
 
     $("[data-role='spa-content-floor_plans']").on("spaloaded", function(){
@@ -361,7 +383,7 @@
 
                 var set = new Set(temp);
                 for(let x in [...set])
-                    dataset.data.push({column_name: temp[x]});
+                    dataset.data.push({COLUMN_NAME: temp[x]});
                 
                 fill_form_fields(JSON.stringify(dataset), sel_val)
             }else{
@@ -635,7 +657,7 @@
         });
 
         if(Object.keys(select_val).length === 0){
-            select_val = {'tc.Client' : $("[data-select='tc.Client'] option:nth-child(3)").text().trim()};
+            select_val = {'tc.Client' : $(`[data-role='${spa_loaded}'] [data-select='tc.Client'] option:nth-child(3)`).text().trim()};
         }
 
         if(Object.keys(select_val).length > 0){
@@ -658,16 +680,54 @@
                         }
                     }
 
+                    var date_begin = $(`[data-role='${spa_loaded}'] [data-field='begin_date']`).val();
+                    var date_end = $(`[data-role='${spa_loaded}'] [data-field='end_date']`).val();
+
                     app.protocol.ajax(
                         'build/bridge.php',
                         { request_type: 'report_card', filters: JSON.stringify(select_val), table: 'TabsBuildings',
-                        date_begin: $('#begin_date').val(), date_end: $('#end_date').val()},
+                        date_begin: date_begin, date_end: date_end},
                         {c: (data) => {
                             fill_report_card(data);
                         }}
                     )  
                 }
             });
+        }else{
+            $("#site_dataset_warning").removeClass("no-display");
+            $("#site_dataset").addClass("no-display");
+        }
+    });
+
+    $("#filter_site_summary_map").parent().click(function(){
+        var select_val = {}
+        var building_id = session.getItem("site_in_view");
+
+        $(`[data-role='${spa_loaded}'] [data-select]`).each(function(i, el){
+            const el_val = $(el).val();
+
+            if(el_val != "-1" && el_val !== null)
+                select_val[$(el).attr("data-select")] = el_val;
+        });
+
+        if(Object.keys(select_val).length === 0){
+            select_val = {'tc.Client' : $(`[data-role='${spa_loaded}'] [data-select='tc.Client'] option:nth-child(3)`).text().trim()};
+        }
+
+        if(Object.keys(select_val).length > 0){
+
+            var date_begin = $(`[data-role='${spa_loaded}'] [data-field='begin_date']`).val();
+            var date_end = $(`[data-role='${spa_loaded}'] [data-field='end_date']`).val();
+
+            app.protocol.ajax(
+                'build/bridge.php',
+                { request_type: 'get_col_values', filters: JSON.stringify(select_val), table: 'TabsBuildings', 
+                date_begin: date_begin, date_end: date_end},
+                {c: (d) =>{
+                    regen_map(map, d);
+                }}
+            );
+
         }else{
             $("#site_dataset_warning").removeClass("no-display");
             $("#site_dataset").addClass("no-display");
@@ -699,21 +759,19 @@
     $("[data-select-pdf='export_to_pdf_dropdown']").change(function(e){
         switch($(this).val()){
             case 'pdf':
-                var element = document.getElementById('element-to-print');
+                var element = $(`[data-role='${spa_loaded}'] [data-elem-print]`)[0];
                 var opt = {
                   margin:       0.5,
-                  filename:     'site_summary.pdf',
+                  filename:     `${$(`[data-role='${spa_loaded}'] [data-elem-print]`).attr('data-export-name')}.${$(this).val()}`,
                   image:        { type: 'jpeg', quality: 1 },
-                  html2canvas:  { scale: 4 },
-                  pagebreak: { mode: ['avoid-all', 'css', 'legacy'] },
-                  jsPDF:        { unit: 'cm', format: 'a2', orientation: 'portrait' },
-                  after: ["#number_intervention"]
+                  html2canvas:  { scale: 1 },
+                  jsPDF:        { unit: 'cm', format: 'a2', orientation: 'landscape' }
                 };
                 
-                $("#element-to-print button").addClass("no-display");
                 // New Promise-based usage:
+                $("[data-role='pdf_loader']").removeClass("no-display");
                 html2pdf().set(opt).from(element).save().then(() => {
-                    $("#element-to-print button").removeClass("no-display");
+                    $("[data-role='pdf_loader']").addClass("no-display");
                 });
                 break;
             default:
@@ -786,7 +844,7 @@
      * *********************************************************/
     app.page.onrendered().then(() => {
 
-        $(`[data-role='spa-content-site'] [data-select]`).change(function(){
+        $(`[data-role='${spa_loaded}'] [data-select]`).change(function(){
 
             const selection_rel = { 'tc.Client': 'client_selection', 'tr.RegionName': 'region_selection'};
 
@@ -806,17 +864,36 @@
         const begin_date_picker = MCDatepicker.create({ 
             el: '#begin_date',
             dateFormat: 'YYYY-MM-DD',
+            bodyType: 'inline'
         })
 
-        begin_date_picker.onOpen(() => $(".mc-calendar").css({left: '330px', top: '220px'}));
+        begin_date_picker.onOpen(() => $(".mc-calendar").css({left: '14px', top: '160px'}));
 
         const end_date_picker = MCDatepicker.create({ 
             el: '#end_date',
             dateFormat: 'YYYY-MM-DD',
+            bodyType: 'inline'
         })
 
-        end_date_picker.onOpen(() => $(".mc-calendar").css({left: '330px', top: '220px'}));
+        end_date_picker.onOpen(() => $(".mc-calendar").css({left: '14px', top: '160px'}));
         
+        const begin_date_picker_map = MCDatepicker.create({ 
+            el: '#begin_date_map',
+            dateFormat: 'YYYY-MM-DD',
+            bodyType: 'inline'
+        })
+
+        begin_date_picker_map.onOpen(() => $(".mc-calendar").css({left: '14px', top: '160px'}));
+
+        const end_date_picker_map = MCDatepicker.create({ 
+            el: '#end_date_map',
+            dateFormat: 'YYYY-MM-DD',
+            bodyType: 'inline'
+        })
+
+        end_date_picker_map.onOpen(() => $(".mc-calendar").css({left: '14px', top: '160px'}));
+    
+
         //setting page date format, populate fields
         app.page.render_datemask_field((masks) => {
             var container = $("[data-select='date_format']");
@@ -938,7 +1015,7 @@
         $("[data-report-card]").each(function(){
             var cloned_card = $(this).clone();
 
-            $(cloned_card).css({width: '100%', height: '240px', 'padding-left': "10px", 'padding-right': "10px"});
+            $(cloned_card).css({width: '100%', 'padding-left': "10px", 'padding-right': "10px", "transform": "scale(0.6)", "position": "relative", "top": "-45px"});
             $("#report_card_carousel").append(cloned_card);
         });
 
@@ -946,17 +1023,39 @@
         owl_title.owlCarousel({
             loop: true,
             margin: 0,
-            nav: true,
+            nav: false,
             items: 1,
-            dots: true,
+            dots: false,
             navText: ['<i class="ti-angle-left"></i>', '<i class="ti-angle-right"></i>'],
             smartSpeed: 1200,
             autoHeight: false,
             autoplay: true,
             mouseDrag: true
         });
-    });
 
+        $("#back_to_map").click(function (argument) {
+            session.removeItem('building_in_view');
+            $("[data-spa-page='spa-content-map']").click();
+            $("[data-spa-page='spa-content-summary-building']").parent().addClass("no-display");
+        });
+
+        /*********** Multiselect EVOL *************/
+        const viable_multiselect_fields = ["tc.Client", "tr.RegionName", "c.BuildingName"];
+
+        for(let o in viable_multiselect_fields){
+            $(`[data-select='${viable_multiselect_fields[o]}']`).change(function(){
+                setTimeout(() =>{ // quirk, the nice select element seems to not load sync
+                    var text_node = $(`[data-value='${$(this).val()}']`).text();
+                    $(`[data-value='${$(this).val()}']`).html(`<span data-feather='arrow-right'></span>${text_node}`);
+                    feather.replace();
+                }, 500);
+            });
+        }
+
+
+        /******************************************/
+    });
+    
     app.init("site_summary");
     feather.replace();
 })(jQuery);
