@@ -329,9 +329,9 @@ var app = {
                 hours: (date.getHours() >= 10)?date.getHours():("0" +date.getHours()),
                 second: (date.getSeconds() >= 10)?date.getSeconds():("0" +date.getSeconds()),
                 meridian: (date.getHours() >= 12)?"PM":"AM",
-                month: ((date.getMonth() + 1) > 10)?(date.getMonth() + 1):("0"+(date.getMonth() + 1)),
+                month: ((date.getMonth() + 1) >= 10)?(date.getMonth() + 1):("0"+(date.getMonth() + 1)),
                 month_full: month[date.getMonth()],
-                date: (date.getDate() > 10)?date.getDate():("0" + date.getDate()),
+                date: (date.getDate() >= 10)?date.getDate():("0" + date.getDate()),
                 year: date.getFullYear()
             });
         },
@@ -361,7 +361,7 @@ var app = {
             
             map = L.map(map_el)
                 .addLayer(mapboxTiles)
-                .setView([46.2276, 2.2137], 6);
+                .setView([-20.269107, 57.571068], 10);
 
             cb(map);    
         }

@@ -372,13 +372,13 @@
             <li class="nav-item" role="presentation">
               <button class="nav-link active" id="csx-map-tab" data-bs-toggle="tab" data-bs-target="#spa-content-map" data-spa-page="spa-content-map" type="button" role="tab" aria-controls="Map" aria-selected="true">Map</button>
             </li>
-            <li class="nav-item no-display" role="presentation">
+            <li class="nav-item" role="presentation">
               <button class="nav-link" id="csx-summary-tab" data-bs-toggle="tab" data-bs-target="#spa-content-summary-building" data-spa-page="spa-content-summary-building" type="button" role="tab" aria-controls="Building details" aria-selected="true">Building details</button>
             </li>
             <li class="nav-item no-display" role="presentation">
               <button class="nav-link" id="csx-contacts-tab" data-bs-toggle="tab" data-bs-target="#spa-content-contacts" data-spa-page="spa-content-contacts" type="button" role="tab" aria-controls="Contacts" aria-selected="true">Contacts</button>
             </li>
-            <li class="nav-item no-display" role="presentation">
+            <li class="nav-item" role="presentation">
               <button class="nav-link" id="csx-building_list-tab" data-bs-toggle="tab" data-bs-target="#spa-content-building_list" data-spa-page="spa-content-building_list" type="button" role="tab" aria-controls="Building List" aria-selected="true">Building List</button>
             </li>
             <li class="nav-item no-display" role="presentation">
@@ -436,8 +436,25 @@
             </div>
             <div class="tab-pane fade show active" id="spa-content-summary-building" data-role="spa-content-summary-building" role="tabpanel" aria-labelledby="csx-summary-tab" style="height: unset !important;">
               <button class="btn btn-sm csx-btn-gradient" style="position: relative; right: -88vw; top: 8vh;" id="back_to_map">Back to map</button>
-              <div class="container mt-5 mb-5">
+              <div class="container" data-show-void="spa-content-summary-building" style="height: 70vh;">
+                <div class="d-flex justify-content-center align-items-center flex-column" style="height: 100%; width: 100%;">
+                  <img src="build/assets/res/img/empty_warning.png" alt="empty data" height="60px" width="60px" class="mt-5">
+                  <h5 class="text-center mt-5" data-header="empty_header">No building selected</h5>
+                  <p class="text-center mt-2" style="padding: 0px 15%;">Please a select a building on the map</p>
+                </div>
+              </div>
+              <div class="container mt-5 mb-5" data-void="spa-content-summary-building">
+                <div class="sb_image_uploader">
+                  <div data-role="upload_building_image" id="upload_building_image"><span data-feather="upload"></span></div>
+                  <div id="cancel_upload_building_image"><span data-feather="x"></span></div>
+                </div>
                 <div class="row">
+                  <div class="col-4 csx-container-img no-display">
+                    <form action="build/bridge.php?request_type=file_upload" class="dropzone" method="post" enctype="multipart/form-data" id="file_src_map"
+                        style="width: 100%;margin: 0px;height: 100%;" name="upload_src_upload" data-db="false">
+                        <input type="text" class="no-display" name="building_image_uid">
+                    </form>
+                  </div>
                   <div class="col-4 csx-container-img" data-field="sb_building_image"></div>
                   <div class="col-4">
                     <div class="d-lg-flex justify-content-center align-items-center flex-column" style="height: 100%;">
@@ -904,7 +921,7 @@
             </div>
             <!--floor_plans ends-->
             <div class="tab-pane fade" id="spa-content-images" data-role="spa-content-images" role="tabpanel" aria-labelledby="csx-images-tab">
-              <div class="container" id="image_dataset">
+            <div class="container" id="image_dataset">
                 <div class="row mt-5">
                   <div class="col-lg-12 d-flex justify-content-between">
                     <div class="dropdown">
@@ -950,7 +967,7 @@
                   <select data-select="building_uid_list" class="wide"></select>
                   <form action="build/bridge.php?request_type=file_upload" class="dropzone mt-5" method="post" enctype="multipart/form-data" id="file_src_scid"
                     style="width: 100%; margin-right: auto; margin-left: auto;" name="upload_src_upload" data-db="false">
-                    <input type="text" name="building_image_uid" style="display: none;" id="building_image_uid">
+            <!--         <input type="text" name="building_image_uid" style="display: none;" id="building_image_uid"> -->
                   </form>
                 </div>
               </div>
@@ -961,100 +978,131 @@
         <div data-tab-target="asset">
           <ul class="nav nav-tabs" id="csx-sub-nav-asset" role="tablist">
             <li class="nav-item" role="presentation">
-              <button class="nav-link active" id="csx-summary-tab" data-bs-toggle="tab" data-bs-target="#spa-content-summary" data-spa-page="spa-content-summary" type="button" role="tab" aria-controls="Summary" aria-selected="true">Summary</button>
+              <button class="nav-link active" id="csx-summary-tab" data-bs-toggle="tab" data-bs-target="#spa-content-summary" data-spa-page="spa-content-summary" type="button" role="tab" aria-controls="Summary" aria-selected="true">Assets</button>
             </li>
             <li class="nav-item" role="presentation">
-              <button class="nav-link" id="csx-asset_list-tab" data-bs-toggle="tab" data-bs-target="#spa-content-asset_list" data-spa-page="spa-content-asset_list" type="button" role="tab" aria-controls="Asset list" aria-selected="true">Asset list</button>
+              <button class="nav-link" id="csx-asset_list-tab" data-bs-toggle="tab" data-bs-target="#spa-content-asset_list" data-spa-page="spa-content-asset_list" type="button" role="tab" aria-controls="Asset list" aria-selected="true">Asset details</button>
             </li>
           </ul>
 
           <div class="tab-content" id="csx-tab-content-asset">
             <div class="tab-pane fade" id="spa-content-summary" data-role="spa-content-summary" role="tabpanel" aria-labelledby="csx-summary-tab">
-              <div class="d-flex justify-content-center align-items-center" style="width: 100%; height: 100%;">
-                <div style="width: 500px;">
-                  <canvas id="asset_chart" ></canvas>
+              <div class="container-fluid">
+                <div class="sidebar-toggle" data-sidebar-collapse-target="left-filters-asset_list">
+                  <span data-feather="chevron-left"></span>
+                </div>
+                <div class="row csx-full-vp">
+                  <div class="col-lg-2" style="padding-right: 2vw;margin-top: 3vh;" data-sidebar-collapse="left-filters-asset_list">
+                    <div class="d-flex justify-content-between flex-column align" style="width: 100%;">
+                        <select data-select="tc.Client" class="mt-3"></select>
+                        <select data-select="tr.RegionName" class="mt-3"></select>
+                        <select data-select="c.BuildingName" class="mt-3"></select>
+
+                        <select data-select="atd.Description" class="mt-3"></select>
+                        <!-- <select data-select="asset_grp" class="mt-3"></select> -->
+                        <select data-select="atg.GroupName" class="mt-3"></select>
+                        <select data-select="atl.Status" class="mt-3"></select>
+                        <select data-select="ats.AssetCode" class="mt-3"></select>
+
+                        <div id="filter_site_asset_wrapper" class="mt-3">
+                          <button class="btn btn-sm csx-btn-gradient" id="filter_site_summary_asset">Apply</button>
+                        </div>
+
+                        <select data-select-pdf="export_to_pdf_dropdown" class="mt-5">
+                          <optgroup>
+                            <option data-display="Export file"></option>
+                            <option value="pdf">PDF</option>
+                            <option value="word">Word</option>
+                            <option value="ppt">PPT</option>
+                          </optgroup>
+                        </select>  
+                      </div>
+                  </div>
+                  <div class="col-lg-10 csx-left-separator" data-main-collapse="left-filters-asset_list">
+                    <div class="container-fluid">
+                      <div class="row mt-5">
+                        <div class="col-lg-4 box-area text-center" style="background-color: #b5e48c;">
+                          <div class="d-lg-flex justify-content-center align-items-center">
+                            <h4 class="mt-3 mb-3 me-3 csx-txt-uppercase" data-report-header="number_of_assets">Number of assets</h4>
+                            <div data-toggle="tooltip" data-placement="top" title="Number of assets tagged and registered in the database"><i class="fa-solid fa-circle-info"></i></div>
+                          </div>
+                          <div class="d-lg-flex justify-content-center align-items-center mt-5">
+                            <h1 data-field="assets_summary">121</h1>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row mt-4">
+                        <div class="col-lg-12" data-target-pagination data-target-table>
+                          <div class="table-responsive mt-5">
+                            <table class="table table-striped">
+                              <thead class="csx-light-theme">
+                                <tr></tr>
+                              </thead>
+                              <tbody class="sm-font"></tbody>
+                            </table>
+                          </div>  
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
 
             <div class="tab-pane fade" id="spa-content-asset_list" data-role="spa-content-asset_list" role="tabpanel" aria-labelledby="csx-asset_list-tab">
               <!--asset_list-->
-              <div class="container-fluid">
-<!--                 <div class="sidebar-toggle" data-sidebar-collapse-target="left-filters-asset_list">
-                  <span data-feather="chevron-left"></span>
-                </div> -->
-                <div class="row csx-full-vp">
-      <!--             <div class="col-lg-2 csx-right-separator" data-sidebar-collapse="left-filters-asset_list"></div> -->
-                  <div class="col-lg-12" data-target-pagination data-target-table>
-                    <div class="container-fluid mt-4">
-                      <div class="row">
-                          <div class="col-lg-3 col-sm-12">
-                            <div class="dropdown">
-                              <button class="btn btn-sm csx-btn-gradient dropdown-toggle" type="button" id="quick_search_form" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Quick search <span data-feather="search"></span>
-                              </button>
-                              <div class="dropdown-menu" aria-labelledby="quick_search_form">
-
-                              </div>
-                            </div>
-                          </div>
-                          <div class="col-lg-9 col-sm-12 d-flex justify-content-end flex-group">
-                              <button class="btn btn-sm csx-btn-gradient no-display" data-table="ATAssets" data-role="show_columns">Column <span data-feather="bar-chart-2"></span></button>
-                              <button class="btn btn-sm csx-btn-gradient no-display">Sorting <span data-feather="filter"></span></button>
-                              <button class="btn btn-sm csx-btn-gradient no-display">Group by <span data-feather="filter"></span></button>
-                              <div class="dropdown me-4">
-                                <button class="btn btn-sm csx-btn-gradient dropdown-toggle" type="button" data-role="export_list_type" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                  Export <span data-feather="download"></span>
-                                </button>
-                                <div class="dropdown-menu" aria-labelledby="export_list_type" data-table="ATAssets">
-                                  <a class="dropdown-item" href="#" data-export="pdf">PDF</a>
-                                  <a class="dropdown-item" href="#" data-export="xlsx">Excel</a>
-                                  <a class="dropdown-item" href="#" data-export="xml">XML</a>
-                                  <a class="dropdown-item" href="#" data-export="json">JSON</a>
-                                  <a class="dropdown-item" href="#" data-export="csv">CSV</a>
-                                </div>
-                              </div>
-                              <button class="btn btn-sm csx-btn-gradient">Search <span data-feather="search"></span></button>
-                          </div>
-                          <div class="col-lg-3 col-sm-12 no-display">
-                            <div class="float-right">
-                              <button class="btn btn-sm csx-btn-gradient no-display">Add new <span data-feather="plus"></span></button>
-                              <button class="btn btn-sm csx-btn-gradient no-display">Reload <span data-feather="refresh-cw"></span></button>
-                            </div>
-                          </div>
-                      </div>
+              <button class="btn btn-sm csx-btn-gradient" style="position: relative; right: -88vw; top: 8vh;" id="back_to_asset">Back to asset</button>
+              <div class="container" data-show-void="spa-content-asset_list" style="height: 70vh;">
+                <div class="d-flex justify-content-center align-items-center flex-column" style="height: 100%; width: 100%;">
+                  <img src="build/assets/res/img/empty_warning.png" alt="empty data" height="60px" width="60px" class="mt-5">
+                  <h5 class="text-center mt-5" data-header="empty_header">No asset selected</h5>
+                  <p class="text-center mt-2" style="padding: 0px 15%;">Please a select an asset on the asset list</p>
+                </div>
+              </div>
+              <div class="container mt-5" data-void="spa-content-asset_list">
+                <div class="row">
+                  <div class="col-lg-12">
+                    <div class="asset_section_header">
+                      <p>Asset details</p>
                     </div>
-                    <div class="container-fluid mt-4 mb-4 no-display" data-column-form>
-                      <div class="row">
-                        <div class="col-lg-12 col-sm-12 float-right">
-                          <div class="d-lg-flex justify-content-end mt-3 mb-3">
-                            <button class="btn btn-sm csx-btn-gradient ms-3" data-column-form-role="apply" data-table="ATAssets">Apply <span data-feather="check"></span></button>
-                            <button class="btn btn-sm csx-btn-gradient ms-3" data-column-form-role="restore">Restore <span data-feather="x"></span></button>
-                            <button class="btn btn-sm csx-btn-gradient ms-3" data-column-form-role="cancel">Cancel <span data-feather="x"></span></button>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="row">
-                          <div class="col-lg-6 col-sm-6">
-                            <div class="csx-drop-col-zone d-flex flex-wrap" data-drop-col></div>
-                          </div> 
-                          <div class="col-lg-6 col-sm-6">
-                            <div class="csx-drop-col-zone d-flex flex-wrap dropzone">
-                              
-                            </div>
-                          </div>
-                      </div>
-                    </div>
-                    <div class="table-responsive mt-5">
-                      <table class="table table-striped">
-                        <thead class="csx-light-theme">
-                          <tr></tr>
-                        </thead>
-                        <tbody class="sm-font"></tbody>
-                      </table>
-                    </div>   
                   </div>
-                </div> 
+                </div>
+                <div class="row  mt-2">
+                  <div class="col-lg-5">
+                    <div class="table-responsive">
+                      <table class="table">
+                        <thead class="csx-light-theme">
+                          <tr>
+                            <th></th>
+                            <th></th>
+                          </tr>
+                        </thead>
+                        <tbody class="sm-font">
+                          <tr><td class="csx-asset-row" width="50%">Client</td> <td width="50%" data-table-asset-row-field="Client"></td></tr>
+                          <tr><td class="csx-asset-row" width="50%">Building name</td> <td width="50%" data-table-asset-row-field="BuildingName"></td></tr>
+                          <tr><td class="csx-asset-row" width="50%">Asset code</td> <td width="50%" data-table-asset-row-field="AssetCode"></td></tr>
+                          <tr><td class="csx-asset-row" width="50%">Description</td> <td width="50%" data-table-asset-row-field="Description"></td></tr>
+                          <tr><td class="csx-asset-row" width="50%">Group 1</td> <td width="50%" data-table-asset-row-field="GroupName"></td></tr>
+                          <tr><td class="csx-asset-row" width="50%">Location description</td> <td width="50%" data-table-asset-row-field="location_desc"></td></tr>
+                          <tr><td class="csx-asset-row" width="50%">Location code</td> <td width="50%" data-table-asset-row-field="LocationCode"></td></tr>
+                          <tr><td class="csx-asset-row" width="50%">Manufacturer</td> <td width="50%" data-table-asset-row-field="Manufacturer"></td></tr>
+                          <tr><td class="csx-asset-row" width="50%">Model</td> <td width="50%" data-table-asset-row-field="Model"></td></tr>
+                          <tr><td class="csx-asset-row" width="50%">Serial number</td> <td width="50%" data-table-asset-row-field="SerialNumber"></td></tr>
+                          <tr><td class="csx-asset-row" width="50%">Status</td> <td width="50%" data-table-asset-row-field="Status"></td></tr>
+                          <tr><td class="csx-asset-row" width="50%">Comments</td> <td width="50%" data-table-asset-row-field="Comments"></td></tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  <div class="col-lg-2"></div>
+                  <div class="col-lg-5">
+                    <div class="d-flex justify-content-center align-items-center flex-column" style="height: 100%; width: 100%;">
+                      <img src="build/assets/res/img/empty_warning.png" alt="empty data" height="60px" width="60px" class="mt-5">
+                      <h5 class="text-center mt-5" data-header="empty_header">Image not found</h5>
+                      <p class="text-center mt-2" style="padding: 0px 15%;">Asset don't currently have an image</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
             <!--asset_list ends-->
@@ -1357,9 +1405,15 @@
       </main>
     </div>
 
-    <div class="no-display" data-shadow-el="building_marker">
-        <p class="mt-3 mb-3" data-role="popup_header"></p> 
-        <button class="btn btn-sm csx-btn-gradient" data-role="popup_link" style="width: 100%;">View </button>
+    <div class="container-fluid no-display" data-shadow-el="building_marker">
+      <div class="row">
+        <div class="col-lg-8">
+          <div class="mt-3 mb-3" data-role="popup_header"></div>
+        </div>
+        <div class="col-lg-4">
+          <button data-role="popup_link"><span data-feather="external-link"></span></button>
+        </div>
+      </div>
     </div>
 
     <div class="chart_preloader no-display" style="height: 100%; width: 100%;" data-shadow-el="chart-preloader">

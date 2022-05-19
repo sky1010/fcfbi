@@ -12,6 +12,8 @@
 	--constant-black: 0, 0, 0;
 	--csx-color-one: 34, 34, 34;
 	--line-opacity: 1;
+	--asset-header: 69,123,157;
+	--asset-header-text-node: 255,183,3;
 }
 
 [data-theme="dark"] {
@@ -28,6 +30,8 @@
 	--constant-black: 0, 0, 0;
 	--csx-color-one: 34, 34, 34;
 	--line-opacity: 0.1;
+	--asset-header: 69,123,157;
+	--asset-header-text-node: 255,183,3;
 }
 
 @font-face {
@@ -226,7 +230,7 @@ svg rect{
 	fill: rgb(var(--secondary-color)) !important;
 }
 
-#filter_site_summary, #filter_site_summary_map{
+#filter_site_summary, #filter_site_summary_map, #filter_site_summary_asset{
 	border-radius: 30px !important;
 	z-index: -1;
 	position: relative;
@@ -239,7 +243,7 @@ svg rect{
 	width: 100%;
 }
 
-#filter_site_summary_wrapper, #filter_site_map_wrapper{
+#filter_site_summary_wrapper, #filter_site_map_wrapper, #filter_site_asset_wrapper{
 	cursor: pointer;
 	border-radius: 30px; height: 42px; width: 80%;
 	margin-left: auto; margin-right: auto;
@@ -461,4 +465,74 @@ input{
 .feather-arrow-right{
 	width: 10px;
 	height: 10px;
+}
+
+[data-role="popup_link"]{
+	width: 40px;height: 40px;border-radius: 50%; margin: auto; background-color: #d62828; border: unset; margin-top: 16px;
+}
+
+[data-role="popup_link"] svg{
+	position: unset !important;
+	stroke: #fff;
+}
+
+[data-role="popup_header"] li{
+	font-size: 10px !important;
+    letter-spacing: 0.1em;
+    margin: 0px !important;
+}
+
+[data-role="popup_header"] ul{
+	padding-left: 1rem !important;
+}
+
+.leaflet-popup-content{
+	padding: unset !important;
+	width: 240px !important;
+}
+
+.leaflet-popup-content-wrapper{
+	border-radius: 10px !important;
+}
+
+.sb_image_uploader{
+	position: relative;
+    left: 38vh;
+    top: 29vh;
+    width: 30px;
+    height: 80px;
+    background-color: #fff;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0px;
+    flex-direction: column;
+}
+
+.sb_image_uploader div{
+	margin: 10px 0px;
+}
+
+.sb_image_uploader:hover{
+	cursor: pointer;
+}
+
+.asset_section_header{
+	height: 60px;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    text-align: center;
+    background-color: rgb(var(--asset-header));
+}
+
+.asset_section_header p {
+	margin: 0px;
+	color: rgb(var(--asset-header-text-node)) !important;
+}
+
+.csx-asset-row{
+	background-color: rgb(var(--asset-header)) !important;
+	color: rgb(var(--asset-header-text-node)) !important;
 }

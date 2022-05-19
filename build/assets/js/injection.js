@@ -260,8 +260,12 @@ function show_floor_plans(data){
     }
 }
 
-function show_asset_list(data){
-    const asset_list = JSON.parse(data);
+function fill_summary_asset(data){    
+    const asset_list = JSON.parse(data);    
+
+    /*------------ ASSETS CARD -------------*/
+    $("[data-field='assets_summary']").text(asset_list.data.assets[0].tot_assets);
+
     const container = $(`[data-role='${spa_loaded}'] [data-target-table]`);
     $(container).find("tbody").children().remove();
     $(container).find("thead").children().remove();
@@ -273,7 +277,7 @@ function show_asset_list(data){
             const parse = JSON.parse(data);
             
             // gen header
-            var col_name = Object.keys(asset_list.data[0]);
+            var col_name = Object.keys(asset_list.data.asset_dataset[0]);
             var tr_node = $("<tr></tr>");
             $(tr_node).append($("<th></th>"));
 
@@ -296,32 +300,40 @@ function show_asset_list(data){
         }}
     ); 
 
-    for(let x in asset_list.data){
+    var as_link = ["AssetCode"];
+    for(let x in asset_list.data.asset_dataset){
 
-        var tr = $("<tr></tr>").attr("data-asset_list", asset_list.data[x].UID );
+        var tr = $("<tr></tr>").attr("data-asset_list", asset_list.data.asset_dataset[x].UID );
         var edit_btn = $("<th scope='row'> <span class='hover-pointer' data-feather='edit-3'></span></th>");
 
         $(tr).append(edit_btn);
         
-        for(let y in asset_list.data[x]){
-
-            var td_node = $("<td></td>").text(asset_list.data[x][y]);
+        for(let y in asset_list.data.asset_dataset[x]){
+            var link_node = $(`<a href='#' data-asset-link-value='${asset_list.data.asset_dataset[x][y]}'>${asset_list.data.asset_dataset[x][y]}</a>`);
+            var node_ = as_link.includes(y)?link_node:asset_list.data.asset_dataset[x][y];
+            var td_node = $("<td></td>").html(node_);
             $(tr).append(td_node);
 
         }
 
         $(container).find("tbody").append(tr);
-
     }
 
-    $(`[data-role='${spa_loaded}'] [data-target-pagination]`).pagination({
-        dataSource: [...$(`[data-role='${spa_loaded}'] [data-target-table] tbody tr`)],
-        pageSize: 9,
-        callback: function(data, pagination) {
-            var html = template(data);
-            $(`[data-role='${spa_loaded}'] [data-target-table] tbody`).html(html);
-        }
-    })
+
+    $("[data-asset-link-value]").click(function(e){
+        e.preventDefault();
+        session.setItem('asset_in_view', $(this).attr('data-asset-link-value'));
+        $("[data-spa-page='spa-content-asset_list']").click();
+    });
+
+    // $(`[data-role='${spa_loaded}'] [data-target-pagination]`).pagination({
+    //     dataSource: [...$(`[data-role='${spa_loaded}'] [data-target-table] tbody tr`)],
+    //     pageSize: 9,
+    //     callback: function(data, pagination) {
+    //         var html = template(data);
+    //         $(`[data-role='${spa_loaded}'] [data-target-table] tbody`).html(html);
+    //     }
+    // })
 
     feather.replace();
 }
@@ -932,14 +944,22 @@ function fillSelect(data){
         BuildingNumber: 'Site number',
         BuildingName: 'Site name',
         Client: 'Client',
-        RegionName: 'Region'
+        RegionName: 'Region',
+        Description: 'Description',
+        GroupName: 'Group',
+        Status: 'Status',
+        AssetCode: 'Code'
     };
 
     // fields remapped is not compatible with the initial tables specs
     var key_remapped_fields = {
         BuildingName: 'c.BuildingName', 
         Client: 'tc.Client',
-        RegionName: 'tr.RegionName'
+        RegionName: 'tr.RegionName',
+        Description: 'atd.Description',
+        GroupName: 'atg.GroupName',
+        Status: 'atl.Status',
+        AssetCode: 'ats.AssetCode'
     };
 
     for(let x in dataset.data){
@@ -1173,7 +1193,7 @@ function fill_building_summary(argument) {
     $("[data-field='sb_email']").text(`Email : ${dataset.data.general_info[0].Email}`);
     $("[data-field='sb_building_name']").text(`${dataset.data.general_info[0].BuildingName}`);
     $("[data-field='sb_client_name']").text(`${dataset.data.general_info[0].Client}'s office`);
-    $("[data-field='sb_building_image']").css("background-image", `url('${dataset.data.general_info[0].building_image}')`);
+    $("[data-field='sb_building_image']").css("background-image", `url('${dataset.data.general_info[0].building_image.replace('../', '')}')`);
 
     /*------------- BUILDING CONTACT SUMMARY -----------------*/
     let container_contact = $("[data-table-fill='summary_building_contact'] tbody");
@@ -1254,6 +1274,7 @@ function regen_map(map_instance, data){
                 var coords = [];
                 var popup_dom = $("[data-shadow-el='building_marker']").clone().removeClass("no-display");
 
+                var invalid_points = false
                 for(let x in buildings.data){
 
                     var marker = L.marker(
@@ -1261,7 +1282,7 @@ function regen_map(map_instance, data){
                         {icon: buildingIcon}
                     ).addTo(map);
 
-                    $(popup_dom).find("[data-role='popup_header']").html(`${buildings.data[x].BuildingName} <br> ${buildings.data[x].Client}`);
+                    $(popup_dom).find("[data-role='popup_header']").html(`<ul><li>${buildings.data[x].Client}</li><li>${buildings.data[x].BuildingName}</li></ul>`);
                     $(popup_dom).find("[data-role='popup_link']").attr("data-building", buildings.data[x].UID);
 
                     marker.bindPopup($(popup_dom)[0].outerHTML);
@@ -1269,19 +1290,19 @@ function regen_map(map_instance, data){
                     if(buildings.data[x].VixenReactive != '' && buildings.data[x].VixenPPM !== ''){
                         coords.push([buildings.data[x].VixenPPM, buildings.data[x].VixenReactive]); 
                     }else{
+                        invalid_points = true;
                         app.page.toast("ERR", "Building points withing those parameters are erroneous");
                     }
 
                 }
 
-                if(coords.length > 0){
+                if(coords.length > 0 && !invalid_points){
                     map.fitBounds(coords, {maxZoom: 10});
 
                     map.on('popupopen', function() {  
                         $("[data-role='popup_link']").click(function(e){
                             session.setItem("building_in_view", $(this).attr("data-building"));
                             $("[data-spa-page='spa-content-summary-building']").click();
-                            $("[data-spa-page='spa-content-summary-building']").parent().removeClass("no-display");
                         });
                     });
                 }
@@ -1294,6 +1315,19 @@ function regen_map(map_instance, data){
         app.page.toast("WARNING", "There is currently no known building, within those parameters");
     }
 }
+
+function fill_asset_summary(d){
+    const p = JSON.parse(d);
+
+    const container = $(`[data-role='${spa_loaded}'] [data-target-table]`);
+    $(container).find("tbody [data-table-asset-row-field]").text("");
+
+    for(let x in p.data){
+        for(let y in p.data[x]){
+            $(`[data-table-asset-row-field='${y}']`).text(p.data[x][y]);
+        }
+    }
+};
 
 function template(nodes){
     var html = "";

@@ -31,7 +31,6 @@
               // Hide the success button or the complete form.
             });
             this.on("successmultiple", function(files, response) {
-                console.log(response);
                 $("#back_image").click();
                 app.page.toast("SUCCESS", "Image uploaded successfully");
 
@@ -51,6 +50,71 @@
     }
 
     var file_dz = new Dropzone("#file_src_scid", dz_options);
+
+    var dz_sm_map_options= {
+
+          autoProcessQueue: false,
+          uploadMultiple: true,
+          parallelUploads: 100,
+          maxFiles: 1,
+
+          init: function() {
+            myDropzone = this;
+
+            $("[data-role='upload_building_image']").click(function(e) {
+                $(this).data("show_dz", !!!$(this).data("show_dz"));
+                const show_state = $(this).data("show_dz");
+
+                if(show_state){
+                    $(this).children().remove();
+                    $(this).append($("<span></span>"));
+
+                    $(this).find("span").attr("data-feather", "save");
+                    $("#file_src_map").parent().removeClass("no-display");
+                    $("[data-field='sb_building_image']").addClass("no-display");
+                    $(".sb_image_uploader").css("background-color", "#d62828");
+
+                    feather.replace();
+                    $(".sb_image_uploader svg").css("stroke", "#fff");
+                }else{
+                    //Make sure that the form isn't actually being sent.
+                    e.preventDefault();
+                    e.stopPropagation();
+                    myDropzone.processQueue();
+                }
+            });
+
+            this.on("sendingmultiple", function() {
+              // Gets triggered when the form is actually being sent.
+              // Hide the success button or the complete form.
+            });
+            this.on("successmultiple", function(files, response) {
+                $("[data-role='upload_building_image']").children().remove();
+                $("[data-role='upload_building_image']").append($("<span></span>"));
+                $("[data-role='upload_building_image']").find("span").attr("data-feather", "upload");
+                $("#file_src_map").parent().addClass("no-display");
+                $("[data-field='sb_building_image']").removeClass("no-display");
+                $(".sb_image_uploader").css("background-color", "#fff");
+
+                const res = JSON.parse(response);
+                $("[data-field='sb_building_image']").css("background-image", `url('${res.location.replace('../', '')}')`);
+
+                myDropzone.removeAllFiles(true);
+                feather.replace();
+
+                $(".sb_image_uploader svg").css("stroke", "#000");
+            });
+            this.on("errormultiple", function(files, response) {console.log(response);});
+
+            this.on("maxfilesexceeded", function(file){
+                myDropzone.removeFile(file);
+                app.page.toast('ERR', 'Maximum upload image file size exceeded ( 10 MB )');
+            });
+          }
+         
+    }
+
+    var file_dz_map = new Dropzone("#file_src_map", dz_sm_map_options);
 
     $("[data-spa-page]").click(function(){
         var spa_target = $(this).attr("data-spa-page");
@@ -74,68 +138,24 @@
     });
 
     $("[data-role='spa-content-map']").on("spaloaded", function(){
-        app.page.gen_map('map', (map) => {
+        session.removeItem('building_in_view');
+
+        app.page.onrendered().then(() => {
+            var selects_col = [];
+
+            $(`[data-role='${spa_loaded}'] [data-select]`).each(function(i, el){
+                selects_col.push($(el).attr("data-select"));
+            });
+            
             app.protocol.ajax(
                 'build/bridge.php',
-                { request_type: 'get_building_points'},
+                { request_type: 'get_col_grp', fields: JSON.stringify(selects_col), table: 'TabsBuildings'},
                 {c: (data) => {
-                    const buildings = JSON.parse(data);
-
-                    if(buildings.data.length != 0){
-                        var coords = [];
-                        var popup_dom = $("[data-shadow-el='building_marker']").clone().removeClass("no-display");
-
-                        for(let x in buildings.data){
-
-                            var marker = L.marker(
-                                [buildings.data[x].VixenPPM, buildings.data[x].VixenReactive], 
-                                {icon: buildingIcon}
-                            ).addTo(map);
-
-                            $(popup_dom).find("[data-role='popup_header']").html(`${buildings.data[x].BuildingName} <br> ${buildings.data[x].Client}`);
-                            $(popup_dom).find("[data-role='popup_link']").attr("data-building", buildings.data[x].UID);
-
-                            marker.bindPopup($(popup_dom)[0].outerHTML);
-
-                            if(buildings.data[x].VixenReactive != '' && buildings.data[x].VixenPPM !== '')
-                                coords.push([buildings.data[x].VixenPPM, buildings.data[x].VixenReactive]); 
-
-                        }
-
-                        map.fitBounds(coords, {maxZoom: 10});
-
-                        map.on('popupopen', function() {  
-                            $("[data-role='popup_link']").click(function(e){
-                                session.setItem("building_in_view", $(this).attr("data-building"));
-                                $("[data-spa-page='spa-content-summary-building']").click();
-                                $("[data-spa-page='spa-content-summary-building']").parent().removeClass("no-display");
-                            });
-                        });
-
-                    }else{
-                        app.page.toast("WARNING", "There is currently no known building, having a location.");
-                    }
+                    fillSelect(data);
+                    $("#filter_site_summary_map").click();
                 }}
-            );
-
-            app.page.onrendered().then(() => {
-                var selects_col = [];
-
-                $(`[data-role='${spa_loaded}'] [data-select]`).each(function(i, el){
-                    selects_col.push($(el).attr("data-select"));
-                });
-                
-                app.protocol.ajax(
-                    'build/bridge.php',
-                    { request_type: 'get_col_grp', fields: JSON.stringify(selects_col), table: 'TabsBuildings'},
-                    {c: (data) => {
-                        fillSelect(data);
-                        $("#filter_site_summary_map").click();
-                    }}
-                )  
-            });  
-
-        });
+            )  
+        });  
     });
 
     $("[data-role='spa-content-contacts']").on("spaloaded", function(){
@@ -158,35 +178,29 @@
 
     $("[data-role='spa-content-building_list']").on("spaloaded", function(){
         var building_id = session.getItem("building_in_view");
+        var request = {
+            request_type: 'get_buildings'
+        };
 
-        if(building_id === null){
-            $("[data-role='building_edit']").addClass("no-display");
-            $("[data-role='building_form']").removeClass("no-display");
-
-            // generate the building table
-            app.protocol.ajax(
-                'build/bridge.php',
-                { request_type: 'get_buildings'},
-                {c: show_building }
-            );  
-
-            // generate the left filters
-            app.protocol.ajax(
-                'build/bridge.php',
-                { request_type: 'get_buildings_sidebar_dataset'},
-                {c: show_buildings_sidebar_dataset}
-            )
+        $("[data-role='building_form']").removeClass("no-display");
+        $("[data-role='building_edit']").addClass("no-display");
+        if(building_id !== null){
+            request.building_id = building_id;
+            app.page.toast("INFO", "List filtered though map selection");
         }else{
-            $("[data-role='building_edit']").removeClass("no-display");
-            $("[data-role='building_form']").addClass("no-display");
-            $("#building-edit").click();
-
-            app.protocol.ajax(
-                'build/bridge.php',
-                { request_type: 'get_building_by_uid', building_id: building_id},
-                {c: fill_form_building}
-            )
+            app.page.toast("INFO", "No prior map selection, showing all buildings");
         }
+
+        app.protocol.ajax(
+            'build/bridge.php',request, {c: show_building }
+        );  
+
+        // generate the left filters
+        app.protocol.ajax(
+            'build/bridge.php',
+            { request_type: 'get_buildings_sidebar_dataset'},
+            {c: show_buildings_sidebar_dataset}
+        )
     });
 
 
@@ -202,15 +216,27 @@
     $("[data-role='spa-content-summary-building']").on("spaloaded", function(){
         if(map_building !== null) map_building.remove();
 
-        var mapboxTiles = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/{z}/{x}/{y}?access_token=' + L.mapbox.accessToken, {
-               attribution: '© <a href="https://www.mapbox.com/feedback/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-               tileSize: 512,
-               zoomOffset: -1
-        });
+        app.protocol.ajax(
+            'build/bridge.php',
+            { request_type: 'get_atomic_building_point', building_id: session.getItem('building_in_view')},
+            {c: (d) => {
+                var parse = JSON.parse(d);
+                var mapboxTiles = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/{z}/{x}/{y}?access_token=' + L.mapbox.accessToken, {
+                       attribution: '© <a href="https://www.mapbox.com/feedback/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+                       tileSize: 512,
+                       zoomOffset: -1
+                });
 
-        map_building = L.map('map_sm')
-            .addLayer(mapboxTiles)
-            .setView([46.2276, 2.2137], 6);
+                map_building = L.map('map_sm')
+                    .addLayer(mapboxTiles)
+                    .setView([parse.data[0].VixenPPM, parse.data[0].VixenReactive], 16);
+
+                var marker = L.marker(
+                    [parse.data[0].VixenPPM, parse.data[0].VixenReactive], 
+                    {icon: buildingIcon}
+                ).addTo(map_building);
+            }}
+        );  
 
         const building_id = session.getItem('building_in_view');    
 
@@ -219,8 +245,18 @@
                 'build/bridge.php',
                 { request_type: 'building_summary', building_id: building_id},
                 {c: fill_building_summary }
-            );    
+            ); 
+
+            $("[data-show-void='spa-content-summary-building']").addClass("no-display"); 
+            $("[data-void='spa-content-summary-building']").removeClass("no-display"); 
+            $("#back_to_map").removeClass("no-display");
+        }else{
+            $("[data-show-void='spa-content-summary-building']").removeClass("no-display"); 
+            $("[data-void='spa-content-summary-building']").addClass("no-display"); 
+            $("#back_to_map").addClass("no-display");
         }
+
+        $("[name='building_image_uid']").attr("value", building_id);
     });
 
     $("[data-role='spa-content-floor_plans']").on("spaloaded", function(){
@@ -256,19 +292,24 @@
     });
 
     $("[data-role='spa-content-summary']").on("spaloaded", function(){
-        app.protocol.ajax(
-            'build/bridge.php',
-            { request_type: 'get_asset_summary'},
-            {c: (data) => {
-                if(ref_chart['asset_chart'] == undefined)
-                    chart_.gen_chart_asset_summary(data);
-                else{
-                    ref_chart['asset_chart'].destroy();
-                    ref_chart['asset_chart'] = undefined;
-                    chart_.gen_chart_asset_summary(data);
-                }
-            }}
-        );   
+        session.removeItem('building_in_view');
+
+        app.page.onrendered().then(() => {
+            var selects_col = [];
+
+            $(`[data-role='${spa_loaded}'] [data-select]`).each(function(i, el){
+                selects_col.push($(el).attr("data-select"));
+            });
+            
+            app.protocol.ajax(
+                'build/bridge.php',
+                { request_type: 'get_col_grp_assets', fields: JSON.stringify(selects_col), table: 'TabsBuildings'},
+                {c: (data) => {
+                    fillSelect(data);
+                    $("#filter_site_summary_asset").click();
+                }}
+            )  
+        });
     });
 
     $("[data-role='spa-building_edit']").on("spaloaded", function(){
@@ -277,18 +318,23 @@
 
 
     $("[data-role='spa-content-asset_list']").on("spaloaded", function(){
-        app.protocol.ajax(
-            'build/bridge.php',
-            { request_type: 'get_asset_list'},
-            {c: show_asset_list }
-        );  
+        const asset_id = session.getItem('asset_in_view');    
 
-        // generate the left filters [DEPRECATED]
-        // app.protocol.ajax(
-        //     'build/bridge.php',
-        //     { request_type: 'get_asset_list_sidebar_dataset'},
-        //     {c: show_asset_list_sidebar_dataset}
-        // )
+        if(asset_id != null || asset_id != undefined){
+            app.protocol.ajax(
+                'build/bridge.php',
+                { request_type: 'get_atomic_asset_summary', asset_code: asset_id},
+                {c: fill_asset_summary }
+            ); 
+
+            $("[data-show-void='spa-content-asset_list']").addClass("no-display"); 
+            $("[data-void='spa-content-asset_list']").removeClass("no-display"); 
+            $("#back_to_asset").removeClass("no-display");
+        }else{
+            $("[data-show-void='spa-content-asset_list']").removeClass("no-display"); 
+            $("[data-void='spa-content-asset_list']").addClass("no-display"); 
+            $("#back_to_asset").addClass("no-display");
+        }
     });
 
     $("[data-role='spa-content-site']").on("spaloaded", function(){
@@ -661,13 +707,6 @@
         }
 
         if(Object.keys(select_val).length > 0){
-            // app.protocol.ajax(
-            //     'build/bridge.php',
-            //     { request_type: 'get_col_values', filters: JSON.stringify(select_val), table: 'TabsBuildings', 
-            //     date_begin: $('#begin_date').val(), date_end: $('#end_date').val()},
-            //     {c: show_site_summary}
-            // );
-
             app.protocol.ajax(
                 'build/bridge.php',
                 { request_type: 'get_col_json', table: 'report_card'},
@@ -710,12 +749,32 @@
                 select_val[$(el).attr("data-select")] = el_val;
         });
 
+        const map_filters_session = JSON.parse(session.getItem("map_filters"));
         if(Object.keys(select_val).length === 0){
-            select_val = {'tc.Client' : $(`[data-role='${spa_loaded}'] [data-select='tc.Client'] option:nth-child(3)`).text().trim()};
+            if(map_filters_session != null){
+                select_val = map_filters_session;
+
+                for(let x in select_val){
+                    setTimeout(() =>{ // quirk, the nice select element seems to not load sync
+                        $(`[data-role='${spa_loaded}'] [data-value='${select_val[x]}']`).parent().find("[data-value]").each(function(i, el){
+                            $(el).removeClass("selected focus");
+                        });
+
+                        $(`[data-role='${spa_loaded}'] [data-value='${select_val[x]}']`).addClass("selected focus");
+                        $(`[data-role='${spa_loaded}'] [data-value='${select_val[x]}']`).parent().parent().find(".current").text(select_val[x]);
+
+                        let sel_idx = $(`[data-role='${spa_loaded}'] [data-select='${x}'] option[value='${select_val[x]}']`)[0].index;
+                        $(`[data-role='${spa_loaded}'] [data-select='${x}']`)[0].selectedIndex = sel_idx;
+                    }, 500);
+                }
+            }else{
+                select_val = {'tc.Client' : $(`[data-role='${spa_loaded}'] [data-select='tc.Client'] option:nth-child(3)`).text().trim()};
+            }
         }
 
         if(Object.keys(select_val).length > 0){
-
+        
+            session.setItem("map_filters", JSON.stringify(select_val));
             var date_begin = $(`[data-role='${spa_loaded}'] [data-field='begin_date']`).val();
             var date_end = $(`[data-role='${spa_loaded}'] [data-field='end_date']`).val();
 
@@ -732,6 +791,34 @@
             $("#site_dataset_warning").removeClass("no-display");
             $("#site_dataset").addClass("no-display");
         }
+    });
+
+    $("#filter_site_summary_asset").parent().click(function(){
+        var select_val = {}
+        var building_id = session.getItem("site_in_view");
+
+        $(`[data-role='${spa_loaded}'] [data-select]`).each(function(i, el){
+            const el_val = $(el).val();
+
+            if(el_val != "-1" && el_val !== null)
+                select_val[$(el).attr("data-select")] = el_val;
+        });
+
+        if(Object.keys(select_val).length === 0){
+            select_val = {'tc.Client' : $(`[data-role='${spa_loaded}'] [data-select='tc.Client'] option:nth-child(3)`).text().trim()};
+        }
+
+        if(Object.keys(select_val).length > 0){
+            app.protocol.ajax(
+                'build/bridge.php',
+                { request_type: 'get_asset_summary', filters: JSON.stringify(select_val)},
+                {c: (d) =>{
+                    fill_summary_asset(d);
+                }}
+            );
+        }else{
+            console.log(select_val);
+        } 
     });
 
     $("[data-canvas]").click(function(){
@@ -913,12 +1000,13 @@
                 'Europe/Brussels',
                 'Europe/Paris',
                 'Indian/Mauritius',
-                'Indian/Reunion'
+                'Indian/Reunion',
             ];
 
             $(container).append($("<option></option>").attr("data-display", "Choose").text(" a date locale"));
             for(let x in data){
-                var opt_node = $("<option></option>").val(data[x]).text(data[x]);
+                const o = (data[x]).includes("Mauritius")?data[x].split("/")[1]:data[x];
+                var opt_node = $("<option></option>").val(data[x]).text(o);
                 $(container).append(opt_node);
                 $(container).niceSelect("update");
             }
@@ -952,7 +1040,8 @@
                             });
                         }, 1000);
 
-                        $("#date_locale_").text(`( ${dataset.data[0].date_locale} )`);
+                        const temp_date_locale = (dataset.data[0].date_locale).includes("Mauritius")?dataset.data[0].date_locale.split("/")[1]:dataset.data[0].date_locale;
+                        $("#date_locale_").text(`( ${temp_date_locale} )`);
                         $("#date_").text($(`option[value='${dataset.data[0].date_format}']`).text());
 
                         var d = new Date();
@@ -1036,24 +1125,43 @@
         $("#back_to_map").click(function (argument) {
             session.removeItem('building_in_view');
             $("[data-spa-page='spa-content-map']").click();
-            $("[data-spa-page='spa-content-summary-building']").parent().addClass("no-display");
+        });
+
+        $("#back_to_asset").click(function (argument) {
+            session.removeItem('asset_in_view');
+            $("[data-spa-page='spa-content-summary']").click();
         });
 
         /*********** Multiselect EVOL *************/
-        const viable_multiselect_fields = ["tc.Client", "tr.RegionName", "c.BuildingName"];
-
-        for(let o in viable_multiselect_fields){
-            $(`[data-select='${viable_multiselect_fields[o]}']`).change(function(){
-                setTimeout(() =>{ // quirk, the nice select element seems to not load sync
-                    var text_node = $(`[data-value='${$(this).val()}']`).text();
-                    $(`[data-value='${$(this).val()}']`).html(`<span data-feather='arrow-right'></span>${text_node}`);
-                    feather.replace();
-                }, 500);
-            });
-        }
-
-
+        // const viable_multiselect_fields = ["tc.Client", "tr.RegionName", "c.BuildingName"];
+        // for(let o in viable_multiselect_fields){
+        //     $(`[data-select='${viable_multiselect_fields[o]}']`).change(function(){
+        //         setTimeout(() =>{ // quirk, the nice select element seems to not load sync
+        //             var text_node = $(`[data-value='${$(this).val()}']`).text();
+        //             $(`[data-value='${$(this).val()}']`).html(`<span data-feather='arrow-right'></span>${text_node}`);
+        //             feather.replace();
+        //         }, 500);
+        //     });
+        // }
         /******************************************/
+
+        $("#cancel_upload_building_image").click(function () {
+            const upload_state = $("[data-role='upload_building_image']").data("show_dz");
+
+            if(upload_state){
+                $("[data-role='upload_building_image']").children().remove();
+                $("[data-role='upload_building_image']").append($("<span></span>"));
+
+                $("[data-role='upload_building_image']").find("span").attr("data-feather", "upload");
+                $("#file_src_map").parent().addClass("no-display");
+                $("[data-field='sb_building_image']").removeClass("no-display");
+                $(".sb_image_uploader").css("background-color", "#fff");
+
+                feather.replace();
+                $(".sb_image_uploader svg").css("stroke", "#000");
+                $("[data-role='upload_building_image']").data("show_dz", false);
+            }
+        });
     });
     
     app.init("site_summary");

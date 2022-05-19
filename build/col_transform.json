@@ -8,7 +8,7 @@
         "UID": "Identification",
         "BuildingID": "Building id"
     },
-    "ATAssets": {},
+    "ATAssets": [],
     "PMJobs": [],
     "fplans": [],
     "report_card": {

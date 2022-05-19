@@ -39,11 +39,31 @@
                 http_response_code(400);
             }
             break;
+        case 'get_atomic_building_point':
+            try{
+                //creates a connection, selects the user and send the data as an JSON outstream
+                $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
+                $building = select($connection, "SELECT b.UID, b.VixenReactive, b.VixenPPM FROM TabsBuildings b WHERE b.UID = ?", [$_REQUEST['building_id']]);
+
+                echo json_encode(['data' => $building]);
+
+                //destroy database connection
+                db_disconnect($connection);
+                http_response_code(200);
+            }catch(Exception $e){
+                //return bad http request when error is encountered
+                http_response_code(400);
+            }
+            break;
         case 'get_buildings':
             try{
                 //creates a connection, selects the user and send the data as an JSON outstream
                 $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
-                $building = select($connection, "SELECT * FROM TabsBuildings ORDER BY UID", []);
+
+                if(isset($_REQUEST['building_id']))
+                    $building = select($connection, "SELECT * FROM TabsBuildings WHERE UID = ? ORDER BY UID", [$_REQUEST['building_id']]);
+                else
+                    $building = select($connection, "SELECT * FROM TabsBuildings ORDER BY UID", []);
 
                 echo json_encode(['data' => $building]);
 
@@ -691,6 +711,38 @@
                 http_response_code(400);
             }
             break;
+        case 'get_col_grp_assets':
+            try{
+                $cols = json_decode($_REQUEST['fields'], true);
+                $temp = [];
+
+                //creates a connection, selects the user and send the data as an JSON outstream
+                $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
+
+                foreach($cols AS $v){
+                    $_pos = strpos($v, ".")  + 1;
+
+                    if($_pos !== FALSE){
+                        $v_col = substr($v, $_pos);
+                    }
+
+                    $sql = sprintf("SELECT %s FROM %s c INNER JOIN TabsClients tc ON c.Client = tc.ID INNER JOIN TabsRegions tr ON c.Region = tr.UID INNER JOIN PMJobs pmj ON c.UID = pmj.Building
+                        INNER JOIN ATAssets ats ON pmj.AssetCode = ats.AssetCode INNER JOIN ATDescriptions atd ON ats.Description = atd.UID INNER JOIN ATGroups atg ON atd.GroupID = atg.UID 
+                        INNER JOIN ATStatusLevels atl ON ats.StatusLevelID = atl.UID
+                        GROUP BY %s", $v, $_REQUEST['table'], $v);
+                    $temp[$v_col] = select($connection, $sql, []);
+                }
+
+                echo json_encode(['data' => $temp]);
+
+                //destroy database connection
+                db_disconnect($connection);
+                http_response_code(200);
+            }catch(Exception $e){
+                //return bad http request when error is encountered
+                http_response_code(400);
+            }
+            break;
         case 'get_col_values':
             try{
                 $cols = json_decode($_REQUEST['filters'], true);
@@ -831,19 +883,75 @@
             break;
         case 'get_asset_summary':
             try{
+                $cols = json_decode($_REQUEST['filters'], true);
+                $temp = [];
+                $date_count = [];
+
+                foreach($cols AS $k => $v){
+                    $a = ['begin_date', 'end_date'];
+                    if(!in_array($k, $a))
+                        $temp[] = sprintf(" %s = '%s' ", $k, $v);
+                }
+
+                $filters = implode("AND", $temp);
+
                 //creates a connection, selects the user and send the data as an JSON outstream
                 $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
-                $dataset = select($connection, "SELECT Count(pmj.JobNumber) AS jobcount, pmjd.Description FROM PMJobs pmj INNER JOIN PMJobDescriptions pmjd ON pmj.UID = pmjd.UID GROUP BY pmjd.Description", []);
 
-                echo json_encode(['data' => $dataset]);
+                $sql_table = select($connection, sprintf("SELECT DISTINCT(ats.AssetCode), tc.Client, tr.RegionName, c.BuildingName, c.SiteNumber, atg.GroupName, atd.Description, ats.Manufacturer, ats.Model, ats.SerialNumber, ats.Comments, ats.Quantity, ats.LocationCode, 'N/A' AS ParentCode, ats.CostCode, atl.Status, ats.CreatedBy, ats.DisposalDate
+                    FROM TabsBuildings c 
+                    INNER JOIN TabsClients tc ON c.Client = tc.ID 
+                    INNER JOIN TabsRegions tr ON c.Region = tr.UID INNER JOIN PMJobs pmj ON c.UID = pmj.Building
+                    INNER JOIN ATAssets ats ON pmj.AssetCode = ats.AssetCode INNER JOIN ATDescriptions atd ON ats.Description = atd.UID INNER JOIN ATGroups atg ON atd.GroupID = atg.UID 
+                    INNER JOIN ATStatusLevels atl ON ats.StatusLevelID = atl.UID WHERE %s", $filters), []);
+
+                $sql_tiles = select($connection, sprintf("SELECT COUNT(ats.AssetCode) AS tot_assets
+                    FROM TabsBuildings c 
+                    INNER JOIN TabsClients tc ON c.Client = tc.ID 
+                    INNER JOIN TabsRegions tr ON c.Region = tr.UID INNER JOIN PMJobs pmj ON c.UID = pmj.Building
+                    INNER JOIN ATAssets ats ON pmj.AssetCode = ats.AssetCode INNER JOIN ATDescriptions atd ON ats.Description = atd.UID INNER JOIN ATGroups atg ON atd.GroupID = atg.UID 
+                    INNER JOIN ATStatusLevels atl ON ats.StatusLevelID = atl.UID WHERE %s", $filters), []);
+                
+                $agr_dataset = [
+                    'assets' => $sql_tiles,
+                    'asset_dataset' => $sql_table
+                ];
+
+                echo json_encode(['data' => $agr_dataset]);
 
                 //destroy database connection
                 db_disconnect($connection);
                 http_response_code(200);
             }catch(Exception $e){
+                echo $e->getMessage();
                 //return bad http request when error is encountered
                 http_response_code(400);
-            }
+            }     
+            break;
+        case 'get_atomic_asset_summary':
+            try{
+
+                //creates a connection, selects the user and send the data as an JSON outstream
+                $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
+
+                $sql_tiles = select($connection, "SELECT DISTINCT(ats.AssetCode), tc.Client, c.BuildingName, atd.Description, atg.GroupName, tl.Description AS location_desc, tl.LocationCode,  ats.Manufacturer, ats.Model, ats.SerialNumber, ats.Comments, atl.Status
+                    FROM TabsBuildings c 
+                    INNER JOIN TabsClients tc ON c.Client = tc.ID 
+                    INNER JOIN TabsRegions tr ON c.Region = tr.UID INNER JOIN PMJobs pmj ON c.UID = pmj.Building
+                    INNER JOIN ATAssets ats ON pmj.AssetCode = ats.AssetCode INNER JOIN ATDescriptions atd ON ats.Description = atd.UID INNER JOIN ATGroups atg ON atd.GroupID = atg.UID 
+                    INNER JOIN ATStatusLevels atl ON ats.StatusLevelID = atl.UID 
+                    INNER JOIN TabsLocations tl ON ats.LocationCode = tl.LocationCode WHERE ats.AssetCode = ?", [$_REQUEST['asset_code']]);
+
+                echo json_encode(['data' => $sql_tiles]);
+
+                //destroy database connection
+                db_disconnect($connection);
+                http_response_code(200);
+            }catch(Exception $e){
+                echo $e->getMessage();
+                //return bad http request when error is encountered
+                http_response_code(400);
+            }    
             break;
         case 'col_to_json':
             $fields = json_decode($_REQUEST["fields_"]);
@@ -922,16 +1030,27 @@
                 $target_file = $target_dir.basename($_FILES["file"]["name"][0]);
                 $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
 
+                $dataset_bimage = select($connection, "SELECT * FROM bimage WHERE UID = ?", [intval($_REQUEST['building_image_uid'])]);
+
                 $mv = move_uploaded_file($_FILES["file"]["tmp_name"][0], $target_file);
                 if($mv){
-                    exec_sql(
-                        $connection,
-                        'INSERT INTO bimage ( UID, bimage ) VALUES (?, ?)',
-                        [intval($_REQUEST['building_image_uid']),$target_file]
-                    );
+
+                    if(count($dataset_bimage) > 0){
+                        exec_sql(
+                            $connection,
+                            'UPDATE bimage SET bimage = ? WHERE UID = ?',
+                            [$target_file, intval($_REQUEST['building_image_uid'])]
+                        );
+                    }else{
+                        exec_sql(
+                            $connection,
+                            'INSERT INTO bimage ( UID, bimage ) VALUES (?, ?)',
+                            [intval($_REQUEST['building_image_uid']),$target_file]
+                        );
+                    }
                 }
 
-                echo json_encode(['status' => ($mv)?'true':'false']);
+                echo json_encode(['status' => ($mv)?'true':'false', 'location' => $target_file]);
                 db_disconnect($connection);
                 http_response_code(200);
             }catch(Exception $e){
@@ -1203,7 +1322,7 @@
                 //creates a connection, selects the user and send the data as an JSON outstream
                 $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
 
-                $general_info = select($connection, "SELECT tb.BuildingName, tc.Client, tb.Address, tr.RegionName, IF(tb.PostCode = '', 'N/A', tb.PostCode) AS PostCode, IF(tc.Phone = '', 'N/A', tc.Phone) AS Phone,  IF(tc.Email = '', 'N/A', tc.Email) AS Email, COALESCE(b.bimage, 'build/assets/res/img/failed_img_loader.png') AS building_image FROM TabsBuildings tb INNER JOIN TabsRegions tr ON tb.Region = tr.UID INNER JOIN TabsClients tc ON tb.Client = tc.ID LEFT JOIN bimage b ON tb.UID = b.UID WHERE tb.UID = ?", [$_REQUEST['building_id']]);
+                $general_info = select($connection, "SELECT tb.BuildingName, tc.Client, tb.Address, tr.RegionName, IF(tb.PostCode = '', 'N/A', tb.PostCode) AS PostCode, IF(tc.Phone = '', 'N/A', tc.Phone) AS Phone,  IF(tc.Email = '', 'N/A', tc.Email) AS Email, COALESCE(b.bimage, 'build/assets/res/img/failed_img_loader.jpg') AS building_image FROM TabsBuildings tb INNER JOIN TabsRegions tr ON tb.Region = tr.UID INNER JOIN TabsClients tc ON tb.Client = tc.ID LEFT JOIN bimage b ON tb.UID = b.UID WHERE tb.UID = ?", [$_REQUEST['building_id']]);
 
                 $contact_section = select($connection, "SELECT tb.BuildingName, tc.Name, IF(tc.Email = '', 'N/A', tc.Email) AS Email, IF(tc.Phone = '', 'N/A', tc.Phone) AS Phone, IF(tc.Mobile = '', 'N/A', tc.Mobile) AS Mobile, tc.UID AS contact_id FROM TabsBuildings tb INNER JOIN TabsBuildingContacts tc ON tb.UID = tc.BuildingID
                     WHERE tb.UID = ?", [$_REQUEST['building_id']]);
