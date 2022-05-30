@@ -69,9 +69,9 @@ footer{
 
 #map { height: 90%; }
 
-[data-role^="spa"]{
+/*[data-role^="spa"]{
 	height: 75vh;
-}
+}*/
 
 .sm-font{
 	font-size: 14px;
@@ -219,7 +219,7 @@ footer{
 	padding: 1em;
 	margin: 0 auto 1em;
 	display: inline-block;
-	vertical-align: top;
+	vertical-align: top; 
 }
 
 /*
@@ -227,10 +227,11 @@ footer{
 */
 .chart_preloader svg path,
 svg rect{
-	fill: rgb(var(--secondary-color)) !important;
+	fill: rgb(var(--secondary-color)) !important; 
 }
 
-#filter_site_summary, #filter_site_summary_map, #filter_site_summary_asset{
+#filter_site_summary, #filter_site_summary_map, #filter_site_summary_asset, #filter_jobs, 
+#filter_contractor, #filter_worker, #filter_finance_overview, #filter_finance_expenditure{
 	border-radius: 30px !important;
 	z-index: -1;
 	position: relative;
@@ -243,7 +244,8 @@ svg rect{
 	width: 100%;
 }
 
-#filter_site_summary_wrapper, #filter_site_map_wrapper, #filter_site_asset_wrapper{
+#filter_site_summary_wrapper, #filter_site_map_wrapper, #filter_site_asset_wrapper, #filter_work_order_wrapper, 
+#filter_contractor_wrapper, #filter_worker_wrapper, #filter_finance_overview_wrapper, #filter_finance_expenditure_wrapper{
 	cursor: pointer;
 	border-radius: 30px; height: 42px; width: 80%;
 	margin-left: auto; margin-right: auto;
@@ -532,7 +534,7 @@ input{
 	color: rgb(var(--asset-header-text-node)) !important;
 }
 
-.csx-asset-row{
+.csx-row{
 	background-color: rgb(var(--asset-header)) !important;
 	color: rgb(var(--asset-header-text-node)) !important;
 }

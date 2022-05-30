@@ -720,8 +720,31 @@ function show_work_order(data){
     const work_order = JSON.parse(data);
     const container = $(`[data-role='${spa_loaded}'] [data-target-table]`);
     $(container).find("tbody").children().remove();
-
     $(container).find("thead").children().remove();
+
+    /*------------ LIVE JOB STATUS CARD -------------*/
+    var woljs_container = $("[data-field='wo_live_job_status']");
+    $(woljs_container).children().remove();
+    for(let x in work_order.data.live_job_status){
+        var div_node = $("<div></div>").addClass("d-lg-flex justify-content-between");
+        var p_head_node = $("<p></p>").text(work_order.data.live_job_status[x].CurrentStatus);
+        var p_desc_node = $("<p></p>").text(work_order.data.live_job_status[x].number_intervention);
+
+        $(div_node).append(p_head_node).append(p_desc_node);
+        $(woljs_container).append(div_node);
+    }
+
+    /*------------ JOB PRIORITY CARD -------------*/
+    var wojp_container = $("[data-field='wo_jobs_priority']");
+    $(wojp_container).children().remove();
+    for(let x in work_order.data.job_priorities){
+        var div_node = $("<div></div>").addClass("d-lg-flex justify-content-between");
+        var p_head_node = $("<p></p>").text(work_order.data.job_priorities[x].CurrentStatus);
+        var p_desc_node = $("<p></p>").text(work_order.data.job_priorities[x].number_intervention);
+
+        $(div_node).append(p_head_node).append(p_desc_node);
+        $(wojp_container).append(div_node);
+    }
 
     app.protocol.ajax(
         'build/bridge.php',
@@ -730,7 +753,7 @@ function show_work_order(data){
             const parse = JSON.parse(data);
             
             // gen header
-            var col_name = Object.keys(work_order.data[0]);
+            var col_name = Object.keys(work_order.data.job[0]);
             var tr_node = $("<tr></tr>");
             $(tr_node).append($("<th></th>"));
 
@@ -752,23 +775,245 @@ function show_work_order(data){
         }}
     ); 
 
-    for(let x in work_order.data){
+    for(let x in work_order.data.job){
 
-        var tr = $("<tr></tr>").attr("data-work_order", work_order.data[x].UID );
+        var tr = $("<tr></tr>").attr("data-work_order", work_order.data.job[x].UID );
         var edit_btn = $("<th scope='row'> <span class='hover-pointer' data-feather='edit-3'></span></th>");
 
         $(tr).append(edit_btn);
         
-        for(let y in work_order.data[x]){
-            var td_node = $("<td></td>").text(work_order.data[x][y]);
+        for(let y in work_order.data.job[x]){
+            var td_node = $("<td></td>").text(work_order.data.job[x][y]);
             $(tr).append(td_node);
         }
 
         $(container).find("tbody").append(tr);
 
-        // $(edit_btn).click(function(){
-        //     // TODO
-        // });
+    }
+
+    $(`[data-role='${spa_loaded}'] [data-target-pagination]`).pagination({
+        dataSource: [...$(`[data-role='${spa_loaded}'] [data-target-table] tbody tr`)],
+        pageSize: 9,
+        callback: function(data, pagination) {
+            var html = template(data);
+            $(`[data-role='${spa_loaded}'] [data-target-table] tbody`).html(html);
+        }
+    })
+
+    feather.replace();
+}
+
+function show_contractor(data){
+    const contractor = JSON.parse(data);
+    const container = $(`[data-role='${spa_loaded}'] [data-target-table]`);
+    $(container).find("tbody").children().remove();
+    $(container).find("thead").children().remove();
+
+    app.protocol.ajax(
+        'build/bridge.php',
+        { request_type: 'get_col_json', table: 'jobs'},
+        {c: (data) => {
+            const parse = JSON.parse(data);
+            
+            // gen header
+            var col_name = Object.keys(contractor.data.contractor[0]);
+            var tr_node = $("<tr></tr>");
+            $(tr_node).append($("<th></th>"));
+
+            for(let x in col_name){
+
+                var temp_val = null
+                if(parse.data !== null){
+                    temp_val = parse.data.hasOwnProperty(col_name[x])?parse.data[col_name[x]]:col_name[x]
+                }else{
+                    temp_val = col_name[x];
+                }
+
+                var th_node = $("<th></th>").text(temp_val);
+                $(tr_node).append(th_node);
+            }
+
+            $(container).find("thead").append(tr_node);
+
+        }}
+    ); 
+
+    for(let x in contractor.data.contractor){
+
+        var tr = $("<tr></tr>").attr("data-work_order", contractor.data.contractor[x].UID );
+        var edit_btn = $("<th scope='row'> <span class='hover-pointer' data-feather='edit-3'></span></th>");
+
+        $(tr).append(edit_btn);
+        
+        for(let y in contractor.data.contractor[x]){
+            var td_node = $("<td></td>").text(contractor.data.contractor[x][y]);
+            $(tr).append(td_node);
+        }
+
+        $(container).find("tbody").append(tr);
+
+    }
+
+    $(`[data-role='${spa_loaded}'] [data-target-pagination]`).pagination({
+        dataSource: [...$(`[data-role='${spa_loaded}'] [data-target-table] tbody tr`)],
+        pageSize: 9,
+        callback: function(data, pagination) {
+            var html = template(data);
+            $(`[data-role='${spa_loaded}'] [data-target-table] tbody`).html(html);
+        }
+    })
+
+    feather.replace();
+}
+
+
+function show_finance(data){
+    const finance = JSON.parse(data);
+    const container = $(`[data-role='${spa_loaded}'] [data-target-table]`);
+    $(container).find("tbody").children().remove();
+    $(container).find("thead").children().remove();
+
+    app.protocol.ajax(
+        'build/bridge.php',
+        { request_type: 'get_col_json', table: 'jobs'},
+        {c: (data) => {
+            const parse = JSON.parse(data);
+            
+            // gen header
+            var col_name = Object.keys(finance.data.finance[0]);
+            var tr_node = $("<tr></tr>");
+            $(tr_node).append($("<th></th>"));
+
+            for(let x in col_name){
+
+                var temp_val = null
+                if(parse.data !== null){
+                    temp_val = parse.data.hasOwnProperty(col_name[x])?parse.data[col_name[x]]:col_name[x]
+                }else{
+                    temp_val = col_name[x];
+                }
+
+                var th_node = $("<th></th>").text(temp_val);
+                $(tr_node).append(th_node);
+            }
+
+            $(container).find("thead").append(tr_node);
+
+        }}
+    ); 
+
+    for(let x in finance.data.finance){
+
+        var tr = $("<tr></tr>").attr("data-work_order", finance.data.finance[x].UID );
+        var edit_btn = $("<th scope='row'> <span class='hover-pointer' data-feather='edit-3'></span></th>");
+
+        $(tr).append(edit_btn);
+        
+        for(let y in finance.data.finance[x]){
+            var td_node = $("<td></td>").text(finance.data.finance[x][y]);
+            $(tr).append(td_node);
+        }
+
+        $(container).find("tbody").append(tr);
+
+    }
+
+    $(`[data-role='${spa_loaded}'] [data-target-pagination]`).pagination({
+        dataSource: [...$(`[data-role='${spa_loaded}'] [data-target-table] tbody tr`)],
+        pageSize: 9,
+        callback: function(data, pagination) {
+            var html = template(data);
+            $(`[data-role='${spa_loaded}'] [data-target-table] tbody`).html(html);
+        }
+    })
+
+    feather.replace();
+}
+
+function show_finance_expenditure(data){
+    const p = JSON.parse(data);
+    const container = $(`[data-role='${spa_loaded}'] [data-fwe-report-card]`);
+    const tile_color = ["#ffbe0b", "#e63946", "#a8dadc", "#b5e48c", "#fca311"];
+    var color_repeats_x_time = 2;
+    var color_index = 0;
+
+    $(container).children().remove();
+
+    for(let x in p.data.finance){
+        var div_node = $("<div></div").addClass("col-lg-4 box-area text-center").css({"background-color": tile_color[color_index], 'min-height': '190px'});
+        var sub_div = $("<div></div>").addClass("d-lg-flex justify-content-center align-items-center");
+        var title_node = $("<h4></h4>").addClass("mt-3 mb-3 me-3 csx-txt-uppercase").text(p.data.finance[x].Name);
+        var tooltip = $("<div data-toggle='tooltip' data-placement='top' title='Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua'><i class='fa-solid fa-circle-info'></i></div>");
+        $(sub_div).append(title_node).append(tooltip);
+
+        var div_txt_node = $("<div></div>").addClass("d-lg-flex justify-content-center align-items-center mt-3");
+        var text_node = $("<h1></h1>").text(`Rs ${p.data.finance[x].WorkCost}`);
+        $(div_txt_node).append(text_node);
+
+        $(div_node).append(sub_div).append(div_txt_node);
+        $(container).append(div_node);
+
+        color_repeats_x_time--;
+        if(color_repeats_x_time <= 0){
+            color_repeats_x_time = 3;
+            color_index++;
+            if(color_index > tile_color.length){
+                color_index = 0;
+            }
+        }
+    }
+
+    $('[data-toggle="tooltip"]').tooltip();
+}
+
+function show_worker(data){
+    const worker = JSON.parse(data);
+    const container = $(`[data-role='${spa_loaded}'] [data-target-table]`);
+    $(container).find("tbody").children().remove();
+    $(container).find("thead").children().remove();
+
+    app.protocol.ajax(
+        'build/bridge.php',
+        { request_type: 'get_col_json', table: 'jobs'},
+        {c: (data) => {
+            const parse = JSON.parse(data);
+            
+            // gen header
+            var col_name = Object.keys(worker.data.worker[0]);
+            var tr_node = $("<tr></tr>");
+            $(tr_node).append($("<th></th>"));
+
+            for(let x in col_name){
+
+                var temp_val = null
+                if(parse.data !== null){
+                    temp_val = parse.data.hasOwnProperty(col_name[x])?parse.data[col_name[x]]:col_name[x]
+                }else{
+                    temp_val = col_name[x];
+                }
+
+                var th_node = $("<th></th>").text(temp_val);
+                $(tr_node).append(th_node);
+            }
+
+            $(container).find("thead").append(tr_node);
+
+        }}
+    ); 
+
+    for(let x in worker.data.worker){
+
+        var tr = $("<tr></tr>").attr("data-work_order", worker.data.worker[x].UID );
+        var edit_btn = $("<th scope='row'> <span class='hover-pointer' data-feather='edit-3'></span></th>");
+
+        $(tr).append(edit_btn);
+        
+        for(let y in worker.data.worker[x]){
+            var td_node = $("<td></td>").text(worker.data.worker[x][y]);
+            $(tr).append(td_node);
+        }
+
+        $(container).find("tbody").append(tr);
 
     }
 
@@ -940,6 +1185,7 @@ function show_columns(sel, data){
 
 function fillSelect(data){
     const dataset = JSON.parse(data);
+    
     var key_transform = {
         BuildingNumber: 'Site number',
         BuildingName: 'Site name',
@@ -947,8 +1193,12 @@ function fillSelect(data){
         RegionName: 'Region',
         Description: 'Description',
         GroupName: 'Group',
-        Status: 'Status',
-        AssetCode: 'Code'
+        asset_status: 'Status',
+        AssetCode: 'Code',
+        job_type: 'Job type',
+        Name: 'Work type',
+        Status: 'Status level',
+        Priority: 'Priority'
     };
 
     // fields remapped is not compatible with the initial tables specs
@@ -958,8 +1208,12 @@ function fillSelect(data){
         RegionName: 'tr.RegionName',
         Description: 'atd.Description',
         GroupName: 'atg.GroupName',
-        Status: 'atl.Status',
-        AssetCode: 'ats.AssetCode'
+        asset_status: 'atl.asset_status',
+        AssetCode: 'ats.AssetCode',
+        job_type: 'pmjd.job_type',
+        Name: 'pmwt.Name',
+        Status: 'pmsl.Status',
+        Priority: 'pmp.Priority'
     };
 
     for(let x in dataset.data){
@@ -989,9 +1243,6 @@ function fillSelect(data){
 
 
 function fill_form_fields(data , table) {
-    console.log(data);
-    console.log(table);
-
     const parse = JSON.parse(data);
     const container = $("#fill_fields");
 
@@ -1004,7 +1255,7 @@ function fill_form_fields(data , table) {
             const parse_ = JSON.parse(data);
 
             for(x in parse.data){
-                var col_name = parse.data[x].COLUMN_NAME;
+                var col_name = parse.data[x].column_name;
                 var div_node = $("<div></div>").addClass("form-floating m-4");
                 var input_node = $("<input type='text'>").attr({id: col_name, placeholder: col_name, name: col_name}).addClass("form-control");
                 var label_node = $("<label></label>").attr("for", col_name).text(col_name);

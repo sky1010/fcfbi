@@ -142,22 +142,531 @@
             }                          
             break;    
 
-        case 'get_work_order':
+        case 'get_col_grp_jobs':
             try{
+                $cols = json_decode($_REQUEST['fields'], true);
+                $temp = [];
+
                 //creates a connection, selects the user and send the data as an JSON outstream
                 $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
-                $work_order = select($connection, "SELECT * FROM PMJobs ORDER BY UID", []);
 
-                echo json_encode(['data' => $work_order]);
+                $alias = ['job_type' => 'Description'];
+
+                foreach($cols AS $v){
+                    $_pos = strpos($v, ".")  + 1;
+
+                    if($_pos !== FALSE){
+                        $v_col = substr($v, $_pos);
+                    }
+
+                    $v_temp = $v;
+                    if(in_array($v_col, array_keys($alias))){
+                        $v_temp = sprintf("%s AS %s", str_replace($v_col, $alias[$v_col], $v), $v_col);
+                        $v = $v_col;
+                    }
+
+                    $sql = sprintf("SELECT %s FROM %s c 
+                    INNER JOIN TabsClients tc ON c.Client = tc.ID 
+                    INNER JOIN TabsRegions tr ON c.Region = tr.UID 
+                    INNER JOIN PMJobs pmj ON pmj.Building = c.UID
+                    INNER JOIN PMJobDescriptions pmjd ON pmj.JobType = pmjd.UID 
+                    INNER JOIN PMWorkTypes pmwt ON pmjd.WorkType = pmwt.UID
+                    INNER JOIN PMPriorities pmp ON pmp.UID = pmj.Priority 
+                    INNER JOIN PMStatusLevels pmsl ON pmsl.UID = pmj.CurrentStatus GROUP BY %s", $v_temp, $_REQUEST['table'], $v);
+
+                    $temp[$v_col] = select($connection, $sql, []);
+                }
+
+                echo json_encode(['data' => $temp]);
 
                 //destroy database connection
                 db_disconnect($connection);
                 http_response_code(200);
             }catch(Exception $e){
+                echo $e->getMessage();
                 //return bad http request when error is encountered
                 http_response_code(400);
-            }                          
-            break; 
+            }            
+            break;
+        case 'get_col_grp_finance':
+            try{
+                $cols = json_decode($_REQUEST['fields'], true);
+                $temp = [];
+
+                //creates a connection, selects the user and send the data as an JSON outstream
+                $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
+
+                $alias = ['job_type' => 'Description'];
+
+                foreach($cols AS $v){
+                    $_pos = strpos($v, ".")  + 1;
+
+                    if($_pos !== FALSE){
+                        $v_col = substr($v, $_pos);
+                    }
+
+                    $v_temp = $v;
+                    if(in_array($v_col, array_keys($alias))){
+                        $v_temp = sprintf("%s AS %s", str_replace($v_col, $alias[$v_col], $v), $v_col);
+                        $v = $v_col;
+                    }
+
+                    $sql = sprintf("SELECT %s FROM %s c 
+                    INNER JOIN TabsClients tc ON c.Client = tc.ID 
+                    INNER JOIN TabsRegions tr ON c.Region = tr.UID 
+                    INNER JOIN PMJobs pmj ON pmj.Building = c.UID
+                    INNER JOIN PMJobDescriptions pmjd ON pmj.JobType = pmjd.UID 
+                    INNER JOIN PMWorkTypes pmwt ON pmjd.WorkType = pmwt.UID
+                    INNER JOIN PMPriorities pmp ON pmp.UID = pmj.Priority 
+                    INNER JOIN PMStatusLevels pmsl ON pmsl.UID = pmj.CurrentStatus GROUP BY %s", $v_temp, $_REQUEST['table'], $v);
+
+                    $temp[$v_col] = select($connection, $sql, []);
+                }
+
+                echo json_encode(['data' => $temp]);
+
+                //destroy database connection
+                db_disconnect($connection);
+                http_response_code(200);
+            }catch(Exception $e){
+                echo $e->getMessage();
+                //return bad http request when error is encountered
+                http_response_code(400);
+            }    
+            break;
+        case 'get_col_grp_worker':
+            try{
+                $cols = json_decode($_REQUEST['fields'], true);
+                $temp = [];
+
+                //creates a connection, selects the user and send the data as an JSON outstream
+                $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
+
+                $alias = ['job_type' => 'Description'];
+
+                foreach($cols AS $v){
+                    $_pos = strpos($v, ".")  + 1;
+
+                    if($_pos !== FALSE){
+                        $v_col = substr($v, $_pos);
+                    }
+
+                    $v_temp = $v;
+                    if(in_array($v_col, array_keys($alias))){
+                        $v_temp = sprintf("%s AS %s", str_replace($v_col, $alias[$v_col], $v), $v_col);
+                        $v = $v_col;
+                    }
+
+                    $sql = sprintf("SELECT %s FROM %s c 
+                    INNER JOIN TabsClients tc ON c.Client = tc.ID 
+                    INNER JOIN TabsRegions tr ON c.Region = tr.UID 
+                    INNER JOIN PMJobs pmj ON pmj.Building = c.UID
+                    INNER JOIN PMJobDescriptions pmjd ON pmj.JobType = pmjd.UID 
+                    INNER JOIN PMWorkTypes pmwt ON pmjd.WorkType = pmwt.UID
+                    INNER JOIN PMPriorities pmp ON pmp.UID = pmj.Priority 
+                    INNER JOIN PMStatusLevels pmsl ON pmsl.UID = pmj.CurrentStatus GROUP BY %s", $v_temp, $_REQUEST['table'], $v);
+
+                    $temp[$v_col] = select($connection, $sql, []);
+                }
+
+                echo json_encode(['data' => $temp]);
+
+                //destroy database connection
+                db_disconnect($connection);
+                http_response_code(200);
+            }catch(Exception $e){
+                echo $e->getMessage();
+                //return bad http request when error is encountered
+                http_response_code(400);
+            }            
+            break;
+
+        case 'get_jobs':
+            try{
+                $cols = json_decode($_REQUEST['filters'], true);
+                $temp = [];
+                $date_count = [];
+
+                foreach($cols AS $k => $v){
+                    $a = ['begin_date', 'end_date', 'created_date'];
+                    if(!in_array($k, $a))
+                        $temp[] = sprintf(" %s = '%s' ", $k, $v);
+                }
+
+                $filters = implode("AND", $temp);
+
+                //creates a connection, selects the user and send the data as an JSON outstream
+                $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
+
+                $con_dates = !empty($_REQUEST['date_begin']) && !empty($_REQUEST['date_end']);
+
+                $date_partial_sql = $con_dates?"AND pmj.DateCreated >= DATE(?) AND pmj.DateCreated <= DATE(?)":'';
+
+                $val_array = [];
+                if($con_dates)
+                    $val_array = [$_REQUEST['date_begin'], $_REQUEST['date_end']];
+
+
+                $dataset_temp = select($connection, sprintf("SELECT c.UID  FROM TabsBuildings c 
+                INNER JOIN TabsClients tc ON c.Client = tc.ID 
+                INNER JOIN TabsRegions tr ON c.Region = tr.UID 
+                INNER JOIN PMJobs pmj ON pmj.Building = c.UID
+                INNER JOIN PMJobDescriptions pmjd ON pmj.JobType = pmjd.UID 
+                INNER JOIN PMWorkTypes pmwt ON pmjd.WorkType = pmwt.UID
+                INNER JOIN PMPriorities pmp ON pmp.UID = pmj.Priority 
+                INNER JOIN PMStatusLevels pmsl ON pmsl.UID = pmj.CurrentStatus WHERE %s %s GROUP BY c.UID", $filters, $date_partial_sql), []);
+
+                $live_job_status = null;
+                $job_priorities = null;
+                $ds_job = null;
+                if(!empty($dataset_temp)){
+                    if($con_dates){
+                        $val_array = array_merge([$dataset_temp[0]['UID']], [$_REQUEST['date_begin'], $_REQUEST['date_end']]);
+                    }else{
+                        $val_array = [$dataset_temp[0]['UID']];
+                    }
+
+                    $live_job_status = select($connection, sprintf("SELECT COUNT(pmj.UID) AS number_intervention, pms.Status AS CurrentStatus FROM PMJobs pmj INNER JOIN PMStatusLevels pms ON pmj.CurrentStatus = pms.UID
+                        WHERE pmj.DateCompleted IS NULL AND Building = ? %s GROUP BY pms.Status ORDER BY pms.UID ASC", $date_partial_sql), $val_array);
+
+                    $job_priorities = select($connection, sprintf("SELECT COUNT(pmp.UID) AS number_intervention, pmp.Priority AS CurrentStatus FROM PMPriorities pmp INNER JOIN PMJobs pmj ON pmj.Priority = pmp.UID
+                        WHERE pmj.DateCompleted IS NULL AND Building = ? %s GROUP BY pmp.Priority ORDER BY pmp.UID ASC", $date_partial_sql), $val_array);
+
+                    $ds_job = select($connection, sprintf("SELECT tc.Client, tr.RegionName, c.BuildingName, tl.LocationCode, pmj.JobNumber, pmwt.Name, pmjd.Description,
+                        pmj.Comments, COALESCE(pmj.Schedule, 'N/A') AS Schedule, pmp.Priority, COALESCE(null, 'N/A') AS contractor_name, pmj.DateCreated, pmj.ReportedBy, pmj.CreatedBy,
+                        pmj.StartDate, pmj.StartTime, pmj.CallLoggedDate, pmj.EstimatedRespondToDateTime, pmj.EstimatedCompletionDateTime, pmsl.Status AS CurrentStatus, pmj.ResponsesReceived, 
+                        pmj.DateOfFirstResponse, pmj.LastModified AS LastChasedDate, pmj.JobComplete, pmj.DateCompleted, pmj.Cancelled, pmj.DateCancelled, pmj.FurtherWork, pmj.Resolved,
+                        pmj.CostCode
+                        FROM TabsBuildings c 
+                        INNER JOIN TabsLocations tl ON tl.Building = c.UID
+                        INNER JOIN TabsClients tc ON c.Client = tc.ID 
+                        INNER JOIN TabsRegions tr ON c.Region = tr.UID 
+                        INNER JOIN PMJobs pmj ON pmj.Building = c.UID
+                        INNER JOIN PMJobDescriptions pmjd ON pmj.JobType = pmjd.UID 
+                        INNER JOIN PMWorkTypes pmwt ON pmjd.WorkType = pmwt.UID
+                        INNER JOIN PMPriorities pmp ON pmp.UID = pmj.Priority 
+                        INNER JOIN PMStatusLevels pmsl ON pmsl.UID = pmj.CurrentStatus WHERE c.UID = ? %s", $date_partial_sql), $val_array);
+                }   
+
+                
+
+                $job_dataset = [
+                    'job' => $ds_job,
+                    'live_job_status' => $live_job_status,
+                    'job_priorities' => $job_priorities
+                ];
+
+                echo json_encode(['data' => $job_dataset]);
+
+                //destroy database connection
+                db_disconnect($connection);
+                http_response_code(200);
+            }catch(Exception $e){
+                echo $e->getMessage();
+                //return bad http request when error is encountered
+                http_response_code(400);
+            }     
+            break;
+        case 'get_finance':
+            try{
+                $cols = json_decode($_REQUEST['filters'], true);
+                $temp = [];
+                $date_count = [];
+
+                foreach($cols AS $k => $v){
+                    $a = ['begin_date', 'end_date', 'created_date'];
+                    if(!in_array($k, $a))
+                        $temp[] = sprintf(" %s = '%s' ", $k, $v);
+                }
+
+                $filters = implode("AND", $temp);
+
+                //creates a connection, selects the user and send the data as an JSON outstream
+                $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
+
+                $con_dates = !empty($_REQUEST['date_begin']) && !empty($_REQUEST['date_end']);
+
+                $date_partial_sql = $con_dates?"AND pmj.DateCreated >= DATE(?) AND pmj.DateCreated <= DATE(?)":'';
+
+                $val_array = [];
+                if($con_dates)
+                    $val_array = [$_REQUEST['date_begin'], $_REQUEST['date_end']];
+
+
+                $dataset_temp = select($connection, sprintf("SELECT c.UID  FROM TabsBuildings c 
+                INNER JOIN TabsClients tc ON c.Client = tc.ID 
+                INNER JOIN TabsRegions tr ON c.Region = tr.UID 
+                INNER JOIN PMJobs pmj ON pmj.Building = c.UID
+                INNER JOIN PMJobDescriptions pmjd ON pmj.JobType = pmjd.UID 
+                INNER JOIN PMWorkTypes pmwt ON pmjd.WorkType = pmwt.UID
+                INNER JOIN PMPriorities pmp ON pmp.UID = pmj.Priority 
+                INNER JOIN PMStatusLevels pmsl ON pmsl.UID = pmj.CurrentStatus WHERE %s %s GROUP BY c.UID", $filters, $date_partial_sql), []);
+
+                $live_finance_status = null;
+                $finance_priorities = null;
+                $ds_finance = null;
+                if(!empty($dataset_temp)){
+                    if($con_dates){
+                        $val_array = array_merge([$dataset_temp[0]['UID']], [$_REQUEST['date_begin'], $_REQUEST['date_end']]);
+                    }else{
+                        $val_array = [$dataset_temp[0]['UID']];
+                    }
+
+                    $ds_finance = select($connection, sprintf("SELECT tc.Client, tr.RegionName, c.BuildingName, tl.LocationCode, pmj.JobNumber, pmwt.Name, pmjd.Description,
+                        pmj.Comments, COALESCE(pmj.Schedule, 'N/A') AS Schedule, pmp.Priority, COALESCE(null, 'N/A') AS contractor_name, pmj.DateCreated, pmj.ReportedBy, pmj.CreatedBy,
+                        pmj.StartDate, pmj.StartTime, pmj.CallLoggedDate, pmj.EstimatedRespondToDateTime, pmj.EstimatedCompletionDateTime, pmsl.Status AS CurrentStatus, pmj.ResponsesReceived, 
+                        pmj.DateOfFirstResponse, pmj.LastModified AS LastChasedDate, pmj.JobComplete, pmj.DateCompleted, pmj.Cancelled, pmj.DateCancelled, pmj.FurtherWork, pmj.Resolved,
+                        pmj.CostCode
+                        FROM TabsBuildings c 
+                        INNER JOIN TabsLocations tl ON tl.Building = c.UID
+                        INNER JOIN TabsClients tc ON c.Client = tc.ID 
+                        INNER JOIN TabsRegions tr ON c.Region = tr.UID 
+                        INNER JOIN PMJobs pmj ON pmj.Building = c.UID
+                        INNER JOIN PMJobDescriptions pmjd ON pmj.JobType = pmjd.UID 
+                        INNER JOIN PMWorkTypes pmwt ON pmjd.WorkType = pmwt.UID
+                        INNER JOIN PMPriorities pmp ON pmp.UID = pmj.Priority 
+                        INNER JOIN PMStatusLevels pmsl ON pmsl.UID = pmj.CurrentStatus WHERE c.UID = ? %s", $date_partial_sql), $val_array);
+                }   
+
+                $finance_dataset = [
+                    'finance' => $ds_finance
+                ];
+
+                echo json_encode(['data' => $finance_dataset]);
+
+                //destroy database connection
+                db_disconnect($connection);
+                http_response_code(200);
+            }catch(Exception $e){
+                echo $e->getMessage();
+                //return bad http request when error is encountered
+                http_response_code(400);
+            }     
+            break;
+        case 'get_finance_expenditure':
+            try{
+                $cols = json_decode($_REQUEST['filters'], true);
+                $temp = [];
+                $date_count = [];
+
+                foreach($cols AS $k => $v){
+                    $a = ['begin_date', 'end_date', 'created_date'];
+                    if(!in_array($k, $a))
+                        $temp[] = sprintf(" %s = '%s' ", $k, $v);
+                }
+
+                $filters = implode("AND", $temp);
+
+                //creates a connection, selects the user and send the data as an JSON outstream
+                $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
+
+                $con_dates = !empty($_REQUEST['date_begin']) && !empty($_REQUEST['date_end']);
+
+                $date_partial_sql = $con_dates?"AND pmj.DateCreated >= DATE(?) AND pmj.DateCreated <= DATE(?)":'';
+
+                $val_array = [];
+                if($con_dates)
+                    $val_array = [$_REQUEST['date_begin'], $_REQUEST['date_end']];
+
+
+                $dataset_temp = select($connection, sprintf("SELECT c.UID  FROM TabsBuildings c 
+                INNER JOIN TabsClients tc ON c.Client = tc.ID 
+                INNER JOIN TabsRegions tr ON c.Region = tr.UID 
+                INNER JOIN PMJobs pmj ON pmj.Building = c.UID
+                INNER JOIN PMJobDescriptions pmjd ON pmj.JobType = pmjd.UID 
+                INNER JOIN PMWorkTypes pmwt ON pmjd.WorkType = pmwt.UID
+                INNER JOIN PMPriorities pmp ON pmp.UID = pmj.Priority 
+                INNER JOIN PMStatusLevels pmsl ON pmsl.UID = pmj.CurrentStatus WHERE %s %s GROUP BY c.UID", $filters, $date_partial_sql), []);
+
+                $live_finance_status = null;
+                $finance_priorities = null;
+                $ds_finance = null;
+                if(!empty($dataset_temp)){
+                    if($con_dates){
+                        $val_array = array_merge([$dataset_temp[0]['UID']], [$_REQUEST['date_begin'], $_REQUEST['date_end']]);
+                    }else{
+                        $val_array = [$dataset_temp[0]['UID']];
+                    }
+
+                    $ds_finance = select($connection, sprintf("SELECT pmwt.Name, FLOOR(RAND()*(100000-1000+1)+1000) AS WorkCost
+                        FROM PMJobs pmj
+                        INNER JOIN PMJobDescriptions pmjd ON pmj.JobType = pmjd.UID 
+                        INNER JOIN PMWorkTypes pmwt ON pmjd.WorkType = pmwt.UID
+                        WHERE pmj.Building = ? %s GROUP BY pmwt.Name", $date_partial_sql), $val_array);
+                }   
+
+                $finance_dataset = [
+                    'finance' => $ds_finance
+                ];
+
+                echo json_encode(['data' => $finance_dataset]);
+
+                //destroy database connection
+                db_disconnect($connection);
+                http_response_code(200);
+            }catch(Exception $e){
+                echo $e->getMessage();
+                //return bad http request when error is encountered
+                http_response_code(400);
+            }     
+            break;
+        case 'get_worker':
+            try{
+                $cols = json_decode($_REQUEST['filters'], true);
+                $temp = [];
+                $date_count = [];
+
+                foreach($cols AS $k => $v){
+                    $a = ['begin_date', 'end_date', 'created_date'];
+                    if(!in_array($k, $a))
+                        $temp[] = sprintf(" %s = '%s' ", $k, $v);
+                }
+
+                $filters = implode("AND", $temp);
+
+                //creates a connection, selects the user and send the data as an JSON outstream
+                $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
+
+                $con_dates = !empty($_REQUEST['date_begin']) && !empty($_REQUEST['date_end']);
+
+                $date_partial_sql = $con_dates?"AND pmj.DateCreated >= DATE(?) AND pmj.DateCreated <= DATE(?)":'';
+
+                $val_array = [];
+                if($con_dates)
+                    $val_array = [$_REQUEST['date_begin'], $_REQUEST['date_end']];
+
+
+                $dataset_temp = select($connection, sprintf("SELECT c.UID  FROM TabsBuildings c 
+                INNER JOIN TabsClients tc ON c.Client = tc.ID 
+                INNER JOIN TabsRegions tr ON c.Region = tr.UID 
+                INNER JOIN PMJobs pmj ON pmj.Building = c.UID
+                INNER JOIN PMJobDescriptions pmjd ON pmj.JobType = pmjd.UID 
+                INNER JOIN PMWorkTypes pmwt ON pmjd.WorkType = pmwt.UID
+                INNER JOIN PMPriorities pmp ON pmp.UID = pmj.Priority 
+                INNER JOIN PMStatusLevels pmsl ON pmsl.UID = pmj.CurrentStatus WHERE %s %s GROUP BY c.UID", $filters, $date_partial_sql), []);
+
+                $live_worker_status = null;
+                $worker_priorities = null;
+                $ds_worker = null;
+                if(!empty($dataset_temp)){
+                    if($con_dates){
+                        $val_array = array_merge([$dataset_temp[0]['UID']], [$_REQUEST['date_begin'], $_REQUEST['date_end']]);
+                    }else{
+                        $val_array = [$dataset_temp[0]['UID']];
+                    }
+
+                    $ds_worker = select($connection, sprintf("SELECT tc.Client, tr.RegionName, c.BuildingName, tl.LocationCode, pmj.JobNumber, pmwt.Name, pmjd.Description,
+                        pmj.Comments, COALESCE(pmj.Schedule, 'N/A') AS Schedule, pmp.Priority, COALESCE(null, 'N/A') AS contractor_name, pmj.DateCreated, pmj.ReportedBy, pmj.CreatedBy,
+                        pmj.StartDate, pmj.StartTime, pmj.CallLoggedDate, pmj.EstimatedRespondToDateTime, pmj.EstimatedCompletionDateTime, pmsl.Status AS CurrentStatus, pmj.ResponsesReceived, 
+                        pmj.DateOfFirstResponse, pmj.LastModified AS LastChasedDate, pmj.JobComplete, pmj.DateCompleted, pmj.Cancelled, pmj.DateCancelled, pmj.FurtherWork, pmj.Resolved,
+                        pmj.CostCode
+                        FROM TabsBuildings c 
+                        INNER JOIN TabsLocations tl ON tl.Building = c.UID
+                        INNER JOIN TabsClients tc ON c.Client = tc.ID 
+                        INNER JOIN TabsRegions tr ON c.Region = tr.UID 
+                        INNER JOIN PMJobs pmj ON pmj.Building = c.UID
+                        INNER JOIN PMJobDescriptions pmjd ON pmj.JobType = pmjd.UID 
+                        INNER JOIN PMWorkTypes pmwt ON pmjd.WorkType = pmwt.UID
+                        INNER JOIN PMPriorities pmp ON pmp.UID = pmj.Priority 
+                        INNER JOIN PMStatusLevels pmsl ON pmsl.UID = pmj.CurrentStatus WHERE c.UID = ? %s", $date_partial_sql), $val_array);
+                }   
+
+                $worker_dataset = [
+                    'worker' => $ds_worker
+                ];
+
+                echo json_encode(['data' => $worker_dataset]);
+
+                //destroy database connection
+                db_disconnect($connection);
+                http_response_code(200);
+            }catch(Exception $e){
+                echo $e->getMessage();
+                //return bad http request when error is encountered
+                http_response_code(400);
+            }     
+            break;
+        case 'get_contractor':
+            try{
+                $cols = json_decode($_REQUEST['filters'], true);
+                $temp = [];
+                $date_count = [];
+
+                foreach($cols AS $k => $v){
+                    $a = ['begin_date', 'end_date', 'created_date'];
+                    if(!in_array($k, $a))
+                        $temp[] = sprintf(" %s = '%s' ", $k, $v);
+                }
+
+                $filters = implode("AND", $temp);
+
+                //creates a connection, selects the user and send the data as an JSON outstream
+                $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
+
+                $con_dates = !empty($_REQUEST['date_begin']) && !empty($_REQUEST['date_end']);
+
+                $date_partial_sql = $con_dates?"AND pmj.DateCreated >= DATE(?) AND pmj.DateCreated <= DATE(?)":'';
+
+                $val_array = [];
+                if($con_dates)
+                    $val_array = [$_REQUEST['date_begin'], $_REQUEST['date_end']];
+
+
+                $dataset_temp = select($connection, sprintf("SELECT c.UID  FROM TabsBuildings c 
+                INNER JOIN TabsClients tc ON c.Client = tc.ID 
+                INNER JOIN TabsRegions tr ON c.Region = tr.UID 
+                INNER JOIN PMJobs pmj ON pmj.Building = c.UID
+                INNER JOIN PMJobDescriptions pmjd ON pmj.JobType = pmjd.UID 
+                INNER JOIN PMWorkTypes pmwt ON pmjd.WorkType = pmwt.UID
+                INNER JOIN PMPriorities pmp ON pmp.UID = pmj.Priority 
+                INNER JOIN PMStatusLevels pmsl ON pmsl.UID = pmj.CurrentStatus WHERE %s %s GROUP BY c.UID", $filters, $date_partial_sql), []);
+
+                $live_status = null;
+                $contractor_priorities = null;
+                $ds_contractor = null;
+                if(!empty($dataset_temp)){
+                    if($con_dates){
+                        $val_array = array_merge([$dataset_temp[0]['UID']], [$_REQUEST['date_begin'], $_REQUEST['date_end']]);
+                    }else{
+                        $val_array = [$dataset_temp[0]['UID']];
+                    }
+
+                    $live_status = select($connection, sprintf("SELECT COUNT(pmj.UID) AS number_intervention, pms.Status AS CurrentStatus FROM PMJobs pmj INNER JOIN PMStatusLevels pms ON pmj.CurrentStatus = pms.UID
+                        WHERE pmj.DateCompleted IS NULL AND Building = ? %s GROUP BY pms.Status ORDER BY pms.UID ASC", $date_partial_sql), $val_array);
+
+                    $job_priorities = select($connection, sprintf("SELECT COUNT(pmp.UID) AS number_intervention, pmp.Priority AS CurrentStatus FROM PMPriorities pmp INNER JOIN PMJobs pmj ON pmj.Priority = pmp.UID
+                        WHERE pmj.DateCompleted IS NULL AND Building = ? %s GROUP BY pmp.Priority ORDER BY pmp.UID ASC", $date_partial_sql), $val_array);
+
+                    $ds_contractor = select($connection, sprintf("SELECT pmj.JobNumber, c.BuildingName, COALESCE(null, 'N/A') AS contractor_name, pmj.OrderNumber AS InvoiceNumber, COALESCE(null, 'N/A') AS NetAmount,
+                        pmj.PaymentDate AS InvoiceDate, c.SiteNumber, pmwt.Name, pmj.JobDescription, pmj.DateCompleted, COALESCE(null, 'N/A') AS CompletedBy, pmj.Comments, COALESCE(null, 'N/A') AS NoReply,
+                        CASE WHEN (pmjs.Happy = 1) THEN 'YES' ELSE 'NO' END AS Happy
+                        FROM TabsBuildings c 
+                        INNER JOIN TabsLocations tl ON tl.Building = c.UID
+                        INNER JOIN TabsClients tc ON c.Client = tc.ID 
+                        INNER JOIN TabsRegions tr ON c.Region = tr.UID 
+                        INNER JOIN PMJobs pmj ON pmj.Building = c.UID
+                        INNER JOIN PMJobDescriptions pmjd ON pmj.JobType = pmjd.UID 
+                        INNER JOIN PMWorkTypes pmwt ON pmjd.WorkType = pmwt.UID
+                        INNER JOIN PMPriorities pmp ON pmp.UID = pmj.Priority 
+                        INNER JOIN PMJobSatisfactionSurveys pmjs ON pmjs.JobID = pmj.UID
+                        INNER JOIN PMStatusLevels pmsl ON pmsl.UID = pmj.CurrentStatus WHERE c.UID = ? %s", $date_partial_sql), $val_array);
+                }   
+
+                $contractor_dataset = [
+                    'contractor' => $ds_contractor
+                ];
+
+                echo json_encode(['data' => $contractor_dataset]);
+
+                //destroy database connection
+                db_disconnect($connection);
+                http_response_code(200);
+            }catch(Exception $e){
+                echo $e->getMessage();
+                //return bad http request when error is encountered
+                http_response_code(400);
+            }     
+            break;
         case 'get_buildings_sidebar_dataset':
             try{
                 //creates a connection, selects the user and send the data as an JSON outstream
@@ -718,6 +1227,7 @@
 
                 //creates a connection, selects the user and send the data as an JSON outstream
                 $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
+                $alias = ['asset_status' => 'Status'];
 
                 foreach($cols AS $v){
                     $_pos = strpos($v, ".")  + 1;
@@ -726,10 +1236,16 @@
                         $v_col = substr($v, $_pos);
                     }
 
+                    $v_temp = $v;
+                    if(in_array($v_col, array_keys($alias))){
+                        $v_temp = sprintf("%s AS %s", str_replace($v_col, $alias[$v_col], $v), $v_col);
+                        $v = $v_col;
+                    }
+
                     $sql = sprintf("SELECT %s FROM %s c INNER JOIN TabsClients tc ON c.Client = tc.ID INNER JOIN TabsRegions tr ON c.Region = tr.UID INNER JOIN PMJobs pmj ON c.UID = pmj.Building
                         INNER JOIN ATAssets ats ON pmj.AssetCode = ats.AssetCode INNER JOIN ATDescriptions atd ON ats.Description = atd.UID INNER JOIN ATGroups atg ON atd.GroupID = atg.UID 
                         INNER JOIN ATStatusLevels atl ON ats.StatusLevelID = atl.UID
-                        GROUP BY %s", $v, $_REQUEST['table'], $v);
+                        GROUP BY %s", $v_temp, $_REQUEST['table'], $v);
                     $temp[$v_col] = select($connection, $sql, []);
                 }
 
@@ -742,6 +1258,52 @@
                 //return bad http request when error is encountered
                 http_response_code(400);
             }
+            break;
+        case 'get_col_grp_contractor':
+            try{
+                $cols = json_decode($_REQUEST['fields'], true);
+                $temp = [];
+
+                //creates a connection, selects the user and send the data as an JSON outstream
+                $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
+
+                $alias = ['job_type' => 'Description'];
+
+                foreach($cols AS $v){
+                    $_pos = strpos($v, ".")  + 1;
+
+                    if($_pos !== FALSE){
+                        $v_col = substr($v, $_pos);
+                    }
+
+                    $v_temp = $v;
+                    if(in_array($v_col, array_keys($alias))){
+                        $v_temp = sprintf("%s AS %s", str_replace($v_col, $alias[$v_col], $v), $v_col);
+                        $v = $v_col;
+                    }
+
+                    $sql = sprintf("SELECT %s FROM %s c 
+                    INNER JOIN TabsClients tc ON c.Client = tc.ID 
+                    INNER JOIN TabsRegions tr ON c.Region = tr.UID 
+                    INNER JOIN PMJobs pmj ON pmj.Building = c.UID
+                    INNER JOIN PMJobDescriptions pmjd ON pmj.JobType = pmjd.UID 
+                    INNER JOIN PMWorkTypes pmwt ON pmjd.WorkType = pmwt.UID
+                    INNER JOIN PMPriorities pmp ON pmp.UID = pmj.Priority 
+                    INNER JOIN PMStatusLevels pmsl ON pmsl.UID = pmj.CurrentStatus GROUP BY %s", $v_temp, $_REQUEST['table'], $v);
+
+                    $temp[$v_col] = select($connection, $sql, []);
+                }
+
+                echo json_encode(['data' => $temp]);
+
+                //destroy database connection
+                db_disconnect($connection);
+                http_response_code(200);
+            }catch(Exception $e){
+                echo $e->getMessage();
+                //return bad http request when error is encountered
+                http_response_code(400);
+            }   
             break;
         case 'get_col_values':
             try{
@@ -847,39 +1409,6 @@
                 //return bad http request when error is encountered 
                 http_response_code(400);
             } 
-            break;
-        case 'get_finance':
-            try{
-                //creates a connection, selects the user and send the data as an JSON outstream
-                $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
-                $dataset = select($connection, "SELECT Count(pmj.JobNumber) AS jobcount, pmjd.Description AS WorkType FROM PMJobs pmj INNER JOIN PMJobDescriptions pmjd ON pmj.UID = pmjd.UID GROUP BY pmjd.Description", []);
-
-                echo json_encode(['data' => $dataset]);
-
-                //destroy database connection
-                db_disconnect($connection);
-                http_response_code(200);
-            }catch(Exception $e){
-                //return bad http request when error is encountered
-                http_response_code(400);
-            }
-            break;
-        case 'get_contractor':
-            try{
-                //creates a connection, selects the user and send the data as an JSON outstream
-                $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
-                $dataset = select($connection, "SELECT Count(pmj.JobNumber) AS jobcount, pms.Status AS CurrentStatus FROM PMJobs pmj INNER JOIN PMStatusLevels pms ON pmj.CurrentStatus = pms.UID
-                    GROUP BY pms.Status", []);
-
-                echo json_encode(['data' => $dataset]);
-
-                //destroy database connection
-                db_disconnect($connection);
-                http_response_code(200);
-            }catch(Exception $e){
-                //return bad http request when error is encountered
-                http_response_code(400);
-            }
             break;
         case 'get_asset_summary':
             try{
@@ -1074,22 +1603,6 @@
                 http_response_code(400);
             }
             break;
-        case 'get_work_orders':
-            try{
-                //creates a connection, selects the user and send the data as an JSON outstream
-                $connection = db_connect(HOST, USER, PASSWORD, DB_NAME, SERVER_PORT);
-                $dataset = select($connection, "SELECT COUNT(Client) AS tot_client, Client FROM PMJobs GROUP BY Client", []);
-
-                echo json_encode(['data' => $dataset]);
-
-                //destroy database connection
-                db_disconnect($connection);
-                http_response_code(200);
-            }catch(Exception $e){
-                //return bad http request when error is encountered
-                http_response_code(400);
-            }
-            break;
         case 'update_selection_fields':
             try{
 
@@ -1229,15 +1742,6 @@
                             ELSE 'out_sla'
                         END AS job_completion_status
                         FROM PMJobs pmj WHERE pmj.PPMGroup = 0 AND pmj.DateCompleted IS NULL AND Building = ? %s", $date_partial_sql), $val_array);
-
-                    $maintenance_jobs = select($connection, sprintf("SELECT pmj.JobNumber, pmj.DateCreated, pmj.DateCompleted, 
-                        IF(DATEDIFF(DATE(pmj.EstimatedCompletionDateTime), DATE(pmj.DateCreated))<0, 0, DATEDIFF(DATE(pmj.EstimatedCompletionDateTime), DATE(pmj.DateCreated))) AS completion_timescale, DATE_ADD(pmj.DateCreated, INTERVAL IF(DATEDIFF(DATE(pmj.EstimatedCompletionDateTime), DATE(pmj.DateCreated))<0, 0, DATEDIFF(DATE(pmj.EstimatedCompletionDateTime), DATE(pmj.DateCreated))) DAY) AS completion_date,
-                        CASE
-                            WHEN DATE(NOW()) <= DATE_ADD(pmj.DateCreated, INTERVAL IF(DATEDIFF(DATE(pmj.EstimatedCompletionDateTime), DATE(pmj.DateCreated))<0, 0, DATEDIFF(DATE(pmj.EstimatedCompletionDateTime), DATE(pmj.DateCreated))) DAY) THEN 'in_sla'
-                            WHEN DATE(NOW()) > DATE_ADD(pmj.DateCreated, INTERVAL IF(DATEDIFF(DATE(pmj.EstimatedCompletionDateTime), DATE(pmj.DateCreated))<0, 0, DATEDIFF(DATE(pmj.EstimatedCompletionDateTime), DATE(pmj.DateCreated))) DAY) THEN 'out_sla'
-                            ELSE 'out_sla'
-                        END AS job_completion_status
-                        FROM PMJobs pmj WHERE pmj.PPMGroup <> 0 AND pmj.DateCompleted IS NULL AND Building = ? %s", $date_partial_sql), $val_array);
 
                     $maintenance_jobs = select($connection, sprintf("SELECT pmj.JobNumber, pmj.DateCreated, pmj.DateCompleted, 
                         IF(DATEDIFF(DATE(pmj.EstimatedCompletionDateTime), DATE(pmj.DateCreated))<0, 0, DATEDIFF(DATE(pmj.EstimatedCompletionDateTime), DATE(pmj.DateCreated))) AS completion_timescale, DATE_ADD(pmj.DateCreated, INTERVAL IF(DATEDIFF(DATE(pmj.EstimatedCompletionDateTime), DATE(pmj.DateCreated))<0, 0, DATEDIFF(DATE(pmj.EstimatedCompletionDateTime), DATE(pmj.DateCreated))) DAY) AS completion_date,

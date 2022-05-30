@@ -399,7 +399,7 @@
               </div>
               <div class="container-fluid" data-elem-print="map_summary_content" data-export-name="map_export"> 
                 <div class="row">
-                  <div class="col-lg-2" style="padding-right: 2vw;margin-top: 3vh;">
+                  <div class="col-lg-2" style="padding-right: 2vw;margin-top: 3vh;" data-sidebar-collapse="left-filters-map">
                     <div class="d-flex justify-content-between flex-column align" style="width: 100%;">
                         <select data-select="tc.Client" class="mt-3"></select>
                         <select data-select="tr.RegionName" class="mt-3"></select>
@@ -1001,7 +1001,7 @@
                         <select data-select="atd.Description" class="mt-3"></select>
                         <!-- <select data-select="asset_grp" class="mt-3"></select> -->
                         <select data-select="atg.GroupName" class="mt-3"></select>
-                        <select data-select="atl.Status" class="mt-3"></select>
+                        <select data-select="atl.asset_status" class="mt-3"></select>
                         <select data-select="ats.AssetCode" class="mt-3"></select>
 
                         <div id="filter_site_asset_wrapper" class="mt-3">
@@ -1078,18 +1078,18 @@
                           </tr>
                         </thead>
                         <tbody class="sm-font">
-                          <tr><td class="csx-asset-row" width="50%">Client</td> <td width="50%" data-table-asset-row-field="Client"></td></tr>
-                          <tr><td class="csx-asset-row" width="50%">Building name</td> <td width="50%" data-table-asset-row-field="BuildingName"></td></tr>
-                          <tr><td class="csx-asset-row" width="50%">Asset code</td> <td width="50%" data-table-asset-row-field="AssetCode"></td></tr>
-                          <tr><td class="csx-asset-row" width="50%">Description</td> <td width="50%" data-table-asset-row-field="Description"></td></tr>
-                          <tr><td class="csx-asset-row" width="50%">Group 1</td> <td width="50%" data-table-asset-row-field="GroupName"></td></tr>
-                          <tr><td class="csx-asset-row" width="50%">Location description</td> <td width="50%" data-table-asset-row-field="location_desc"></td></tr>
-                          <tr><td class="csx-asset-row" width="50%">Location code</td> <td width="50%" data-table-asset-row-field="LocationCode"></td></tr>
-                          <tr><td class="csx-asset-row" width="50%">Manufacturer</td> <td width="50%" data-table-asset-row-field="Manufacturer"></td></tr>
-                          <tr><td class="csx-asset-row" width="50%">Model</td> <td width="50%" data-table-asset-row-field="Model"></td></tr>
-                          <tr><td class="csx-asset-row" width="50%">Serial number</td> <td width="50%" data-table-asset-row-field="SerialNumber"></td></tr>
-                          <tr><td class="csx-asset-row" width="50%">Status</td> <td width="50%" data-table-asset-row-field="Status"></td></tr>
-                          <tr><td class="csx-asset-row" width="50%">Comments</td> <td width="50%" data-table-asset-row-field="Comments"></td></tr>
+                          <tr><td class="csx-row" width="50%">Client</td> <td width="50%" data-table-asset-row-field="Client"></td></tr>
+                          <tr><td class="csx-row" width="50%">Building name</td> <td width="50%" data-table-asset-row-field="BuildingName"></td></tr>
+                          <tr><td class="csx-row" width="50%">Asset code</td> <td width="50%" data-table-asset-row-field="AssetCode"></td></tr>
+                          <tr><td class="csx-row" width="50%">Description</td> <td width="50%" data-table-asset-row-field="Description"></td></tr>
+                          <tr><td class="csx-row" width="50%">Group 1</td> <td width="50%" data-table-asset-row-field="GroupName"></td></tr>
+                          <tr><td class="csx-row" width="50%">Location description</td> <td width="50%" data-table-asset-row-field="location_desc"></td></tr>
+                          <tr><td class="csx-row" width="50%">Location code</td> <td width="50%" data-table-asset-row-field="LocationCode"></td></tr>
+                          <tr><td class="csx-row" width="50%">Manufacturer</td> <td width="50%" data-table-asset-row-field="Manufacturer"></td></tr>
+                          <tr><td class="csx-row" width="50%">Model</td> <td width="50%" data-table-asset-row-field="Model"></td></tr>
+                          <tr><td class="csx-row" width="50%">Serial number</td> <td width="50%" data-table-asset-row-field="SerialNumber"></td></tr>
+                          <tr><td class="csx-row" width="50%">Status</td> <td width="50%" data-table-asset-row-field="Status"></td></tr>
+                          <tr><td class="csx-row" width="50%">Comments</td> <td width="50%" data-table-asset-row-field="Comments"></td></tr>
                         </tbody>
                       </table>
                     </div>
@@ -1104,6 +1104,137 @@
                   </div>
                 </div>
               </div>
+              <div class="container mt-5" data-void="spa-content-asset_list">
+                <div class="row">
+                  <div class="col-lg-12">
+                    <div class="asset_section_header">
+                      <p>Financial & Warranty details</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="row  mt-2">
+                  <div class="col-lg-5">
+                    <div class="table-responsive">
+                      <table class="table">
+                        <thead class="csx-light-theme">
+                          <tr>
+                            <th></th>
+                            <th></th>
+                          </tr>
+                        </thead>
+                        <tbody class="sm-font">
+                          <tr><td class="csx-row" width="50%">Date of purchase</td> <td width="50%" data-table-fw-row-field=""></td></tr>
+                          <tr><td class="csx-row" width="50%">Purchase value</td> <td width="50%" data-table-fw-row-field=""></td></tr>
+                          <tr><td class="csx-row" width="50%">Warranty expiry date</td> <td width="50%" data-fw-fw-row-field=""></td></tr>
+                          <tr><td class="csx-row" width="50%">Lease start date</td> <td width="50%" data-table-fw-row-field=""></td></tr>
+                          <tr><td class="csx-row" width="50%">Lease end date</td> <td width="50%" data-table-fw-row-field=""></td></tr>
+                          <tr><td class="csx-row" width="50%">Lease duration</td> <td width="50%" data-table-fw-row-field=""></td></tr>
+                          <tr><td class="csx-row" width="50%">Lease value</td> <td width="50%" data-table-fw-row-field=""></td></tr>
+                          <tr><td class="csx-row" width="50%">Work orders</td> <td width="50%" data-table-fw-row-field=""></td></tr>
+                          <tr><td class="csx-row" width="50%">Cost</td> <td width="50%" data-table-fw-row-field=""></td></tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  <div class="col-lg-2"></div>
+                  <div class="col-lg-5 d-flex justify-content-center align-items-center flex-column">
+                      <div class="chart-container" style="height:auto; width: 300px;">
+                          <canvas id="fw_chart_details"></canvas>
+                      </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="container mt-5" data-void="spa-content-asset_list">
+                <div class="row">
+                  <div class="col-lg-12">
+                    <div class="asset_section_header">
+                      <p>Job history</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="row  mt-2">
+                  <div class="col-lg-12">
+                    <div class="container-fluid">
+                      <div class="row">
+                        <div class="col-lg-6">
+                          <div class="asset_section_header"><p>Regulatory</p></div>
+                        </div>
+                        <div class="col-lg-6">
+                          <div class="asset_section_header"><p>Planned</p></div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-lg-6">
+                          <div class="d-flex justify-content-center align-items-center flex-column" style="height: 100%; width: 100%;">
+                            <img src="build/assets/res/img/empty_warning.png" alt="empty data" height="60px" width="60px" class="mt-5">
+                            <h5 class="text-center mt-5" data-header="empty_header">No regulatory</h5>
+                            <p class="text-center mt-2" style="padding: 0px 15%;">There is currently no available dataset</p>
+                          </div>
+                        </div>
+                        <div class="col-lg-6">
+                          <div class="d-flex justify-content-center align-items-center flex-column" style="height: 100%; width: 100%;">
+                            <img src="build/assets/res/img/empty_warning.png" alt="empty data" height="60px" width="60px" class="mt-5">
+                            <h5 class="text-center mt-5" data-header="empty_header">No planned</h5>
+                            <p class="text-center mt-2" style="padding: 0px 15%;">There is currently no available dataset</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="container mt-5 mb-5" data-void="spa-content-asset_list">
+                <div class="row">
+                  <div class="col-lg-12">
+                    <div class="asset_section_header">
+                      <p>Reactive</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="row  mt-2">
+                  <div class="col-lg-6 d-flex justify-content-center align-items-center flex-column">
+                      <div class="chart-container" style="height:auto; width: 300px;">
+                          <canvas id="fw_chart_reactive_pie"></canvas>
+                      </div>
+                  </div>
+                  <div class="col-lg-6 d-flex justify-content-center align-items-center flex-column">
+                      <div class="chart-container" style="height:auto; width: 500px;">
+                          <canvas id="fw_chart_reactive_stackbar"></canvas>
+                      </div>
+                  </div>
+                </div>
+                <div class="row  mt-2">
+                  <div class="table-responsive mt-5" data-rct-table="reactive">
+                    <table class="table table-striped">
+                      <thead class="csx-light-theme">
+                        <tr>
+                          <th class="csx-row">Job number</th>
+                          <th class="csx-row">Start date</th>
+                          <th class="csx-row">Work type</th>
+                          <th class="csx-row">Job description</th>
+                          <th class="csx-row">Priority</th>
+                          <th class="csx-row">Comments</th>
+                          <th class="csx-row">Current Status</th>
+                          <th class="csx-row">Cost</th>
+                        </tr>
+                      </thead>
+                      <tbody class="sm-font">
+                        <tr>
+                          <td>DE14</td>
+                          <td>03/08/2021 00:00:00</td>
+                          <td>Piscines</td>
+                          <td>Equipement piscine</td>
+                          <td>P4 - Tres faible</td>
+                          <td>Barriere piscines</td>
+                          <td>Pause</td>
+                          <td>0.00</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div> 
+                </div>
+              </div>
             </div>
             <!--asset_list ends-->
             </div>
@@ -1112,118 +1243,146 @@
           <div data-tab-target="work_order">
             <ul class="nav nav-tabs" id="csx-sub-nav-work_order" role="tablist">
               <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="csx-work_order-tab" data-bs-toggle="tab" data-bs-target="#spa-content-work_order" data-bs-target="spa-content-work_order" type="button" role="tab" aria-controls="Work order" aria-selected="true">Work Order</button>
+                <button class="nav-link active" id="csx-work_order-tab" data-bs-toggle="tab" data-bs-target="#spa-content-work_order" data-bs-target="spa-content-work_order" type="button" role="tab" aria-controls="Work order" aria-selected="true"></button>
               </li>
             </ul>
 
             <div class="tab-content" id="csx-tab-content-work">
               <div class="tab-pane fade show active" id="spa-content-work_order" data-role="spa-content-work_order" role="tabpanel" aria-labelledby="csx-work_order-tab">
                 <div class="container-fluid">
-                  <div class="row mt-5">
-                      <div class="col-lg-3 col-sm-12"></div>
-<!--                       <div class="col-lg-6 col-sm-12">
-                        <div class="chart-container" style="height:auto; width: 100%">
-                            <div id="work_orders"></div>
-                        </div>
-                      </div> -->
-                      <div class="col-lg-3 col-sm-12">
-                        <button class="btn btn-sm csx-btn-gradient invisible" id="chart_drill_back"> Back </button>
-                      </div>
+                  <div class="sidebar-toggle" data-sidebar-collapse-target="left-filters-work_order">
+                    <span data-feather="chevron-left"></span>
                   </div>
-                  <div class="row mt-5">
-             <!--          <div class="col-lg-3 col-sm-12"></div> -->
-                      <div class="col-lg-6 col-sm-12">
-                        <div class="chart-container" style="height:auto; width: 100%">
-                            <canvas id="work_priority"></canvas>
-                        </div>
-                      </div>
-                      <div class="col-lg-6 col-sm-12">
-                        <div class="chart-container" style="height:auto; width: 100%">
-                            <canvas id="work_type"></canvas>
-                        </div>
-                      </div>
- <!--                      <div class="col-lg-3 col-sm-12"></div> -->
-                  </div>
-<!--                   <div class="row mt-5">
-                      <div class="col-lg-3 col-sm-12"></div>
-                      <div class="col-lg-6 col-sm-12">
-                        <div class="chart-container" style="height:auto; width: 100%">
-                            <canvas id="work_type"></canvas>
-                        </div>
-                      </div>
-                      <div class="col-lg-3 col-sm-12"></div>
-                  </div> -->
                   <div class="row csx-full-vp">
-                    <div class="col-lg-12" data-target-pagination data-target-table>
-                      <div class="container-fluid mt-4">
-                        <div class="row">
-                            <div class="col-lg-3 col-sm-12">
-                              <div class="dropdown">
-                                <button class="btn btn-sm csx-btn-gradient dropdown-toggle" type="button" id="quick_search_form" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                  Quick search <span data-feather="search"></span>
-                                </button>
-                                <div class="dropdown-menu" aria-labelledby="quick_search_form">
+                    <div class="col-lg-2" style="padding-right: 2vw;margin-top: 3vh;" data-sidebar-collapse="left-filters-work_order">
+                      <div class="d-flex justify-content-between flex-column align" style="width: 100%;">
+                          <select data-select="tc.Client" class="mt-3"></select>
+                          <select data-select="c.BuildingName" class="mt-3"></select>
+                          <select data-select="tr.RegionName" class="mt-3"></select>
 
-                                </div>
-                              </div>
-                            </div>
-                            <div class="col-lg-9 col-sm-12 d-flex justify-content-end flex-group">
-                                <button class="btn btn-sm csx-btn-gradient no-display" data-table="jobs" data-role="show_columns">Column <span data-feather="bar-chart-2"></span></button>
-                                <button class="btn btn-sm csx-btn-gradient no-display">Sorting <span data-feather="filter"></span></button>
-                                <button class="btn btn-sm csx-btn-gradient no-display">Group by <span data-feather="filter"></span></button>
-                                <div class="dropdown me-4">
-                                  <button class="btn btn-sm csx-btn-gradient dropdown-toggle" type="button" data-role="export_list_type" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Export <span data-feather="download"></span>
-                                  </button>
-                                  <div class="dropdown-menu" aria-labelledby="export_list_type" data-table="jobs">
-                                  <a class="dropdown-item" href="#" data-export="pdf">PDF</a>
-                                  <a class="dropdown-item" href="#" data-export="xlsx">Excel</a>
-                                  <a class="dropdown-item" href="#" data-export="xml">XML</a>
-                                  <a class="dropdown-item" href="#" data-export="json">JSON</a>
-                                  <a class="dropdown-item" href="#" data-export="csv">CSV</a>
-                                  </div>
-                                </div>
-                                <button class="btn btn-sm csx-btn-gradient">Search <span data-feather="search"></span></button>
-                            </div>
-                            <div class="col-lg-3 col-sm-12 no-display">
-                              <div class="float-right">
-                                <button class="btn btn-sm csx-btn-gradient no-display">Add new <span data-feather="plus"></span></button>
-                                <button class="btn btn-sm csx-btn-gradient no-display">Reload <span data-feather="refresh-cw"></span></button>
-                              </div>
-                            </div>
+<!--                           <select data-select="" class="mt-3"></select>
+                          <select data-select="" class="mt-3"></select> -->
+                          <select data-select="pmjd.job_type" class="mt-3"></select>
+                          <select data-select="pmwt.Name" class="mt-3"></select>
+                          <select data-select="pmsl.Status" class="mt-3"></select>
+                          <select data-select="pmp.Priority" class="mt-3"></select>
+
+                          <div class="d-flex flex-column text-center mt-5" style="width: 50%; margin-left: auto; margin-right: auto;">
+                            <input type="text" name="wo_created_date" id="wo_created_date" data-field="wo_created_date" placeholder="YYYY / MM / DD" class="csx-date" autocomplete="off">
+                            <p style="font-size: 12px;">Created date</p> 
+                          </div>
+
+                          <div class="d-flex flex-column text-center mt-3" style="width: 50%; margin-left: auto; margin-right: auto;">
+                            <input type="text" name="wo_begin_date" id="wo_begin_date" data-field="wo_begin_date" placeholder="YYYY / MM / DD" class="csx-date" autocomplete="off">
+                            <p style="font-size: 12px;">Begin date</p> 
+                          </div>
+
+                          <div class="d-flex flex-column text-center mt-3" style="width: 50%; margin-left: auto; margin-right: auto;">
+                            <input type="text" name="wo_end_date" id="wo_end_date" data-field="end_date" placeholder="YYYY / MM / DD" class="csx-date" autocomplete="off">
+                            <p style="font-size: 12px;">End date</p> 
+                          </div>
+
+                          <div id="filter_work_order_wrapper" class="mt-3">
+                            <button class="btn btn-sm csx-btn-gradient" id="filter_jobs">Apply</button>
+                          </div>
+
+                          <select data-select-pdf="export_to_pdf_dropdown" class="mt-5">
+                            <optgroup>
+                              <option data-display="Export file"></option>
+                              <option value="pdf">PDF</option>
+                              <option value="word">Word</option>
+                              <option value="ppt">PPT</option>
+                            </optgroup>
+                          </select>  
                         </div>
-                      </div>
-                      <div class="container-fluid mt-4 mb-4 no-display" data-column-form>
-                        <div class="row">
-                          <div class="col-lg-12 col-sm-12 float-right">
-                            <div class="d-lg-flex justify-content-end mt-3 mb-3">
-                              <button class="btn btn-sm csx-btn-gradient ms-3" data-column-form-role="apply" data-table="jobs">Apply <span data-feather="check"></span></button>
-                              <button class="btn btn-sm csx-btn-gradient ms-3" data-column-form-role="restore">Restore <span data-feather="x"></span></button>
-                              <button class="btn btn-sm csx-btn-gradient ms-3" data-column-form-role="cancel">Cancel <span data-feather="x"></span></button>
+                    </div>
+                    <div class="col-lg-10 csx-left-separator" data-main-collapse="left-filters-work_order">
+                      <div class="container-fluid">
+                        <div class="row mt-5">
+                          <div class="col-lg-4 box-area text-center" style="background-color: #fb8500;" data-report-card>
+                            <div class="d-lg-flex justify-content-center align-items-center">
+                              <h4 class="mt-3 mb-3 me-3 csx-txt-uppercase" data-report-header="live_job_status">live job status</h4>
+                              <div data-toggle="tooltip" data-placement="top" title="An overview of job status so you can manage your operations"><i class="fa-solid fa-circle-info"></i></div>
+                            </div>
+                            <div class="csx-box-list" data-field="wo_live_job_status">
+                              <div class="d-lg-flex justify-content-between">
+                                <p>IN PROGRESS</p>
+                                <p>31</p>
+                              </div>
+                              <div class="d-lg-flex justify-content-between">
+                                <p>PAUSED</p>
+                                <p>22</p>
+                              </div>
+                              <div class="d-lg-flex justify-content-between">
+                                <p>AWAITING PARTS</p>
+                                <p>13</p>
+                              </div>
+                              <div class="d-lg-flex justify-content-between">
+                                <p>SUP.ATTENTION</p>
+                                <p>42</p>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-lg-4 box-area text-center" style="background-color: #b5e48c;" data-report-card>
+                            <div class="d-lg-flex justify-content-center align-items-center">
+                              <h4 class="mt-3 mb-3 me-3 csx-txt-uppercase" data-report-header="job_by_priority">Jobs by priority</h4>
+                              <div data-toggle="tooltip" data-placement="top" title="Jobs urgency so you can prioritise accordingly"><i class="fa-solid fa-circle-info"></i></div>
+                            </div>
+                            <div class="csx-box-list" data-field="wo_jobs_priority">
+                              <div class="d-lg-flex justify-content-between">
+                                <p>P1 - VERY HIGH</p>
+                                <p>3</p>
+                              </div>
+                              <div class="d-lg-flex justify-content-between">
+                                <p>P2 - HIGH</p>
+                                <p>12</p>
+                              </div>
+                              <div class="d-lg-flex justify-content-between">
+                                <p>P3 - MEDIUM</p>
+                                <p>37</p>
+                              </div>
+                              <div class="d-lg-flex justify-content-between">
+                                <p>P4 - LOW</p>
+                                <p>52</p>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-lg-4 box-area text-center" style="background-color: #48cae4;" data-report-card>
+                            <div class="d-lg-flex justify-content-center align-items-center">
+                              <h4 class="mt-3 mb-3 me-3 csx-txt-uppercase" data-report-header="overdue_jobs">Overdue jobs</h4>
+                              <div data-toggle="tooltip" data-placement="top" title="Jobs raised that are either within their required completion time (In SLA) or have passed their required completion time (Out of SLA)"><i class="fa-solid fa-circle-info"></i></div>
+                            </div>
+                            <div class="d-lg-flex text-center">
+                              <div class="csx-box" style="background-color: #b5e48c;">
+                                <p class="mt-2 mb-2">Repair</p>
+                                <div class="d-lg-flex justify-content-center text-center">
+                                  <h1 data-field="wo_repair">10</h1>
+                                </div>
+                              </div>
+                              <div class="csx-box" style="background-color: #e63946;">
+                                <p class="mt-2 mb-2">Maintenance</p>
+                                <div class="d-lg-flex justify-content-center text-center">
+                                  <h1 data-field="wo_maintenance">7</h1>
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </div>
-                        <div class="row">
-                            <div class="col-lg-6 col-sm-6">
-                              <div class="csx-drop-col-zone d-flex flex-wrap" data-drop-col></div>
-                            </div> 
-                            <div class="col-lg-6 col-sm-6">
-                              <div class="csx-drop-col-zone d-flex flex-wrap dropzone">
-                                
-                              </div>
-                            </div>
+                        <div class="row mt-4">
+                          <div class="col-lg-12" data-target-pagination data-target-table>
+                            <div class="table-responsive mt-5">
+                              <table class="table table-striped">
+                                <thead class="csx-light-theme">
+                                  <tr></tr>
+                                </thead>
+                                <tbody class="sm-font"></tbody>
+                              </table>
+                            </div>  
+                          </div>
                         </div>
                       </div>
-                      <div class="table-responsive mt-5">
-                        <table class="table table-striped">
-                          <thead class="csx-light-theme">
-                            <tr></tr>
-                          </thead>
-                          <tbody class="sm-font"></tbody>
-                        </table>
-                      </div>   
                     </div>
-                  </div> 
+                  </div>
                 </div>
               </div>
             </div>
@@ -1376,26 +1535,599 @@
           </div>
 
           <div data-tab-target="finance">
-            <div data-role="spa-finance">
-              <div class="container" style="height: 100%">
-                <div class="row" style="height: inherit;">
-                  <div class="col-lg-12 d-flex justify-content-center align-items-center">
-                    <div style="height: auto; width: 600px;">
-                      <canvas id="finance_chart" ></canvas>
+            <ul class="nav nav-tabs" id="csx-sub-nav" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="csx-finance-overview-tab" data-bs-toggle="tab" data-bs-target="#spa-finance" data-spa-page="spa-finance" type="button" role="tab" aria-controls="Overview" aria-selected="true">Overview</button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="csx-work-type-expenditure-tab" data-bs-toggle="tab" data-bs-target="#spa-work-type-expenditure" data-spa-page="spa-work-type-expenditure" type="button" role="tab" aria-controls="Work type expenditure" aria-selected="true">Work type expenditure</button>
+              </li>
+            </ul>
+
+            <div class="tab-content" id="csx-tab-content">
+              <div class="tab-pane" id="spa-finance" data-role="spa-finance" role="tabpanel" aria-labelledby="csx-finance-overview-tab">
+                 <div class="container-fluid">
+                    <div class="sidebar-toggle" data-sidebar-collapse-target="left-filters-overview">
+                      <span data-feather="chevron-left"></span>
                     </div>
-                  </div>
+                    <div class="row csx-full-vp">
+                      <div class="col-lg-2" style="padding-right: 2vw;margin-top: 3vh;" data-sidebar-collapse="left-filters-overview">
+                        <div class="d-flex justify-content-between flex-column align" style="width: 100%;">
+                            <select data-select="tc.Client" class="mt-3"></select>
+                            <select data-select="c.BuildingName" class="mt-3"></select>
+                            <select data-select="tr.RegionName" class="mt-3"></select>
+
+                            <select data-select="pmjd.job_type" class="mt-3"></select>
+                            <select data-select="pmwt.Name" class="mt-3"></select>
+
+                            <div class="d-flex flex-column text-center mt-5" style="width: 50%; margin-left: auto; margin-right: auto;">
+                              <input type="text" name="fo_created_date" id="fo_created_date" data-field="fo_created_date" placeholder="YYYY / MM / DD" class="csx-date" autocomplete="off">
+                              <p style="font-size: 12px;">Created date</p> 
+                            </div>
+
+                            <div class="d-flex flex-column text-center mt-3" style="width: 50%; margin-left: auto; margin-right: auto;">
+                              <input type="text" name="fo_begin_date" id="fo_begin_date" data-field="fo_begin_date" placeholder="YYYY / MM / DD" class="csx-date" autocomplete="off">
+                              <p style="font-size: 12px;">Begin date</p> 
+                            </div>
+
+                            <div class="d-flex flex-column text-center mt-3" style="width: 50%; margin-left: auto; margin-right: auto;">
+                              <input type="text" name="fo_end_date" id="fo_end_date" data-field="fo_end_date" placeholder="YYYY / MM / DD" class="csx-date" autocomplete="off">
+                              <p style="font-size: 12px;">End date</p> 
+                            </div>
+
+                            <div id="filter_finance_overview_wrapper" class="mt-3">
+                              <button class="btn btn-sm csx-btn-gradient" id="filter_finance_overview">Apply</button>
+                            </div>
+
+                            <select data-select-pdf="export_to_pdf_dropdown" class="mt-5">
+                              <optgroup>
+                                <option data-display="Export file"></option>
+                                <option value="pdf">PDF</option>
+                                <option value="word">Word</option>
+                                <option value="ppt">PPT</option>
+                              </optgroup>
+                            </select>  
+                          </div>
+                      </div>
+                      <div class="col-lg-10 csx-left-separator" data-main-collapse="left-filters-overview">
+                        <div class="container-fluid">
+                          <div class="row mt-5">
+                            <div class="col-lg-4 box-area text-center" style="background-color: #e63946;" data-report-card>
+                              <div class="d-lg-flex justify-content-center align-items-center">
+                                <h4 class="mt-3 mb-3 me-3 csx-txt-uppercase" data-report-header="invoice_status">Invoice status</h4>
+                                <div data-toggle="tooltip" data-placement="top" title="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"><i class="fa-solid fa-circle-info"></i></div>
+                              </div>
+                              <div class="csx-box-list" data-field="fo_invoice_status">
+                                <div class="d-lg-flex justify-content-between">
+                                  <p>Paid</p>
+                                  <p>2</p>
+                                </div>
+                                <div class="d-lg-flex justify-content-between">
+                                  <p>Passed</p>
+                                  <p>3</p>
+                                </div>
+                                <div class="d-lg-flex justify-content-between">
+                                  <p>In query</p>
+                                  <p>1</p>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-lg-4 box-area text-center" style="background-color: #b5e48c;" data-report-card>
+                              <div class="d-lg-flex justify-content-center align-items-center">
+                                <h4 class="mt-3 mb-3 me-3 csx-txt-uppercase" data-report-header="credit_notes">Credit notes</h4>
+                                <div data-toggle="tooltip" data-placement="top" title="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"><i class="fa-solid fa-circle-info"></i></div>
+                              </div>
+                              <div class="d-lg-flex justify-content-center align-items-center mt-5">
+                                <h1 data-field="fo_credit_notes">Rs 6,500</h1>
+                              </div>
+                            </div>
+                            <div class="col-lg-4 box-area text-center" style="background-color: #ffd60a;" data-report-card>
+                              <div class="d-lg-flex justify-content-center align-items-center">
+                                <h4 class="mt-3 mb-3 me-3 csx-txt-uppercase" data-report-header="total_invoice_paid">Total invoice paid</h4>
+                                <div data-toggle="tooltip" data-placement="top" title="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"><i class="fa-solid fa-circle-info"></i></div>
+                              </div>
+                              <div class="d-lg-flex justify-content-center align-items-center mt-5">
+                                <h1 data-field="fo_invoice_paid">Rs 6,500</h1>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-lg-4 box-area text-center" style="background-color: #e63946;" data-report-card>
+                              <div class="d-lg-flex justify-content-center align-items-center">
+                                <h4 class="mt-3 mb-3 me-3 csx-txt-uppercase" data-report-header="repair_expenditure">Repair expenditure</h4>
+                                <div data-toggle="tooltip" data-placement="top" title="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"><i class="fa-solid fa-circle-info"></i></div>
+                              </div>
+                              <div class="d-lg-flex justify-content-center align-items-center mt-5">
+                                <h1 data-field="fo_repair_expenditure">Rs 10,000</h1>
+                              </div>
+                            </div>
+                            <div class="col-lg-4 box-area text-center" style="background-color: #fb8500;" data-report-card>
+                              <div class="d-lg-flex justify-content-center align-items-center">
+                                <h4 class="mt-3 mb-3 me-3 csx-txt-uppercase" data-report-header="total_maintenance_expenditure">Maintainance expenditure</h4>
+                                <div data-toggle="tooltip" data-placement="top" title="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"><i class="fa-solid fa-circle-info"></i></div>
+                              </div>
+                              <div class="d-lg-flex justify-content-center align-items-center mt-5">
+                                <h1 data-field="fo_maintaintenanc_expenditure">Rs 40,000</h1>
+                              </div>
+                            </div>
+                            <div class="col-lg-4 box-area text-center" style="background-color: #fb8500;" data-report-card>
+                              <div class="d-lg-flex justify-content-center align-items-center">
+                                <h4 class="mt-3 mb-3 me-3 csx-txt-uppercase" data-report-header="total_average_order">Total average order</h4>
+                                <div data-toggle="tooltip" data-placement="top" title="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"><i class="fa-solid fa-circle-info"></i></div>
+                              </div>
+                              <div class="d-lg-flex justify-content-center align-items-center mt-5">
+                                <h1 data-field="fo_total_average_order">Rs 0.00</h1>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="row mt-4">
+                            <div class="col-lg-12" data-target-pagination data-target-table>
+                              <div class="table-responsive mt-5">
+                                <table class="table table-striped">
+                                  <thead class="csx-light-theme">
+                                    <tr></tr>
+                                  </thead>
+                                  <tbody class="sm-font"></tbody>
+                                </table>
+                              </div>  
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                 </div>
+              </div>
+              <div class="tab-pane" id="spa-work-type-expenditure" data-role="spa-work-type-expenditure" role="tabpanel" aria-labelledby="csx-work-type-expenditure-tab">
+                <div class="container-fluid">
+                    <div class="sidebar-toggle" data-sidebar-collapse-target="left-filters-expenditure">
+                      <span data-feather="chevron-left"></span>
+                    </div>
+                    <div class="row csx-full-vp">
+                      <div class="col-lg-2" style="padding-right: 2vw;margin-top: 3vh;" data-sidebar-collapse="left-filters-expenditure">
+                        <div class="d-flex justify-content-between flex-column align" style="width: 100%;">
+                            <select data-select="tc.Client" class="mt-3"></select>
+                            <select data-select="c.BuildingName" class="mt-3"></select>
+                            <select data-select="tr.RegionName" class="mt-3"></select>
+                            <select data-select="pmjd.job_type" class="mt-3"></select>
+                            <select data-select="pmwt.Name" class="mt-3"></select>
+
+                            <div class="d-flex flex-column text-center mt-5" style="width: 50%; margin-left: auto; margin-right: auto;">
+                              <input type="text" name="fo_created_date" id="fw_created_date" data-field="fw_created_date" placeholder="YYYY / MM / DD" class="csx-date" autocomplete="off">
+                              <p style="font-size: 12px;">Created date</p> 
+                            </div>
+
+                            <div class="d-flex flex-column text-center mt-3" style="width: 50%; margin-left: auto; margin-right: auto;">
+                              <input type="text" name="fw_begin_date" id="fw_begin_date" data-field="fw_begin_date" placeholder="YYYY / MM / DD" class="csx-date" autocomplete="off">
+                              <p style="font-size: 12px;">Begin date</p> 
+                            </div>
+
+                            <div class="d-flex flex-column text-center mt-3" style="width: 50%; margin-left: auto; margin-right: auto;">
+                              <input type="text" name="fw_end_date" id="fw_end_date" data-field="fw_end_date" placeholder="YYYY / MM / DD" class="csx-date" autocomplete="off">
+                              <p style="font-size: 12px;">End date</p> 
+                            </div>
+
+                            <div id="filter_finance_expenditure_wrapper" class="mt-3">
+                              <button class="btn btn-sm csx-btn-gradient" id="filter_finance_expenditure">Apply</button>
+                            </div>
+
+                            <select data-select-pdf="export_to_pdf_dropdown" class="mt-5">
+                              <optgroup>
+                                <option data-display="Export file"></option>
+                                <option value="pdf">PDF</option>
+                                <option value="word">Word</option>
+                                <option value="ppt">PPT</option>
+                              </optgroup>
+                            </select>  
+                          </div>
+                      </div>
+                      <div class="col-lg-10 csx-left-separator" data-main-collapse="left-filters-overview">
+                        <div class="container-fluid">
+                          <div class="row mt-5" data-fwe-report-card></div>
+                        </div>
+                      </div>
+                    </div>
                 </div>
               </div>
             </div>
           </div>
 
           <div data-tab-target="contractor">
-            <div data-role="spa-contractor">
-              <div class="container" style="height: 100%">
-                <div class="row" style="height: inherit;">
-                  <div class="col-lg-12 d-flex justify-content-center align-items-center">
-                    <div style="height: auto; width: 600px;">
-                      <canvas id="contractor_chart" ></canvas>
+            <ul class="nav nav-tabs" id="csx-sub-nav" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="csx-contractor-tab" data-bs-toggle="tab" data-bs-target="#spa-contractor" data-spa-page="spa-contractor" type="button" role="tab" aria-controls="Contractor" aria-selected="true">Contractor</button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="csx-worker-tab" data-bs-toggle="tab" data-bs-target="#spa-worker" data-spa-page="spa-worker" type="button" role="tab" aria-controls="Wroker" aria-selected="true">Worker</button>
+              </li>
+            </ul>
+
+            <div class="tab-content" id="csx-tab-content">
+              <div class="tab-pane" id="spa-contractor" data-role="spa-contractor" role="tabpanel" aria-labelledby="csx-contractor-tab">
+                <div class="container-fluid">
+                  <div class="sidebar-toggle" data-sidebar-collapse-target="left-filters-contractor">
+                    <span data-feather="chevron-left"></span>
+                  </div>
+                  <div class="row csx-full-vp">
+                    <div class="col-lg-2" style="padding-right: 2vw;margin-top: 3vh;" data-sidebar-collapse="left-filters-contractor">
+                      <div class="d-flex justify-content-between flex-column align" style="width: 100%;">
+                          <select data-select="tc.Client" class="mt-3"></select>
+                          <select data-select="c.BuildingName" class="mt-3"></select>
+                          <select data-select="tr.RegionName" class="mt-3"></select>
+
+                          <select data-select="pmjd.job_type" class="mt-3"></select>
+                          <select data-select="pmwt.Name" class="mt-3"></select>
+                          <select data-select="pmsl.Status" class="mt-3"></select>
+                          <select data-select="pmp.Priority" class="mt-3"></select>
+
+                          <div class="d-flex flex-column text-center mt-5" style="width: 50%; margin-left: auto; margin-right: auto;">
+                            <input type="text" name="co_created_date" id="co_created_date" data-field="co_created_date" placeholder="YYYY / MM / DD" class="csx-date" autocomplete="off">
+                            <p style="font-size: 12px;">Created date</p> 
+                          </div>
+
+                          <div class="d-flex flex-column text-center mt-3" style="width: 50%; margin-left: auto; margin-right: auto;">
+                            <input type="text" name="co_begin_date" id="co_begin_date" data-field="co_begin_date" placeholder="YYYY / MM / DD" class="csx-date" autocomplete="off">
+                            <p style="font-size: 12px;">Begin date</p> 
+                          </div>
+
+                          <div class="d-flex flex-column text-center mt-3" style="width: 50%; margin-left: auto; margin-right: auto;">
+                            <input type="text" name="co_end_date" id="co_end_date" data-field="co_end_date" placeholder="YYYY / MM / DD" class="csx-date" autocomplete="off">
+                            <p style="font-size: 12px;">End date</p> 
+                          </div>
+
+                          <div id="filter_contractor_wrapper" class="mt-3">
+                            <button class="btn btn-sm csx-btn-gradient" id="filter_contractor">Apply</button>
+                          </div>
+
+                          <select data-select-pdf="export_to_pdf_dropdown" class="mt-5">
+                            <optgroup>
+                              <option data-display="Export file"></option>
+                              <option value="pdf">PDF</option>
+                              <option value="word">Word</option>
+                              <option value="ppt">PPT</option>
+                            </optgroup>
+                          </select>  
+                        </div>
+                    </div>
+                    <div class="col-lg-10 csx-left-separator" data-main-collapse="left-filters-contractor">
+                      <div class="container-fluid">
+                        <div class="row mt-5">
+                          <div class="col-lg-4 box-area text-center" style="background-color: #fb8500;" data-report-card>
+                            <div class="d-lg-flex justify-content-center align-items-center">
+                              <h4 class="mt-3 mb-3 me-3 csx-txt-uppercase" data-report-header="live_job_status">live job status</h4>
+                              <div data-toggle="tooltip" data-placement="top" title="An overview of job status so you can manage your operations"><i class="fa-solid fa-circle-info"></i></div>
+                            </div>
+                            <div class="csx-box-list" data-field="co_live_job_status">
+                              <div class="d-lg-flex justify-content-between">
+                                <p>IN PROGRESS</p>
+                                <p>31</p>
+                              </div>
+                              <div class="d-lg-flex justify-content-between">
+                                <p>PAUSED</p>
+                                <p>22</p>
+                              </div>
+                              <div class="d-lg-flex justify-content-between">
+                                <p>AWAITING PARTS</p>
+                                <p>13</p>
+                              </div>
+                              <div class="d-lg-flex justify-content-between">
+                                <p>SUP.ATTENTION</p>
+                                <p>42</p>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-lg-4 box-area text-center" style="background-color: #a8dadc;" data-report-card>
+                            <div class="d-lg-flex justify-content-center align-items-center">
+                              <h4 class="mt-3 mb-3 me-3 csx-txt-uppercase" data-report-header="job_type">Job types</h4>
+                              <div data-toggle="tooltip" data-placement="top" title="Jobs raised that are either within their required completion time (In SLA) or have passed their required completion time (Out of SLA)"><i class="fa-solid fa-circle-info"></i></div>
+                            </div>
+                            <div class="d-lg-flex text-center">
+                              <div class="csx-box" style="background-color: #a8dadc;">
+                                <p class="mt-2 mb-2">Repair</p>
+                                <div class="d-lg-flex justify-content-center text-center">
+                                  <h1 data-field="co_repair">10</h1>
+                                </div>
+                              </div>
+                              <div class="csx-box" style="background-color: #a8dadc;">
+                                <p class="mt-2 mb-2">Maintenance</p>
+                                <div class="d-lg-flex justify-content-center text-center">
+                                  <h1 data-field="co_maintenance">7</h1>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-lg-4 box-area text-center" style="background-color: #48cae4;" data-report-card>
+                            <div class="d-lg-flex justify-content-center align-items-center">
+                              <h4 class="mt-3 mb-3 me-3 csx-txt-uppercase" data-report-header="open_jobs">Open jobs</h4>
+                              <div data-toggle="tooltip" data-placement="top" title="Jobs raised that are either within their required completion time (In SLA) or have passed their required completion time (Out of SLA)"><i class="fa-solid fa-circle-info"></i></div>
+                            </div>
+                            <div class="d-lg-flex text-center">
+                              <div class="csx-box" style="background-color: #b5e48c;">
+                                <p class="mt-2 mb-2">In SLA</p>
+                                <div class="d-lg-flex justify-content-center text-center">
+                                  <h1 data-field="co_in_sla_field">10</h1>
+                                </div>
+                              </div>
+                              <div class="csx-box" style="background-color: #e63946;">
+                                <p class="mt-2 mb-2">Out of SLA</p>
+                                <div class="d-lg-flex justify-content-center text-center">
+                                  <h1 data-field="co_out_sla_field">7</h1>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-lg-4 box-area text-center" style="background-color: #ffd60a;" data-report-card>
+                            <div class="d-lg-flex justify-content-center align-items-center">
+                              <h4 class="mt-3 mb-3 me-3 csx-txt-uppercase" data-report-header="satisfaction">Satisfaction</h4>
+                              <div data-toggle="tooltip" data-placement="top" title="Satisfaction survey completed by the requestor to monitor if intervention is completed promptly"><i class="fa-solid fa-circle-info"></i></div>
+                            </div>
+                            <div class="d-lg-flex">
+                              <div style="flex-basis: 50%; height: 100px;">
+                                <div class="csx-box-image"><i class="fa-regular fa-face-smile" style="color: #40916c !important;"></i></div>
+                                <p style="font-weight: bold;" data-field="co_survey_happy">52%</p>
+                              </div>
+                              <div style="flex-basis: 50%; height: 100px;">
+                                <div class="csx-box-image"><i class="fa-regular fa-face-frown" style="color: #e63946 !important;"></i></div>
+                                <p style="font-weight: bold;" data-field="co_survey_unhappy">48%</p>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-lg-4 box-area text-center" style="background-color: #ffd60a;" data-report-card>
+                            <div class="d-lg-flex justify-content-center align-items-center">
+                              <h4 class="mt-3 mb-3 me-3 csx-txt-uppercase" data-report-header="system_usage">System usage</h4>
+                              <div data-toggle="tooltip" data-placement="top" title="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"><i class="fa-solid fa-circle-info"></i></div>
+                            </div>
+                          </div>
+                          <div class="col-lg-4 box-area text-center" style="background-color: #48cae4;" data-report-card>
+                            <div class="d-lg-flex justify-content-center align-items-center">
+                              <h4 class="mt-3 mb-3 me-3 csx-txt-uppercase" data-report-header="completed_jobs">Completed jobs</h4>
+                              <div data-toggle="tooltip" data-placement="top" title="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"><i class="fa-solid fa-circle-info"></i></div>
+                            </div>
+                            <div class="d-lg-flex text-center">
+                              <div class="csx-box" style="background-color: #b5e48c;">
+                                <p class="mt-2 mb-2">In SLA</p>
+                                <div class="d-lg-flex justify-content-center text-center">
+                                  <h1 data-field="co_cj_in_sla_field">10</h1>
+                                </div>
+                              </div>
+                              <div class="csx-box" style="background-color: #e63946;">
+                                <p class="mt-2 mb-2">Out of SLA</p>
+                                <div class="d-lg-flex justify-content-center text-center">
+                                  <h1 data-field="co_cj_out_sla_field">7</h1>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-lg-4 box-area text-center" style="background-color: #e63946;" data-report-card>
+                            <div class="d-lg-flex justify-content-center align-items-center">
+                              <h4 class="mt-3 mb-3 me-3 csx-txt-uppercase" data-report-header="invoice_status">Invoice status</h4>
+                              <div data-toggle="tooltip" data-placement="top" title="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"><i class="fa-solid fa-circle-info"></i></div>
+                            </div>
+                            <div class="csx-box-list" data-field="co_invoice_status">
+                              <div class="d-lg-flex justify-content-between">
+                                <p>Paid</p>
+                                <p>2</p>
+                              </div>
+                              <div class="d-lg-flex justify-content-between">
+                                <p>Passed</p>
+                                <p>3</p>
+                              </div>
+                              <div class="d-lg-flex justify-content-between">
+                                <p>In query</p>
+                                <p>1</p>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-lg-4 box-area text-center" style="background-color: #fb8500;" data-report-card>
+                            <div class="d-lg-flex justify-content-center align-items-center">
+                              <h4 class="mt-3 mb-3 me-3 csx-txt-uppercase" data-report-header="contractor_turnover">Contractor turnover</h4>
+                              <div data-toggle="tooltip" data-placement="top" title="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"><i class="fa-solid fa-circle-info"></i></div>
+                            </div>
+                            <div class="d-lg-flex justify-content-center align-items-center mt-5">
+                              <h1 data-field="cto">Rs 50,000</h1>
+                            </div>
+                          </div>
+                          <div class="col-lg-4 box-area text-center" style="background-color: #b5e48c;" data-report-card>
+                            <div class="d-lg-flex justify-content-center align-items-center">
+                              <h4 class="mt-3 mb-3 me-3 csx-txt-uppercase" data-report-header="credit_notes">Credit notes</h4>
+                              <div data-toggle="tooltip" data-placement="top" title="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"><i class="fa-solid fa-circle-info"></i></div>
+                            </div>
+                            <div class="d-lg-flex justify-content-center align-items-center mt-5">
+                              <h1 data-field="co_credit_notes">Rs 6,500</h1>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row mt-4">
+                          <div class="col-lg-12" data-target-pagination data-target-table>
+                            <div class="table-responsive mt-5">
+                              <table class="table table-striped">
+                                <thead class="csx-light-theme">
+                                  <tr></tr>
+                                </thead>
+                                <tbody class="sm-font"></tbody>
+                              </table>
+                            </div>  
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="tab-pane" id="spa-worker" data-role="spa-worker" role="tabpanel" aria-labelledby="csx-worker-tab">
+                <div class="container-fluid">
+                  <div class="sidebar-toggle" data-sidebar-collapse-target="left-filters-worker">
+                    <span data-feather="chevron-left"></span>
+                  </div>
+                  <div class="row csx-full-vp">
+                    <div class="col-lg-2" style="padding-right: 2vw;margin-top: 3vh;" data-sidebar-collapse="left-filters-worker">
+                      <div class="d-flex justify-content-between flex-column align" style="width: 100%;">
+                          <select data-select="tc.Client" class="mt-3"></select>
+                          <select data-select="c.BuildingName" class="mt-3"></select>
+                          <select data-select="tr.RegionName" class="mt-3"></select>
+
+                          <select data-select="pmjd.job_type" class="mt-3"></select>
+                          <select data-select="pmwt.Name" class="mt-3"></select>
+                          <select data-select="pmsl.Status" class="mt-3"></select>
+                          <select data-select="pmp.Priority" class="mt-3"></select>
+
+                          <div class="d-flex flex-column text-center mt-5" style="width: 50%; margin-left: auto; margin-right: auto;">
+                            <input type="text" name="worker_created_date" id="worker_created_date" data-field="worker_created_date" placeholder="YYYY / MM / DD" class="csx-date" autocomplete="off">
+                            <p style="font-size: 12px;">Created date</p> 
+                          </div>
+
+                          <div class="d-flex flex-column text-center mt-3" style="width: 50%; margin-left: auto; margin-right: auto;">
+                            <input type="text" name="worker_begin_date" id="worker_begin_date" data-field="worker_begin_date" placeholder="YYYY / MM / DD" class="csx-date" autocomplete="off">
+                            <p style="font-size: 12px;">Begin date</p> 
+                          </div>
+
+                          <div class="d-flex flex-column text-center mt-3" style="width: 50%; margin-left: auto; margin-right: auto;">
+                            <input type="text" name="worker_end_date" id="worker_end_date" data-field="worker_end_date" placeholder="YYYY / MM / DD" class="csx-date" autocomplete="off">
+                            <p style="font-size: 12px;">End date</p> 
+                          </div>
+
+                          <div id="filter_worker_wrapper" class="mt-3">
+                            <button class="btn btn-sm csx-btn-gradient" id="filter_worker">Apply</button>
+                          </div>
+
+                          <select data-select-pdf="export_to_pdf_dropdown" class="mt-5">
+                            <optgroup>
+                              <option data-display="Export file"></option>
+                              <option value="pdf">PDF</option>
+                              <option value="word">Word</option>
+                              <option value="ppt">PPT</option>
+                            </optgroup>
+                          </select>  
+                        </div>
+                    </div>
+                    <div class="col-lg-10 csx-left-separator" data-main-collapse="left-filters-worker">
+                      <div class="container-fluid">
+                        <div class="row mt-5">
+                          <div class="col-lg-4 box-area text-center" style="background-color: #fb8500;" data-report-card>
+                            <div class="d-lg-flex justify-content-center align-items-center">
+                              <h4 class="mt-3 mb-3 me-3 csx-txt-uppercase" data-report-header="live_job_status">live job status</h4>
+                              <div data-toggle="tooltip" data-placement="top" title="An overview of job status so you can manage your operations"><i class="fa-solid fa-circle-info"></i></div>
+                            </div>
+                            <div class="csx-box-list" data-field="co_live_job_status">
+                              <div class="d-lg-flex justify-content-between">
+                                <p>IN PROGRESS</p>
+                                <p>31</p>
+                              </div>
+                              <div class="d-lg-flex justify-content-between">
+                                <p>PAUSED</p>
+                                <p>22</p>
+                              </div>
+                              <div class="d-lg-flex justify-content-between">
+                                <p>AWAITING PARTS</p>
+                                <p>13</p>
+                              </div>
+                              <div class="d-lg-flex justify-content-between">
+                                <p>SUP.ATTENTION</p>
+                                <p>42</p>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-lg-4 box-area text-center" style="background-color: #a8dadc;" data-report-card>
+                            <div class="d-lg-flex justify-content-center align-items-center">
+                              <h4 class="mt-3 mb-3 me-3 csx-txt-uppercase" data-report-header="job_type">Job types</h4>
+                              <div data-toggle="tooltip" data-placement="top" title="Jobs raised that are either within their required completion time (In SLA) or have passed their required completion time (Out of SLA)"><i class="fa-solid fa-circle-info"></i></div>
+                            </div>
+                            <div class="d-lg-flex text-center">
+                              <div class="csx-box" style="background-color: #a8dadc;">
+                                <p class="mt-2 mb-2">Repair</p>
+                                <div class="d-lg-flex justify-content-center text-center">
+                                  <h1 data-field="co_repair">10</h1>
+                                </div>
+                              </div>
+                              <div class="csx-box" style="background-color: #a8dadc;">
+                                <p class="mt-2 mb-2">Maintenance</p>
+                                <div class="d-lg-flex justify-content-center text-center">
+                                  <h1 data-field="co_maintenance">7</h1>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-lg-4 box-area text-center" style="background-color: #48cae4;" data-report-card>
+                            <div class="d-lg-flex justify-content-center align-items-center">
+                              <h4 class="mt-3 mb-3 me-3 csx-txt-uppercase" data-report-header="open_jobs">Open jobs</h4>
+                              <div data-toggle="tooltip" data-placement="top" title="Jobs raised that are either within their required completion time (In SLA) or have passed their required completion time (Out of SLA)"><i class="fa-solid fa-circle-info"></i></div>
+                            </div>
+                            <div class="d-lg-flex text-center">
+                              <div class="csx-box" style="background-color: #b5e48c;">
+                                <p class="mt-2 mb-2">In SLA</p>
+                                <div class="d-lg-flex justify-content-center text-center">
+                                  <h1 data-field="co_in_sla_field">10</h1>
+                                </div>
+                              </div>
+                              <div class="csx-box" style="background-color: #e63946;">
+                                <p class="mt-2 mb-2">Out of SLA</p>
+                                <div class="d-lg-flex justify-content-center text-center">
+                                  <h1 data-field="co_out_sla_field">7</h1>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-lg-4 box-area text-center" style="background-color: #ffd60a;" data-report-card>
+                            <div class="d-lg-flex justify-content-center align-items-center">
+                              <h4 class="mt-3 mb-3 me-3 csx-txt-uppercase" data-report-header="satisfaction">Satisfaction</h4>
+                              <div data-toggle="tooltip" data-placement="top" title="Satisfaction survey completed by the requestor to monitor if intervention is completed promptly"><i class="fa-solid fa-circle-info"></i></div>
+                            </div>
+                            <div class="d-lg-flex">
+                              <div style="flex-basis: 50%; height: 100px;">
+                                <div class="csx-box-image"><i class="fa-regular fa-face-smile" style="color: #40916c !important;"></i></div>
+                                <p style="font-weight: bold;" data-field="co_survey_happy">52%</p>
+                              </div>
+                              <div style="flex-basis: 50%; height: 100px;">
+                                <div class="csx-box-image"><i class="fa-regular fa-face-frown" style="color: #e63946 !important;"></i></div>
+                                <p style="font-weight: bold;" data-field="co_survey_unhappy">48%</p>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-lg-4 box-area text-center" style="background-color: #ffd60a;" data-report-card>
+                            <div class="d-lg-flex justify-content-center align-items-center">
+                              <h4 class="mt-3 mb-3 me-3 csx-txt-uppercase" data-report-header="system_usage">System usage</h4>
+                              <div data-toggle="tooltip" data-placement="top" title="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"><i class="fa-solid fa-circle-info"></i></div>
+                            </div>
+                          </div>
+                          <div class="col-lg-4 box-area text-center" style="background-color: #48cae4;" data-report-card>
+                            <div class="d-lg-flex justify-content-center align-items-center">
+                              <h4 class="mt-3 mb-3 me-3 csx-txt-uppercase" data-report-header="completed_jobs">Completed jobs</h4>
+                              <div data-toggle="tooltip" data-placement="top" title="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"><i class="fa-solid fa-circle-info"></i></div>
+                            </div>
+                            <div class="d-lg-flex text-center">
+                              <div class="csx-box" style="background-color: #b5e48c;">
+                                <p class="mt-2 mb-2">In SLA</p>
+                                <div class="d-lg-flex justify-content-center text-center">
+                                  <h1 data-field="co_cj_in_sla_field">10</h1>
+                                </div>
+                              </div>
+                              <div class="csx-box" style="background-color: #e63946;">
+                                <p class="mt-2 mb-2">Out of SLA</p>
+                                <div class="d-lg-flex justify-content-center text-center">
+                                  <h1 data-field="co_cj_out_sla_field">7</h1>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row mt-4">
+                          <div class="col-lg-12" data-target-pagination data-target-table>
+                            <div class="table-responsive mt-5">
+                              <table class="table table-striped">
+                                <thead class="csx-light-theme">
+                                  <tr></tr>
+                                </thead>
+                                <tbody class="sm-font"></tbody>
+                              </table>
+                            </div>  
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>

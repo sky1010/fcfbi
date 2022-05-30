@@ -214,33 +214,33 @@
     });
 
     $("[data-role='spa-content-summary-building']").on("spaloaded", function(){
+        const building_id = session.getItem('building_in_view'); 
         if(map_building !== null) map_building.remove();
-
-        app.protocol.ajax(
-            'build/bridge.php',
-            { request_type: 'get_atomic_building_point', building_id: session.getItem('building_in_view')},
-            {c: (d) => {
-                var parse = JSON.parse(d);
-                var mapboxTiles = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/{z}/{x}/{y}?access_token=' + L.mapbox.accessToken, {
-                       attribution: '© <a href="https://www.mapbox.com/feedback/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-                       tileSize: 512,
-                       zoomOffset: -1
-                });
-
-                map_building = L.map('map_sm')
-                    .addLayer(mapboxTiles)
-                    .setView([parse.data[0].VixenPPM, parse.data[0].VixenReactive], 16);
-
-                var marker = L.marker(
-                    [parse.data[0].VixenPPM, parse.data[0].VixenReactive], 
-                    {icon: buildingIcon}
-                ).addTo(map_building);
-            }}
-        );  
-
-        const building_id = session.getItem('building_in_view');    
+           
 
         if(building_id != null || building_id != undefined){
+            app.protocol.ajax(
+                'build/bridge.php',
+                { request_type: 'get_atomic_building_point', building_id: session.getItem('building_in_view')},
+                {c: (d) => {
+                    var parse = JSON.parse(d);
+                    var mapboxTiles = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/{z}/{x}/{y}?access_token=' + L.mapbox.accessToken, {
+                           attribution: '© <a href="https://www.mapbox.com/feedback/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+                           tileSize: 512,
+                           zoomOffset: -1
+                    });
+
+                    map_building = L.map('map_sm')
+                        .addLayer(mapboxTiles)
+                        .setView([parse.data[0].VixenPPM, parse.data[0].VixenReactive], 10);
+
+                    var marker = L.marker(
+                        [parse.data[0].VixenPPM, parse.data[0].VixenReactive], 
+                        {icon: buildingIcon}
+                    ).addTo(map_building);
+                }}
+            );  
+
             app.protocol.ajax(
                 'build/bridge.php',
                 { request_type: 'building_summary', building_id: building_id},
@@ -327,6 +327,30 @@
                 {c: fill_asset_summary }
             ); 
 
+            if(ref_chart['fw_chart_details'] == undefined)
+                chart_.gen_fw_chart_details();
+            else{
+                ref_chart['fw_chart_details'].destroy();
+                ref_chart['fw_chart_details'] = undefined;
+                chart_.gen_fw_chart_details();
+            }
+
+            if(ref_chart['fw_chart_reactive_pie'] == undefined)
+                chart_.gen_fw_chart_reactive_pie();
+            else{
+                ref_chart['fw_chart_reactive_pie'].destroy();
+                ref_chart['fw_chart_reactive_pie'] = undefined;
+                chart_.gen_fw_chart_reactive_pie();
+            }
+
+            if(ref_chart['fw_chart_reactive_stackbar'] == undefined)
+                chart_.gen_fw_chart_reactive_stackbar();
+            else{
+                ref_chart['fw_chart_reactive_stackbar'].destroy();
+                ref_chart['fw_chart_reactive_stackbar'] = undefined;
+                chart_.gen_fw_chart_reactive_stackbar();
+            }
+
             $("[data-show-void='spa-content-asset_list']").addClass("no-display"); 
             $("[data-void='spa-content-asset_list']").removeClass("no-display"); 
             $("#back_to_asset").removeClass("no-display");
@@ -361,53 +385,22 @@
     });
 
     $("[data-role='spa-content-work_order']").on("spaloaded", function(){
-        app.protocol.ajax(
-            'build/bridge.php',
-            { request_type: 'get_work_order'},
-            {c: show_work_order }
-        );  
+        app.page.onrendered().then(() => {
+            var selects_col = [];
 
-        // app.protocol.ajax(
-        //     'build/bridge.php',
-        //     { request_type: 'get_work_orders'},
-        //     {c: (data) => {
-        //         if(ref_chart['work_orders'] == undefined)
-        //             chart_.gen_chart_work_orders(data);
-        //         else{
-        //             ref_chart['work_orders'].destroy();
-        //             ref_chart['work_orders'] = undefined;
-        //             chart_.gen_chart_work_orders(data);
-        //         }
-        //     }}
-        // ); 
-
-        app.protocol.ajax(
-            'build/bridge.php',
-            { request_type: 'get_work_priority'},
-            {c: (data) => {
-                if(ref_chart['work_priority'] == undefined)
-                    chart_.gen_chart_priority(data);
-                else{
-                    ref_chart['work_priority'].destroy();
-                    ref_chart['work_priority'] = undefined;
-                    chart_.gen_chart_priority(data);
-                }
-            }}
-        ); 
-
-        app.protocol.ajax(
-            'build/bridge.php',
-            { request_type: 'get_work_type'},
-            {c: (data) => {
-                if(ref_chart['work_type'] == undefined)
-                    chart_.gen_chart_work_type(data);
-                else{
-                    ref_chart['work_type'].destroy();
-                    ref_chart['work_type'] = undefined;
-                    chart_.gen_chart_work_type(data);
-                }
-            }}
-        );         
+            $(`[data-role='${spa_loaded}'] [data-select]`).each(function(i, el){
+                selects_col.push($(el).attr("data-select"));
+            });
+            
+            app.protocol.ajax(
+                'build/bridge.php',
+                { request_type: 'get_col_grp_jobs', fields: JSON.stringify(selects_col), table: 'TabsBuildings'},
+                {c: (d) => {
+                    fillSelect(d);
+                    $("#filter_jobs").click();
+                }}
+            )  
+        });     
     });
 
     $("[data-role='spa-setting']").on("spaloaded", function(){
@@ -448,38 +441,82 @@
     });
 
     $("[data-role='spa-finance']").on("spaloaded", function(){
-        app.protocol.ajax(
-            'build/bridge.php',
-            { request_type: 'get_finance'},
-            {c: (data) => {
-                if(ref_chart['finance_chart'] == undefined)
-                    chart_.gen_chart_finance(data);
-                else{
-                    ref_chart['finance_chart'].destroy();
-                    ref_chart['finance_chart'] = undefined;
-                    chart_.gen_chart_finance(data);
-                }
-            }}
-        );   
+        app.page.onrendered().then(() => {
+            var selects_col = [];
+
+            $(`[data-role='${spa_loaded}'] [data-select]`).each(function(i, el){
+                selects_col.push($(el).attr("data-select"));
+            });
+            
+            app.protocol.ajax(
+                'build/bridge.php',
+                { request_type: 'get_col_grp_finance', fields: JSON.stringify(selects_col), table: 'TabsBuildings'},
+                {c: (d) => {
+                    fillSelect(d);
+                    $("#filter_finance_overview").click();
+                }}
+            )  
+        }); 
+    });
+
+    $("[data-role='spa-work-type-expenditure']").on("spaloaded", function(){
+        app.page.onrendered().then(() => {
+            var selects_col = [];
+
+            $(`[data-role='${spa_loaded}'] [data-select]`).each(function(i, el){
+                selects_col.push($(el).attr("data-select"));
+            });
+            
+            app.protocol.ajax(
+                'build/bridge.php',
+                { request_type: 'get_col_grp_finance', fields: JSON.stringify(selects_col), table: 'TabsBuildings'},
+                {c: (d) => {
+                    fillSelect(d);
+                    $("#filter_finance_expenditure").click();
+                }}
+            )  
+        }); 
     });
 
 
     $("[data-role='spa-contractor']").on("spaloaded", function(){
-        app.protocol.ajax(
-            'build/bridge.php',
-            { request_type: 'get_contractor'},
-            {c: (data) => {
-                console.log(data);
-                if(ref_chart['contractor_chart'] == undefined)
-                    chart_.gen_chart_contractor_chart(data);
-                else{
-                    ref_chart['contractor_chart'].destroy();
-                    ref_chart['contractor_chart'] = undefined;
-                    chart_.gen_chart_contractor_chart(data);
-                }
-            }}
-        );   
+        app.page.onrendered().then(() => {
+            var selects_col = [];
+
+            $(`[data-role='${spa_loaded}'] [data-select]`).each(function(i, el){
+                selects_col.push($(el).attr("data-select"));
+            });
+            
+            app.protocol.ajax(
+                'build/bridge.php',
+                { request_type: 'get_col_grp_contractor', fields: JSON.stringify(selects_col), table: 'TabsBuildings'},
+                {c: (d) => {
+                    fillSelect(d);
+                    $("#filter_contractor").click();
+                }}
+            )  
+        }); 
     });
+
+    $("[data-role='spa-worker']").on("spaloaded", function(){
+        app.page.onrendered().then(() => {
+            var selects_col = [];
+
+            $(`[data-role='${spa_loaded}'] [data-select]`).each(function(i, el){
+                selects_col.push($(el).attr("data-select"));
+            });
+            
+            app.protocol.ajax(
+                'build/bridge.php',
+                { request_type: 'get_col_grp_worker', fields: JSON.stringify(selects_col), table: 'TabsBuildings'},
+                {c: (d) => {
+                    fillSelect(d);
+                    $("#filter_worker").click();
+                }}
+            )  
+        }); 
+    });
+
 
     $("[data-sidebar-collapse-target]").click(function(){
         $(this).data("collapse", !!!$(this).data("collapse"));
@@ -816,8 +853,166 @@
                     fill_summary_asset(d);
                 }}
             );
-        }else{
-            console.log(select_val);
+        }
+    });
+
+    $("#filter_jobs").parent().click(function(){
+        var select_val = {}
+        var building_id = session.getItem("site_in_view");
+
+        $(`[data-role='${spa_loaded}'] [data-select]`).each(function(i, el){
+            const el_val = $(el).val();
+
+            if(el_val != "-1" && el_val !== null)
+                select_val[$(el).attr("data-select")] = el_val;
+        });
+
+        if(Object.keys(select_val).length === 0){
+            select_val = {'tc.Client' : $(`[data-role='${spa_loaded}'] [data-select='tc.Client'] option:nth-child(3)`).text().trim()};
+        }
+
+        if(Object.keys(select_val).length > 0){
+            app.protocol.ajax(
+                'build/bridge.php',
+                { 
+                    request_type: 'get_jobs', 
+                    filters: JSON.stringify(select_val), 
+                    created_date: $("#wo_created_date").val(),
+                    begin_date: $("#wo_begin_date").val(),
+                    end_date: $("#wo_end_date").val()
+                },
+                {c: (d) =>{
+                    show_work_order(d);
+                }}
+            );
+        }
+    });
+
+    $("#filter_worker").parent().click(function(){
+        var select_val = {}
+        var building_id = session.getItem("site_in_view");
+
+        $(`[data-role='${spa_loaded}'] [data-select]`).each(function(i, el){
+            const el_val = $(el).val();
+
+            if(el_val != "-1" && el_val !== null)
+                select_val[$(el).attr("data-select")] = el_val;
+        });
+
+        if(Object.keys(select_val).length === 0){
+            select_val = {'tc.Client' : $(`[data-role='${spa_loaded}'] [data-select='tc.Client'] option:nth-child(3)`).text().trim()};
+        }
+
+        if(Object.keys(select_val).length > 0){
+            app.protocol.ajax(
+                'build/bridge.php',
+                { 
+                    request_type: 'get_worker', 
+                    filters: JSON.stringify(select_val), 
+                    created_date: $("#worker_created_date").val(),
+                    begin_date: $("#worker_begin_date").val(),
+                    end_date: $("#worker_end_date").val()
+                },
+                {c: (d) =>{
+                    show_worker(d);
+                }}
+            );
+        } 
+    });
+
+    $("#filter_contractor").parent().click(function(){
+        var select_val = {}
+        var building_id = session.getItem("site_in_view");
+
+        $(`[data-role='${spa_loaded}'] [data-select]`).each(function(i, el){
+            const el_val = $(el).val();
+
+            if(el_val != "-1" && el_val !== null)
+                select_val[$(el).attr("data-select")] = el_val;
+        });
+
+        if(Object.keys(select_val).length === 0){
+            select_val = {'tc.Client' : $(`[data-role='${spa_loaded}'] [data-select='tc.Client'] option:nth-child(3)`).text().trim()};
+        }
+
+        if(Object.keys(select_val).length > 0){
+            app.protocol.ajax(
+                'build/bridge.php',
+                { 
+                    request_type: 'get_contractor', 
+                    filters: JSON.stringify(select_val), 
+                    created_date: $("#co_created_date").val(),
+                    begin_date: $("#co_begin_date").val(),
+                    end_date: $("#co_end_date").val()
+                },
+                {c: (d) =>{
+                    show_contractor(d);
+                }}
+            );
+        } 
+    });
+    
+    $("#filter_finance_overview").parent().click(function(){
+        var select_val = {}
+        var building_id = session.getItem("site_in_view");
+
+        $(`[data-role='${spa_loaded}'] [data-select]`).each(function(i, el){
+            const el_val = $(el).val();
+
+            if(el_val != "-1" && el_val !== null)
+                select_val[$(el).attr("data-select")] = el_val;
+        });
+
+        if(Object.keys(select_val).length === 0){
+            select_val = {'tc.Client' : $(`[data-role='${spa_loaded}'] [data-select='tc.Client'] option:nth-child(3)`).text().trim()};
+        }
+
+        if(Object.keys(select_val).length > 0){
+            app.protocol.ajax(
+                'build/bridge.php',
+                { 
+                    request_type: 'get_finance', 
+                    filters: JSON.stringify(select_val), 
+                    created_date: $("#fo_created_date").val(),
+                    begin_date: $("#fo_begin_date").val(),
+                    end_date: $("#fo_end_date").val()
+                },
+                {c: (d) =>{
+                    show_finance(d);
+                }}
+            );
+        }
+    });
+
+    $("#filter_finance_expenditure").parent().click(function(){
+        var select_val = {}
+        var building_id = session.getItem("site_in_view");
+
+        $(`[data-role='${spa_loaded}'] [data-select]`).each(function(i, el){
+            const el_val = $(el).val();
+
+            if(el_val != "-1" && el_val !== null)
+                select_val[$(el).attr("data-select")] = el_val;
+        });
+
+        if(Object.keys(select_val).length === 0){
+            select_val = {'tc.Client' : $(`[data-role='${spa_loaded}'] [data-select='tc.Client'] option:nth-child(3)`).text().trim()};
+        }
+
+        if(Object.keys(select_val).length > 0){
+            app.protocol.ajax(
+                'build/bridge.php',
+                { 
+                    request_type: 'get_finance_expenditure', 
+                    filters: JSON.stringify(select_val), 
+                    created_date: $("#fw_created_date").val(),
+                    begin_date: $("#fw_begin_date").val(),
+                    end_date: $("#fw_end_date").val()
+                },
+                {c: (d) =>{
+                    show_finance_expenditure(d);
+                }}
+            );
         } 
     });
 
@@ -979,7 +1174,106 @@
         })
 
         end_date_picker_map.onOpen(() => $(".mc-calendar").css({left: '14px', top: '160px'}));
+
+        const wo_created_date_picker = MCDatepicker.create({ 
+            el: '#wo_created_date',
+            dateFormat: 'YYYY-MM-DD',
+            bodyType: 'inline'
+        })
+
+        wo_created_date_picker.onOpen(() => $(".mc-calendar").css({left: '14px', top: '230px'}));
+
+
+        const wo_begin_date_picker = MCDatepicker.create({ 
+            el: '#wo_begin_date',
+            dateFormat: 'YYYY-MM-DD',
+            bodyType: 'inline'
+        })
+
+        wo_begin_date_picker.onOpen(() => $(".mc-calendar").css({left: '14px', top: '230px'}));
+
+        const wo_end_date_picker = MCDatepicker.create({ 
+            el: '#wo_end_date',
+            dateFormat: 'YYYY-MM-DD',
+            bodyType: 'inline'
+        })
+
+        wo_end_date_picker.onOpen(() => $(".mc-calendar").css({left: '14px', top: '230px'}));
+
+        const co_created_date_picker = MCDatepicker.create({ 
+            el: '#co_created_date',
+            dateFormat: 'YYYY-MM-DD',
+            bodyType: 'inline'
+        })
+
+        co_created_date_picker.onOpen(() => $(".mc-calendar").css({left: '14px', top: '230px'}));
+
+
+        const co_begin_date_picker = MCDatepicker.create({ 
+            el: '#co_begin_date',
+            dateFormat: 'YYYY-MM-DD',
+            bodyType: 'inline'
+        })
+
+        co_begin_date_picker.onOpen(() => $(".mc-calendar").css({left: '14px', top: '230px'}));
+
+        const co_end_date_picker = MCDatepicker.create({ 
+            el: '#co_end_date',
+            dateFormat: 'YYYY-MM-DD',
+            bodyType: 'inline'
+        })
+
+        co_end_date_picker.onOpen(() => $(".mc-calendar").css({left: '14px', top: '230px'}));
     
+        const fo_created_date_picker = MCDatepicker.create({ 
+            el: '#fo_created_date',
+            dateFormat: 'YYYY-MM-DD',
+            bodyType: 'inline'
+        })
+
+        fo_created_date_picker.onOpen(() => $(".mc-calendar").css({left: '14px', top: '230px'}));
+
+
+        const fo_begin_date_picker = MCDatepicker.create({ 
+            el: '#fo_begin_date',
+            dateFormat: 'YYYY-MM-DD',
+            bodyType: 'inline'
+        })
+
+        fo_begin_date_picker.onOpen(() => $(".mc-calendar").css({left: '14px', top: '230px'}));
+
+        const fo_end_date_picker = MCDatepicker.create({ 
+            el: '#fo_end_date',
+            dateFormat: 'YYYY-MM-DD',
+            bodyType: 'inline'
+        })
+
+        fo_end_date_picker.onOpen(() => $(".mc-calendar").css({left: '14px', top: '230px'}));
+
+        const fw_created_date_picker = MCDatepicker.create({ 
+            el: '#fw_created_date',
+            dateFormat: 'YYYY-MM-DD',
+            bodyType: 'inline'
+        })
+
+        fw_created_date_picker.onOpen(() => $(".mc-calendar").css({left: '14px', top: '230px'}));
+
+
+        const fw_begin_date_picker = MCDatepicker.create({ 
+            el: '#fw_begin_date',
+            dateFormat: 'YYYY-MM-DD',
+            bodyType: 'inline'
+        })
+
+        fw_begin_date_picker.onOpen(() => $(".mc-calendar").css({left: '14px', top: '230px'}));
+
+        const fw_end_date_picker = MCDatepicker.create({ 
+            el: '#fw_end_date',
+            dateFormat: 'YYYY-MM-DD',
+            bodyType: 'inline'
+        })
+
+        fw_end_date_picker.onOpen(() => $(".mc-calendar").css({left: '14px', top: '230px'}));
 
         //setting page date format, populate fields
         app.page.render_datemask_field((masks) => {

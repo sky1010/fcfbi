@@ -184,6 +184,140 @@ var chart_ = {
       }
   },
 
+  gen_fw_chart_details: function(data){
+
+      const ctx = document.getElementById('fw_chart_details').getContext('2d');
+
+      var ds = {k: ['Reactive', 'Planned'], v: [60, 80]};
+
+      // for(let x in data_arg){
+      //   ds.k.push(data_arg[x].label);
+      //   ds.v.push(data_arg[x].value);
+      // }
+
+      if(ds.v.length == 0){
+        app.page.renderVoidChart('fw_chart_details', true);
+      }else{
+
+        app.page.renderChartPreloader('fw_chart_details');
+        const fw_chart_details = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ds.k,
+                datasets: [{ data: ds.v, backgroundColor: app.page.fillColors(ds.v.length)}]
+            },
+            options: {
+              responsive: true,
+              plugins: {
+                  title: { display: true, text: 'Lipsum chart' },
+                  legend: { display: true, position: 'right'}
+              },
+              animation: {
+                onComplete: function() {
+                  app.page.unloadChartPreloader('fw_chart_details');
+                }
+              }
+            }
+        });
+
+        ref_chart['fw_chart_details'] = fw_chart_details;
+      }
+  },
+
+  gen_fw_chart_reactive_pie: function(data){
+
+      const ctx = document.getElementById('fw_chart_reactive_pie').getContext('2d');
+
+      var ds = {k: ['En cours', 'Pause', 'Satisfait'], v: [60, 60, 60]};
+
+      // for(let x in data_arg){
+      //   ds.k.push(data_arg[x].label);
+      //   ds.v.push(data_arg[x].value);
+      // }
+
+      if(ds.v.length == 0){
+        app.page.renderVoidChart('fw_chart_reactive_pie', true);
+      }else{
+
+        app.page.renderChartPreloader('fw_chart_reactive_pie');
+        const fw_chart_reactive_pie = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ds.k,
+                datasets: [{ data: ds.v, backgroundColor: app.page.fillColors(ds.v.length)}]
+            },
+            options: {
+              responsive: true,
+              plugins: {
+                  title: { display: true, text: '' },
+                  legend: { display: true, position: 'right'}
+              },
+              animation: {
+                onComplete: function() {
+                  app.page.unloadChartPreloader('fw_chart_reactive_pie');
+                }
+              }
+            }
+        });
+
+        ref_chart['fw_chart_reactive_pie'] = fw_chart_reactive_pie;
+      }
+  },
+
+  gen_fw_chart_reactive_stackbar: function(data){
+
+      const ctx = document.getElementById('fw_chart_reactive_stackbar').getContext('2d');
+
+      var ds = {k: ['March 2021', 'April 2022'], v: [
+          {label: 'Reactive', data: [60, 90, 100], backgroundColor: "#264653"},
+          {label: 'Planned', data: [90], backgroundColor: "#e63946"},
+      ]};
+
+      // for(let x in data_arg){
+      //   ds.k.push(data_arg[x].label);
+      //   ds.v.push(data_arg[x].value);
+      // }
+
+      if(ds.v.length == 0){
+        app.page.renderVoidChart('fw_chart_reactive_stackbar', true);
+      }else{
+
+        app.page.renderChartPreloader('fw_chart_reactive_stackbar');
+        const fw_chart_reactive_stackbar = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ds.k,
+                datasets: ds.v
+            },
+            options: {
+              responsive: true,
+              plugins: {
+                  title: { display: true, text: '' },
+                  legend: { display: true, position: 'right'}
+              },
+              scales: {
+                x: {
+                  grid: {display: false},
+                  stacked: true
+                },
+                y: {
+                  grid: {display: false},
+                  ticks: {display: false},
+                  stacked: true
+                }
+              },
+              animation: {
+                onComplete: function() {
+                  app.page.unloadChartPreloader('fw_chart_reactive_stackbar');
+                }
+              }
+            }
+        });
+
+        ref_chart['fw_chart_reactive_stackbar'] = fw_chart_reactive_stackbar;
+      }
+  },
+
   gen_chart_number_intervention_nature: function(data_arg){
       var ds = {k: [], v: []};
 
